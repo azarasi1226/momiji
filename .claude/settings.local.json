@@ -7,7 +7,8 @@
       "WebFetch(domain:www.ory.com)",
       "WebFetch(domain:support.google.com)",
       "WebFetch(domain:community.auth0.com)",
-      "WebFetch(domain:neon.com)"
+      "WebFetch(domain:neon.com)",
+      "Bash(mkdir:*)"
     ]
   }
 }

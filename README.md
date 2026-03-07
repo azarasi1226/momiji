@@ -1,6 +1,18 @@
 # 🍁Momiji
 OIDCを基盤とした認証・認可のサンプルプロジェクト
 
+## プロジェクト構造
+```
+momiji
+├─ frontend (NextJS)
+├─ backend (server side kotlin)
+│   └─ database
+├─ README.md
+├─ docker-compose.yaml
+└─ docs
+└─ sample.md
+```
+
 ## 特徴
 * IDP は Cognito, Auth0, Keycloak などのメジャーな OIDC 準拠 IDP を使用でき、破壊的な変更なしにいつでも交換できる
 * ログイン方式は複数対応する。IDP 独自のパスワード認証や各種ソーシャルログイン (Google, GitHub など) が利用可能
