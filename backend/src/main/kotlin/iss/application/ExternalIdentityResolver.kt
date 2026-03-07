@@ -9,12 +9,12 @@ class ExternalIdentityResolver(
   private val dsl: DSLContext
 ) {
   fun resolveUserId(oidcIssuer: String, oidcSubject: String): String? {
-    return dsl.select(EXTERNAL_IDENTITIES.USERID)
+    return dsl.select(EXTERNAL_IDENTITIES.USER_ID)
       .from(EXTERNAL_IDENTITIES)
       .where(
         EXTERNAL_IDENTITIES.OIDC_ISSUER.eq(oidcIssuer)
           .and(EXTERNAL_IDENTITIES.OIDC_SUBJECT.eq(oidcSubject))
       )
-      .fetchOne(EXTERNAL_IDENTITIES.USERID)
+      .fetchOne(EXTERNAL_IDENTITIES.USER_ID)
   }
 }

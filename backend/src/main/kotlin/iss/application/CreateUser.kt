@@ -45,7 +45,7 @@ class CreateUser(
       tx.insertInto(EXTERNAL_IDENTITIES)
         .set(EXTERNAL_IDENTITIES.OIDC_ISSUER, input.oidcIssuer)
         .set(EXTERNAL_IDENTITIES.OIDC_SUBJECT, input.oidcSubject)
-        .set(EXTERNAL_IDENTITIES.USERID, userId)
+        .set(EXTERNAL_IDENTITIES.USER_ID, userId)
         .execute()
 
       CreateUserOutput(userId = userId)
