@@ -73,7 +73,6 @@ jooq {
 				isKotlinNotNullRecordAttributes = true
 			}
 			target {
-				// /build/{packageName}/** みたいなパスで生成コードが作られる
 				packageName = "iss.jooq.generated"
 			}
 		}

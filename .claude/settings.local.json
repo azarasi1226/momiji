@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew compileKotlin:*)",
+      "mcp__ide__getDiagnostics",
+      "WebSearch",
+      "WebFetch(domain:www.ory.com)",
+      "WebFetch(domain:support.google.com)",
+      "WebFetch(domain:community.auth0.com)",
+      "WebFetch(domain:neon.com)"
+    ]
+  }
+}
