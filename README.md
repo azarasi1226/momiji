@@ -91,7 +91,7 @@ sequenceDiagram
 
     B->>BFF: 1. ログアウトリクエスト
     Note over BFF: サーバー上のセッションを破棄<br/>(DB から Token を削除)
-    BFF->>IDP: 2. ログアウト (セッション無効化)
+    BFF->>IDP: 2. RP-Initiated Logout (セッション無効化)
     IDP-->>BFF: OK
     BFF-->>B: 3. ログアウト完了 (Cookie 削除)
     Note over B: ブラウザには Token が存在しないため<br/>即時にログアウトが完了する
