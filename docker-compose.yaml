@@ -1,12 +1,9 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: momiji-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: passw0rdt
       MYSQL_DATABASE: momiji
-      MYSQL_USER: momiji
-      MYSQL_PASSWORD: momiji
     ports:
       - "3306:3306"
     volumes:
@@ -15,7 +12,6 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    container_name: momiji-keycloak
     command: start-dev
     environment:
       KC_DB: dev-mem

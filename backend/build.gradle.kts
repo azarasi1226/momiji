@@ -6,7 +6,7 @@ plugins {
 	id("org.jooq.jooq-codegen-gradle") version "3.20.11"
 }
 
-group = "iss"
+group = "momiji"
 version = "0.0.1-SNAPSHOT"
 description = "Identity Service Demo"
 
@@ -38,6 +38,9 @@ dependencies {
 	implementation("org.jooq:jooq:3.20.11")
 	jooqCodegen("com.mysql:mysql-connector-j")
 	jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
+
+	// Axon
+	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
 }
 
 kotlin {

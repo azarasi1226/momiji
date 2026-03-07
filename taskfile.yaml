@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  default:
+    silent: true
+    desc: 実行可能なすべてのタスクを表示
+    cmds:
+      - task --list-all
+
+  local-up:
+    desc: ローカル環境のセットアップ(主にコンテナ起動)
+    cmds:
+      - docker compose -f ./docker-compose.yaml up -d --wait
+
+  local-down:
+    desc: ローカル環境の停止(主にコンテナ停止)
+    cmds:
+      - docker compose -f ./docker-compose.yaml down
+
+  atlas-migrate-diff:
+    desc: データベースのマイグレーション差分を生成
+    dir: ./backend/database
+    cmds:
+      - atlas migrate diff --dev-url "docker://mysql/8/dev" --dir "file://migrations" --to "file://schema.mysql.sql"
+
+  atlas-migrate-apply:
+    desc: データベースのマイグレーションを適用
+    dir: ./backend/database
+    deps:
+      - local-up
+    cmds:
+      - atlas migrate apply --url "mysql://root:passw0rd@localhost:3306/momiji" --dir "file://migrations"

@@ -4,7 +4,7 @@ CREATE TABLE users (
   name varchar(255) NOT NULL,
   created_at datetime(6) NOT NULL,
   updated_at datetime(6) NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
   UNIQUE KEY uk_users_email (email)
 );
 
