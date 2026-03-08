@@ -28,7 +28,7 @@ class CreateUserCommandHandler(
     // ②Emailが検証されていなければエラーとする。
     // ①よりも後で行う理由は、一度外部IDPとリンクが終わった後に外部IDP側で、email_verifiedっがfalseになったとしても冪等性が機能するようにするため。
     if(!command.emailVerified) {
-      return CreateUserCommandResult.emailError()
+      return CreateUserCommandResult.emailNotVerified()
     }
 
     // ③すでにemailアドレスが登録されていたら、既存ユーザーとIDPのIDをリンクする

@@ -18,10 +18,12 @@
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "redirectUris": [
-        "http://localhost:9090/*"
+        "http://localhost:9090/*",
+        "https://oauth.pstmn.io/v1/callback"
       ],
       "webOrigins": [
-        "http://localhost:9090"
+        "http://localhost:9090",
+        "https://oauth.pstmn.io"
       ],
       "defaultClientScopes": [
         "openid",
@@ -38,6 +40,7 @@
       "username": "testuser",
       "enabled": true,
       "email": "testuser@example.com",
+      "emailVerified": true,
       "firstName": "Test",
       "lastName": "User",
       "credentials": [
