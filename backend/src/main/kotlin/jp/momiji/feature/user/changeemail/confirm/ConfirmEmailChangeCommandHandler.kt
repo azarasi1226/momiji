@@ -25,8 +25,7 @@ class ConfirmEmailChangeCommandHandler(
       return ConfirmEmailChangeCommandResult.invalidToken()
     }
 
-    val loggedInUserId = resolveUserId(command.oidcIssuer, command.oidcSubject)
-    if (loggedInUserId != payload.userId) {
+    if (command.userId != payload.userId) {
       return ConfirmEmailChangeCommandResult.userMismatch()
     }
 

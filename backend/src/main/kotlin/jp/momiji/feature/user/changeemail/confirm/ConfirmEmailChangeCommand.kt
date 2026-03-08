@@ -5,9 +5,8 @@ import jp.momiji.feature.Error
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 
 data class ConfirmEmailChangeCommand(
+  val userId: String,
   val token: String,
-  val oidcIssuer: String,
-  val oidcSubject: String,
 )
 
 object ConfirmEmailChangeCommandResult {
