@@ -26,7 +26,7 @@ services:
       MYSQL_ROOT_PASSWORD: passw0rd
       MYSQL_DATABASE: momiji
     ports:
-      - "3306:3306"
+      - "3336:3306"
     volumes:
       - momiji-mysql-data:/var/lib/mysql
       - ./database:/docker-entrypoint-initdb.d
@@ -39,7 +39,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8080:8080"
+      - "8085:8080"
 
 volumes:
   momiji-mysql-data:

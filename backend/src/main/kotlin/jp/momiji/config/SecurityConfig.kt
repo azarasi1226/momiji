@@ -11,7 +11,9 @@ class SecurityConfig {
   fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
     http
       .authorizeHttpRequests { authorize ->
-        authorize.anyRequest().authenticated()
+        authorize
+          .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+          .anyRequest().authenticated()
       }
       .oauth2ResourceServer { oauth2 ->
         oauth2.jwt { }

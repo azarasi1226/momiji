@@ -6,9 +6,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080/realms/momiji}
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8085/realms/momiji}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:3306}/${SPRING_DATASOURCE_DATABASE:momiji}?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:3336}/${SPRING_DATASOURCE_DATABASE:momiji}?createDatabaseIfNotExist=true
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:passw0rd}

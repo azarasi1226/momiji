@@ -43,6 +43,7 @@ dependencies {
 	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 	implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 }
 
 kotlin {
