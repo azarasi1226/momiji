@@ -1,6 +1,17 @@
 {
   "permissions": {
     "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Bash(gradle *)",
+      "Bash(docker compose *)",
+      "Bash(git *)",
+      "Bash(curl *)",
+      "Bash(node *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(ls *)",
       "Bash(./gradlew compileKotlin:*)",
       "mcp__ide__getDiagnostics",
       "WebSearch",
@@ -10,7 +21,17 @@
       "WebFetch(domain:neon.com)",
       "Bash(mkdir:*)",
       "Bash(docker compose ps)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:9090/swagger-ui/index.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:9090/swagger-ui/index.html)",
+      "WebFetch(domain:docs.axoniq.io)",
+      "WebFetch(domain:apidocs.axoniq.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:mvnrepository.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:discuss.axoniq.io)",
+      "WebFetch(domain:dev.to)"
+    ],
+    "deny": [
+      "Bash(git push --force *)"
     ]
   }
 }
