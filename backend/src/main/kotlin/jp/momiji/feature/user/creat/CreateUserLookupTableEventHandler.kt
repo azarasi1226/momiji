@@ -35,7 +35,7 @@ class CreateUserLookupTableEventHandler(
   @Configuration
   class Config {
     @Bean
-    fun processorDefinition(): EventProcessorDefinition =
+    fun eventProcessorDefinition() =
       EventProcessorDefinition
         .subscribing(CreateUserLookupTableEventHandler::class.simpleName)
         .assigningHandlers { it.beanType() == CreateUserLookupTableEventHandler::class.java }
