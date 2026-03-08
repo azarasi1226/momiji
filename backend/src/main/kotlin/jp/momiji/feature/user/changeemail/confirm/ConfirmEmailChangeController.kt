@@ -22,6 +22,7 @@ class ConfirmEmailChangeController(
   ) {
     val userId = userIdResolver.resolve(authentication)
       ?: throw UseCaseException(Error("ユーザーが見つかりません"))
+
     commandGateway.confirmEmailChange(
       ConfirmEmailChangeCommand(
         userId = userId,
