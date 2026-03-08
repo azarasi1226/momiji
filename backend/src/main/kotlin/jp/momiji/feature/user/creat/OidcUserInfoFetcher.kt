@@ -13,25 +13,34 @@ data class OidcUserInfo(
 
 @Component
 class OidcUserInfoFetcher(
-  @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") issuerUri: String,
+  @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") private val issuerUri: String,
 ) {
-  private val restClient = RestClient.builder()
-    .baseUrl(issuerUri.trimEnd('/'))
-    .build()
+  private val restClient = RestClient.create()
+  private val userinfoEndpoint: String
+
+  init {
+    val discovery = restClient.get()
+      .uri("${issuerUri.trimEnd('/')}/.well-known/openid-configuration")
+      .retrieve()
+      .body(Map::class.java)
+      ?: throw RuntimeException("Failed to fetch OIDC discovery document")
+
+    userinfoEndpoint = discovery["userinfo_endpoint"] as String
+  }
 
   fun handle(accessToken: String): OidcUserInfo {
     val response = restClient.get()
-      .uri("/userinfo")
+      .uri(userinfoEndpoint)
       .header("Authorization", "Bearer $accessToken")
       .retrieve()
       .body(Map::class.java)
       ?: throw RuntimeException("Failed to fetch userinfo")
 
     return OidcUserInfo(
-      issuer = response["iss"] as String,
+      issuer = issuerUri,
       subject = response["sub"] as String,
       email = response["email"] as String,
-      emailVerified = response["email_verified"] as Boolean
+      emailVerified = response["email_verified"] as? Boolean ?: false,
     )
   }
 }

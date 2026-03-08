@@ -1,5 +1,6 @@
 package jp.momiji.feature.user.creat
 
+import jp.momiji.feature.throwIfError
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,13 +17,13 @@ class CreateUserController(
     val accessToken = authentication.token.tokenValue
     val userInfo = oidcUserInfoFetcher.handle(accessToken)
 
-    commandGateway.sendAndWait(
+    commandGateway.createUser(
       CreateUserCommand(
         oidcSubject = userInfo.subject,
         oidcIssuer = userInfo.issuer,
         email = userInfo.email,
         emailVerified = userInfo.emailVerified
       )
-    )
+    ).throwIfError()
   }
 }

@@ -22,3 +22,11 @@ class CommandResult private constructor(
     return "UseCaseResult(success=$success, error=$error)"
   }
 }
+
+class UseCaseException(
+  val error: Error,
+) : Exception( "message:[${error.message}]")
+
+fun CommandResult.throwIfError() {
+  if (!this.success) throw UseCaseException(this.error!!)
+}

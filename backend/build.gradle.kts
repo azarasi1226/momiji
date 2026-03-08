@@ -40,7 +40,7 @@ dependencies {
 	jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
 
 	// Other
-	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
+	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.3")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 	implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")

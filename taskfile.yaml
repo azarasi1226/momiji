@@ -29,4 +29,4 @@ tasks:
     deps:
       - local-up
     cmds:
-      - atlas migrate apply --url "mysql://root:passw0rd@localhost:3306/momiji" --dir "file://migrations"
+      - atlas migrate apply --url "mysql://root:passw0rd@localhost:3336/momiji" --dir "file://migrations" --allow-dirty

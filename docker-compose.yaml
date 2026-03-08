@@ -29,15 +29,16 @@ services:
       - "3336:3306"
     volumes:
       - momiji-mysql-data:/var/lib/mysql
-      - ./database:/docker-entrypoint-initdb.d
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_DB: dev-mem
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/momiji-realm.json:/opt/keycloak/data/import/momiji-realm.json:ro
     ports:
       - "8085:8080"
 

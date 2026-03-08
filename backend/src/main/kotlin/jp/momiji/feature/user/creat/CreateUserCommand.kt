@@ -2,6 +2,7 @@ package jp.momiji.feature.user.creat
 
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.Error
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 
 data class CreateUserCommand(
   val oidcIssuer: String,
@@ -14,3 +15,6 @@ object CreateUserCommandResult {
   fun success() = CommandResult.success()
   fun emailError() = CommandResult.faile(Error("Emailが検証されていません"))
 }
+
+fun CommandGateway.createUser(command: CreateUserCommand): CommandResult =
+  this.sendAndWait(command, CommandResult::class.java)

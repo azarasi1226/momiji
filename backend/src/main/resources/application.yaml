@@ -12,3 +12,9 @@ spring:
     url: jdbc:mysql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:3336}/${SPRING_DATASOURCE_DATABASE:momiji}?createDatabaseIfNotExist=true
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:passw0rd}
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: momiji-api
+      use-pkce-with-authorization-code-grant: true
