@@ -1,7 +1,7 @@
 package jp.momiji.config
 
 import org.axonframework.conversion.Converter
-import org.axonframework.messaging.core.unitofwork.transaction.jdbc.JdbcTransactionalExecutorProvider
+import org.axonframework.extension.spring.jdbc.SpringDataSourceConnectionProvider
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.TokenStore
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jdbc.GenericTokenTableFactory
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jdbc.JdbcTokenStore
@@ -9,6 +9,7 @@ import org.axonframework.messaging.eventhandling.processing.streaming.token.stor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import javax.sql.DataSource
+
 
 @Configuration
 class AxonConfig {
@@ -19,7 +20,7 @@ class AxonConfig {
     converter: Converter,
   ): TokenStore {
     val tokenStore = JdbcTokenStore(
-      JdbcTransactionalExecutorProvider(dataSource),
+      SpringDataSourceConnectionProvider(dataSource),
       converter,
       JdbcTokenStoreConfiguration.DEFAULT
     )

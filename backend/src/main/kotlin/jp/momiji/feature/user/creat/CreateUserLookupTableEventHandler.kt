@@ -4,7 +4,7 @@ import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTER
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
-import org.axonframework.extension.spring.config.EventProcessorDefinition
+import org.axonframework.extension.spring.config.ProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
@@ -35,10 +35,10 @@ class CreateUserLookupTableEventHandler(
   @Configuration
   class Config {
     @Bean
-    fun eventProcessorDefinition() =
-      EventProcessorDefinition
-        .subscribing(CreateUserLookupTableEventHandler::class.simpleName)
+    fun createUserLookupTableEventProcessorDefinition() =
+      ProcessorDefinition
+        .subscribingProcessor(CreateUserLookupTableEventHandler::class.simpleName)
         .assigningHandlers { it.beanType() == CreateUserLookupTableEventHandler::class.java }
-        .notCustomized()
+        .withDefaultSettings()
   }
 }
