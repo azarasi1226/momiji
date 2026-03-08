@@ -1,8 +1,29 @@
 services:
+  axon-server:
+    image: axoniq/axonserver:2025.2.5-nonroot
+    environment:
+      # DCB対応のContextを手動でしなくてもよくなる
+      axoniq.axonserver.standalone-dcb: true
+      axoniq_axonserver_hostname: axon-server
+      axoniq_axonserver_devmode_enabled: true
+    volumes:
+      - axonserver-data:/axonserver/data
+      - axonserver-events:/axonserver/events
+    ports:
+      - 8024:8024
+      - 8124:8124
+      - 8224:8224
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8024/actuator/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 5s
+
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: passw0rdt
+      MYSQL_ROOT_PASSWORD: passw0rd
       MYSQL_DATABASE: momiji
     ports:
       - "3306:3306"
@@ -22,3 +43,5 @@ services:
 
 volumes:
   mysql-data:
+  axonserver-data:
+  axonserver-events:

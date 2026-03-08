@@ -123,12 +123,12 @@ erDiagram
         string id PK "U-001, U-002"
         string email "alice@ex, bob@ex"
     }
-    external_identities {
-        string issuer PK "auth0.com"
-        string subject PK "google|11, github|22"
+    lookup_external_identities {
+        string oidc_issuer PK "auth0.com"
+        string oidc_subject PK "google|11, github|22"
         string user_id FK "U-001, U-002"
     }
-    users ||--o{ external_identities : ""
+    users ||--o{ lookup_external_identities : ""
 ```
 
 ## API エンドポイント例

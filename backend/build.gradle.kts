@@ -28,19 +28,21 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("tools.jackson.module:jackson-module-kotlin")
 	runtimeOnly("com.mysql:mysql-connector-j")
-	testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// jooq
+	testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 	implementation("org.jooq:jooq:3.20.11")
 	jooqCodegen("com.mysql:mysql-connector-j")
 	jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
 
-	// Axon
+	// Other
 	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
+	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
+	implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
 }
 
 kotlin {

@@ -1,4 +1,4 @@
-package iss.web
+package jp.momiji.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
