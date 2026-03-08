@@ -1,24 +1,25 @@
-package iss.web
+package jp.momiji.feature.user.creat
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
 data class OidcUserInfo(
-  val sub: String,
-  val email: String?,
+  val issuer: String,
+  val subject: String,
+  val email: String,
   val emailVerified: Boolean,
 )
 
 @Component
-class OidcUserInfoClient(
+class OidcUserInfoFetcher(
   @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") issuerUri: String,
 ) {
   private val restClient = RestClient.builder()
     .baseUrl(issuerUri.trimEnd('/'))
     .build()
 
-  fun fetchUserInfo(accessToken: String): OidcUserInfo {
+  fun handle(accessToken: String): OidcUserInfo {
     val response = restClient.get()
       .uri("/userinfo")
       .header("Authorization", "Bearer $accessToken")
@@ -27,9 +28,10 @@ class OidcUserInfoClient(
       ?: throw RuntimeException("Failed to fetch userinfo")
 
     return OidcUserInfo(
-      sub = response["sub"] as String,
-      email = response["email"] as? String,
-      emailVerified = response["email_verified"] as? Boolean ?: false,
+      issuer = response["iss"] as String,
+      subject = response["sub"] as String,
+      email = response["email"] as String,
+      emailVerified = response["email_verified"] as Boolean
     )
   }
 }
