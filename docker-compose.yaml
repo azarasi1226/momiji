@@ -7,8 +7,8 @@ services:
       axoniq_axonserver_hostname: axon-server
       axoniq_axonserver_devmode_enabled: true
     volumes:
-      - axonserver-data:/axonserver/data
-      - axonserver-events:/axonserver/events
+      - momiji-axonserver-data:/axonserver/data
+      - momiji-axonserver-events:/axonserver/events
     ports:
       - 8024:8024
       - 8124:8124
@@ -28,7 +28,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - momiji-mysql-data:/var/lib/mysql
       - ./database:/docker-entrypoint-initdb.d
 
   keycloak:
@@ -42,6 +42,6 @@ services:
       - "8080:8080"
 
 volumes:
-  mysql-data:
-  axonserver-data:
-  axonserver-events:
+  momiji-mysql-data:
+  momiji-axonserver-data:
+  momiji-axonserver-events:
