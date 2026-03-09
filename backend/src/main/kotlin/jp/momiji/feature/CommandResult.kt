@@ -13,19 +13,17 @@ class CommandResult private constructor(
       return CommandResult(success = true)
     }
 
-    fun faile(error: Error): CommandResult {
+    fun fail(error: Error): CommandResult {
       return CommandResult(success = false, error = error)
     }
   }
 
   override fun toString(): String {
-    return "UseCaseResult(success=$success, error=$error)"
+    return "CommandResult(success=$success, error=$error)"
   }
 }
 
-class UseCaseException(
-  val error: Error,
-) : Exception( "message:[${error.message}]")
+class UseCaseException(error: Error) : Exception( "message:[${error.message}]")
 
 fun CommandResult.throwIfError() {
   if (!this.success) throw UseCaseException(this.error!!)

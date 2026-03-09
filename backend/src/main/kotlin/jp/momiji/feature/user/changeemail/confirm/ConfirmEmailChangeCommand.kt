@@ -11,9 +11,9 @@ data class ConfirmEmailChangeCommand(
 
 object ConfirmEmailChangeCommandResult {
   fun success() = CommandResult.success()
-  fun invalidToken() = CommandResult.faile(Error("無効または期限切れのトークンです"))
-  fun emailAlreadyInUse() = CommandResult.faile(Error("このメールアドレスは既に使用されています"))
-  fun userMismatch() = CommandResult.faile(Error("このメールアドレス変更リクエストは別のユーザーのものです"))
+  fun invalidToken() = CommandResult.fail(Error("無効または期限切れのトークンです"))
+  fun emailAlreadyInUse() = CommandResult.fail(Error("このメールアドレスは既に使用されています"))
+  fun userMismatch() = CommandResult.fail(Error("このメールアドレス変更リクエストは別のユーザーのものです"))
 }
 
 fun CommandGateway.confirmEmailChange(command: ConfirmEmailChangeCommand): CommandResult =

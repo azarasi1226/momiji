@@ -38,7 +38,8 @@
       "Bash(unzip -o /c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.axonframework/axon-messaging/5.0.3/b3ba43a3a333f118ec768eecb9561b631e8ac077/axon-messaging-5.0.3-sources.jar -d messaging)",
       "Bash(unzip -o /c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.axonframework.extensions.spring/axon-spring/5.0.3/1468a2e80c84932e7374b52dfdaccb8727dc46d1/axon-spring-5.0.3-sources.jar -d spring)",
       "Bash(unzip -o /c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.axonframework.extensions.spring/axon-spring-boot-autoconfigure/5.0.3/b26fc915d78c367d807ee8c7823fa12d3efbcb7e/axon-spring-boot-autoconfigure-5.0.3.jar -d autoconfig)",
-      "Bash(perl -e ':*)"
+      "Bash(perl -e ':*)",
+      "Bash(xargs grep -l \"admin\\\\|keycloak\")"
     ],
     "deny": [
       "Bash(git push --force *)"

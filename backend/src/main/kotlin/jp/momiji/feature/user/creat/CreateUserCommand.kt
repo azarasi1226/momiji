@@ -13,7 +13,7 @@ data class CreateUserCommand(
 
 object CreateUserCommandResult {
   fun success() = CommandResult.success()
-  fun emailNotVerified() = CommandResult.faile(Error("Emailが検証されていません"))
+  fun emailNotVerified() = CommandResult.fail(Error("Emailが検証されていません"))
 }
 
 fun CommandGateway.createUser(command: CreateUserCommand): CommandResult =

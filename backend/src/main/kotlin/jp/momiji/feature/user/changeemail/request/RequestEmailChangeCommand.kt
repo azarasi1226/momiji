@@ -11,7 +11,7 @@ data class RequestEmailChangeCommand(
 
 object RequestEmailChangeCommandResult {
   fun success() = CommandResult.success()
-  fun emailAlreadyInUse() = CommandResult.faile(Error("このメールアドレスは既に使用されています"))
+  fun emailAlreadyInUse() = CommandResult.fail(Error("このメールアドレスは既に使用されています"))
 }
 
 fun CommandGateway.requestEmailChange(command: RequestEmailChangeCommand): CommandResult =
