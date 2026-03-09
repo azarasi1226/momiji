@@ -130,11 +130,3 @@ erDiagram
     }
     users ||--o{ lookup_external_identities : ""
 ```
-
-## API エンドポイント例
-全エンドポイントに IDP 発行の Access Token (Bearer) が必要。
-
-| Method | Path | 説明 |
-|--------|------|------|
-| POST | `/users/me` | ユーザー作成 or 既存ユーザーへの紐づけ |
-| GET | `/users/me` | 自身のユーザー情報を取得 |
