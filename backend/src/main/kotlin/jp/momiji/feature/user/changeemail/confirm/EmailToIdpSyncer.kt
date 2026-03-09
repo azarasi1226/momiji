@@ -33,14 +33,4 @@ class EmailToIdpSyncer(
       idpUserClient.updateEmail(oidcSubject!!, event.email)
     }
   }
-
-  @Configuration
-  class Config {
-    @Bean
-    fun emailToIdpSyncerDefinition() =
-      ProcessorDefinition
-        .subscribingProcessor(EmailToIdpSyncer::class.simpleName)
-        .assigningHandlers { it.beanType() == EmailToIdpSyncer::class.java }
-        .withDefaultSettings()
-  }
 }
