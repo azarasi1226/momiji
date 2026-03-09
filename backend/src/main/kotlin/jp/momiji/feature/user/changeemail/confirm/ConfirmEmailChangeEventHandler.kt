@@ -24,7 +24,7 @@ class ConfirmEmailChangeEventHandler(
   @Configuration
   class Config {
     @Bean
-    fun confirmEmailChangeEventProcessorDefinition() =
+    fun confirmEmailChangeEventHandlerDefinition() =
       ProcessorDefinition
         .subscribingProcessor(ConfirmEmailChangeEventHandler::class.simpleName)
         .assigningHandlers { it.beanType() == ConfirmEmailChangeEventHandler::class.java }

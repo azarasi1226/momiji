@@ -2,6 +2,9 @@
   "realm": "momiji",
   "enabled": true,
   "sslRequired": "none",
+  "loginWithEmailAllowed": true,
+  "registrationEmailAsUsername": true,
+  "duplicateEmailsAllowed": false,
   "roles": {
     "realm": [
       {

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @Component
-class CreateUserLookupTableEventHandler(
+class CreateUserEventHandler(
   private val dsl: DSLContext
 ) {
   @EventHandler
@@ -35,10 +35,10 @@ class CreateUserLookupTableEventHandler(
   @Configuration
   class Config {
     @Bean
-    fun createUserLookupTableEventProcessorDefinition() =
+    fun createUserEventHandlerDefinition() =
       ProcessorDefinition
-        .subscribingProcessor(CreateUserLookupTableEventHandler::class.simpleName)
-        .assigningHandlers { it.beanType() == CreateUserLookupTableEventHandler::class.java }
+        .subscribingProcessor(CreateUserEventHandler::class.simpleName)
+        .assigningHandlers { it.beanType() == CreateUserEventHandler::class.java }
         .withDefaultSettings()
   }
 }
