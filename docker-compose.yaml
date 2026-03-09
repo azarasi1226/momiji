@@ -34,16 +34,20 @@ services:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev --import-realm
     environment:
-      KC_DB: dev-mem
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     volumes:
       - ./keycloak/momiji-realm.json:/opt/keycloak/data/import/momiji-realm.json:ro
+      - momiji-keycloak-data:/opt/keycloak/data
     ports:
       - "8085:8080"
 
   mailpit:
     image: axllent/mailpit:latest
+    environment:
+      MP_DATABASE: /data/mailpit.db
+    volumes:
+      - momiji-mailpit-data:/data
     ports:
       - "8025:8025"
       - "1025:1025"
@@ -52,3 +56,5 @@ volumes:
   momiji-mysql-data:
   momiji-axonserver-data:
   momiji-axonserver-events:
+  momiji-keycloak-data:
+  momiji-mailpit-data:

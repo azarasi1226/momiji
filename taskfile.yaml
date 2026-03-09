@@ -17,6 +17,11 @@ tasks:
     cmds:
       - docker compose -f ./docker-compose.yaml down
 
+  local-volume-down:
+    desc: ローカル環境の初期化
+    cmds:
+      - docker compose down -v
+
   atlas-migrate-diff:
     desc: データベースのマイグレーション差分を生成
     dir: ./backend/database
