@@ -1,4 +1,4 @@
-package jp.momiji.feature.user.creat
+package jp.momiji.feature.user.create
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL

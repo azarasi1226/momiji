@@ -1,4 +1,4 @@
-package jp.momiji.feature.user.creat
+package jp.momiji.feature.user.create
 
 import jp.momiji.feature.throwIfError
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway

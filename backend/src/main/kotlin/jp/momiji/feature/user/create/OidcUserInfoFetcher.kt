@@ -1,4 +1,4 @@
-package jp.momiji.feature.user.creat
+package jp.momiji.feature.user.create
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

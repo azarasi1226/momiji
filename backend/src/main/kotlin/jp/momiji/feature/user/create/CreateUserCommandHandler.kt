@@ -1,4 +1,4 @@
-package jp.momiji.feature.user.creat
+package jp.momiji.feature.user.create
 
 import de.huxhorn.sulky.ulid.ULID
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
