@@ -1,7 +1,6 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.events.user.EmailChangeConfirmed
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
@@ -40,16 +39,6 @@ class ConfirmEmailChangeCommandHandler(
       )
     )
     return ConfirmEmailChangeCommandResult.success()
-  }
-
-  private fun resolveUserId(oidcIssuer: String, oidcSubject: String): String? {
-    return dsl.select(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
-      .from(LOOKUP_EXTERNAL_IDENTITIES)
-      .where(
-        LOOKUP_EXTERNAL_IDENTITIES.OIDC_ISSUER.eq(oidcIssuer)
-          .and(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT.eq(oidcSubject))
-      )
-      .fetchOne(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
   }
 
   private fun emailAlreadyExists(email: String): Boolean {
