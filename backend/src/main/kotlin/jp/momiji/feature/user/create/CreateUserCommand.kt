@@ -7,6 +7,7 @@ import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 data class CreateUserCommand(
   val oidcIssuer: String,
   val oidcSubject: String,
+  val oidcIdentityProvider: String,
   val email: String,
   val emailVerified: Boolean
 )

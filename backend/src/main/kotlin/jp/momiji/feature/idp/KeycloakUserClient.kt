@@ -31,6 +31,16 @@ class KeycloakUserClient(
     logger.info { "Keycloakユーザーのメールアドレスを更新しました: oidcSubject=$oidcSubject" }
   }
 
+  override fun getIdentityProvider(accessToken: String): IdentityProvider {
+    val claims = com.nimbusds.jwt.SignedJWT.parse(accessToken).jwtClaimsSet
+    val idp = claims.getStringClaim("identity_provider") ?: return IdentityProvider.LOCAL
+
+    return when (idp) {
+      "google" -> IdentityProvider.GOOGLE
+      else -> IdentityProvider.LOCAL
+    }
+  }
+
   private fun getAdminToken(): String {
     val response = restClient.post()
       .uri("$baseUrl/realms/master/protocol/openid-connect/token")

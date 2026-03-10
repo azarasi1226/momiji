@@ -28,6 +28,7 @@ class CreateUserEventHandler(
     dsl.insertInto(LOOKUP_EXTERNAL_IDENTITIES)
       .set(LOOKUP_EXTERNAL_IDENTITIES.OIDC_ISSUER, event.oidcIssuer)
       .set(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT, event.oidcSubject)
+      .set(LOOKUP_EXTERNAL_IDENTITIES.IDENTITY_PROVIDER, event.oidcIdentityProvider)
       .set(LOOKUP_EXTERNAL_IDENTITIES.USER_ID, event.userId)
       .execute()
   }

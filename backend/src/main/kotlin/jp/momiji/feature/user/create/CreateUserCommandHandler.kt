@@ -38,7 +38,8 @@ class CreateUserCommandHandler(
         ExternalIdentityLinkedEvent(
           userId = existingUserId,
           oidcIssuer = command.oidcIssuer,
-          oidcSubject = command.oidcSubject
+          oidcSubject = command.oidcSubject,
+          oidcIdentityProvider = command.oidcIdentityProvider,
         )
       )
       return CreateUserCommandResult.success()
@@ -55,6 +56,7 @@ class CreateUserCommandHandler(
         userId = newUserId,
         oidcIssuer = command.oidcIssuer,
         oidcSubject = command.oidcSubject,
+        oidcIdentityProvider = command.oidcIdentityProvider,
       )
     )
     return CreateUserCommandResult.success()
