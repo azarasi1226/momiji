@@ -26,7 +26,7 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
     null,
   )
 
-  if (step === "confirm" || confirmState) {
+  if (step === "confirm") {
     return (
       <div className="flex w-full flex-col gap-4">
         <h2 className="text-lg font-medium text-black dark:text-zinc-50">

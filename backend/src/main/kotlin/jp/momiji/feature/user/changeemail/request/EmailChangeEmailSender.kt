@@ -20,16 +20,14 @@ class EmailChangeEmailSender(
       EmailChangePayload(userId = event.userId, newEmail = event.newEmail)
     )
 
-    val confirmUrl = "$baseUrl/users/me/email/change-confirm?token=$token"
-
     mailSender.send(
       to = event.newEmail,
       subject = "メールアドレス変更の確認",
       body = """
         メールアドレスの変更がリクエストされました。
-        以下のリンクをクリックして変更を確定してください。
+        以下のトークンを入力してください
 
-        $confirmUrl
+        $token
 
         このリクエストに心当たりがない場合は、このメールを無視してください。
       """.trimIndent(),
