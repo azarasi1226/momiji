@@ -13,9 +13,10 @@ CREATE TABLE users (
 );
 
 CREATE TABLE lookup_email (
-    email varchar(255) NOT NULL,
     user_id varchar(255) NOT NULL,
-    PRIMARY KEY (email)
+    email varchar(255) NOT NULL,
+    PRIMARY KEY (user_id),
+    UNIQUE KEY uk_lookup_email_email (email)
 );
 
 CREATE TABLE lookup_external_identities (

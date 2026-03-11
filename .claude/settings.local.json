@@ -40,7 +40,10 @@
       "Bash(unzip -o /c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.axonframework.extensions.spring/axon-spring-boot-autoconfigure/5.0.3/b26fc915d78c367d807ee8c7823fa12d3efbcb7e/axon-spring-boot-autoconfigure-5.0.3.jar -d autoconfig)",
       "Bash(perl -e ':*)",
       "Bash(xargs grep -l \"admin\\\\|keycloak\")",
-      "Bash(wc -l /c/Develop/Repository/momiji/backend/src/main/kotlin/jp/momiji/**/*.kt)"
+      "Bash(wc -l /c/Develop/Repository/momiji/backend/src/main/kotlin/jp/momiji/**/*.kt)",
+      "Bash(atlas migrate hash --dir \"file://database/migrations\")",
+      "Bash(./gradlew jooqCodegen)",
+      "Bash(JAVA_HOME=\"/c/Users/seal1/.jdks/corretto-21.0.7\" ./gradlew jooqCodegen)"
     ],
     "deny": [
       "Bash(git push --force *)"
