@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component
 class CreateUserCommandHandler(
   private val dsl: DSLContext
 ) {
+  private val ulid = ULID()
+
   @CommandHandler
   fun handle(
     command: CreateUserCommand,
@@ -46,7 +48,7 @@ class CreateUserCommandHandler(
     }
 
     // ④新規ユーザー登録だった場合は、"ユーザー作成" "IDリンク"の２個イベントを出す
-    val newUserId = ULID().nextULID()
+    val newUserId = ulid.nextULID()
     eventAppender.append(
       UserCreatedEvent(
         id = newUserId,
