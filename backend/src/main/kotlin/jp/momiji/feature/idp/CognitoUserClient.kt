@@ -36,6 +36,22 @@ class CognitoUserClient(
     logger.info { "Cognitoユーザーのメールアドレスを更新しました: oidcSubject=$oidcSubject" }
   }
 
+  override fun deleteUser(oidcSubject: String) {
+    try {
+      cognitoClient.adminDeleteUser(
+        software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDeleteUserRequest.builder()
+          .userPoolId(userPoolId)
+          .username(oidcSubject)
+          .build()
+      )
+    } catch (e: UserNotFoundException) {
+      logger.warn { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+      return
+    }
+
+    logger.info { "Cognitoユーザーを削除しました: oidcSubject=$oidcSubject" }
+  }
+
   override fun getIdentityProvider(accessToken: String): IdentityProvider {
     val claims = com.nimbusds.jwt.SignedJWT.parse(accessToken).jwtClaimsSet
     val sub = claims.subject
