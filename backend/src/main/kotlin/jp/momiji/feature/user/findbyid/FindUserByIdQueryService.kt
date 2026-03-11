@@ -9,6 +9,10 @@ data class UserView(
   val id: String,
   val email: String,
   val name: String,
+  val phoneNumber: String,
+  val postalCode: String,
+  val address1: String,
+  val address2: String,
   val createdAt: LocalDateTime,
   val updatedAt: LocalDateTime,
 )
@@ -22,6 +26,10 @@ class FindUserByIdQueryService(
         USERS.ID,
         USERS.EMAIL,
         USERS.NAME,
+        USERS.PHONE_NUMBER,
+        USERS.POSTAL_CODE,
+        USERS.ADDRESS1,
+        USERS.ADDRESS2,
         USERS.CREATED_AT,
         USERS.UPDATED_AT,
       )
@@ -32,6 +40,10 @@ class FindUserByIdQueryService(
           id = record[USERS.ID]!!,
           email = record[USERS.EMAIL]!!,
           name = record[USERS.NAME]!!,
+          phoneNumber = record[USERS.PHONE_NUMBER]!!,
+          postalCode = record[USERS.POSTAL_CODE]!!,
+          address1 = record[USERS.ADDRESS1]!!,
+          address2 = record[USERS.ADDRESS2]!!,
           createdAt = record[USERS.CREATED_AT]!!,
           updatedAt = record[USERS.UPDATED_AT]!!,
         )
