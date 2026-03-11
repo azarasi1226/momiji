@@ -30,11 +30,6 @@ class EmailToIdpSyncer(
         .and(LOOKUP_EXTERNAL_IDENTITIES.IDENTITY_PROVIDER.eq(IdentityProvider.LOCAL.name))
       .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
 
-    if (oidcSubjects.isEmpty()) {
-      logger.error { "対象のSubjectが発見できませんでした。　何かがおかしい...." }
-      return
-    }
-
     oidcSubjects.forEach { oidcSubject ->
       // テーブルのカラムはNOT NULL 制約にしてるので "!!" しているよ。
       idpUserClient.updateEmail(oidcSubject!!, event.email)

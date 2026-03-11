@@ -16,7 +16,6 @@ class IdpUserDeleter(
   fun on(event: UserDeletedEvent) {
     event.oidcSubjects.forEach { oidcSubject ->
       idpUserClient.deleteUser(oidcSubject)
-      logger.info { "IDPユーザーを削除しました: oidcSubject=$oidcSubject" }
     }
   }
 }
