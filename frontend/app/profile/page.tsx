@@ -3,10 +3,11 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { fetchProfile } from "./actions"
 import { ProfileForm } from "./profile-form"
+import { EmailChangeForm } from "./email-change-form"
 
 export default async function ProfilePage() {
   const session = await auth()
-  if (!session) {
+  if (!session || session.error === "RefreshTokenError") {
     redirect("/")
   }
 
@@ -28,6 +29,10 @@ export default async function ProfilePage() {
         </div>
 
         <ProfileForm profile={profile} />
+
+        <hr className="w-full border-zinc-200 dark:border-zinc-700" />
+
+        <EmailChangeForm currentEmail={profile.email} />
       </main>
     </div>
   )

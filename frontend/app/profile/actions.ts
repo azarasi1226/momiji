@@ -4,6 +4,15 @@ import { auth, BACKEND_URL } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
+async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const body = await res.json()
+    return body.error ?? fallback
+  } catch {
+    return fallback
+  }
+}
+
 export type UserProfile = {
   id: string
   email: string
@@ -68,9 +77,70 @@ export async function updateProfile(
   })
 
   if (!res.ok) {
-    const errorBody = await res.text()
-    console.error("UpdateUser API failed:", res.status, errorBody)
-    return { error: `ユーザー情報の更新に失敗しました (${errorBody})` }
+    const message = await extractErrorMessage(res, "ユーザー情報の更新に失敗しました")
+    return { error: message }
+  }
+
+  revalidatePath("/profile")
+  return { success: true }
+}
+
+export type EmailChangeState = {
+  success?: boolean
+  error?: string
+} | null
+
+export async function requestEmailChange(
+  _prevState: EmailChangeState,
+  formData: FormData,
+): Promise<EmailChangeState> {
+  const session = await auth()
+  if (!session?.accessToken) {
+    redirect("/")
+  }
+
+  const newEmail = formData.get("newEmail") as string
+
+  const res = await fetch(`${BACKEND_URL}/users/me/email/change-request`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ newEmail }),
+  })
+
+  if (!res.ok) {
+    const message = await extractErrorMessage(res, "メールアドレス変更リクエストに失敗しました")
+    return { error: message }
+  }
+
+  return { success: true }
+}
+
+export async function confirmEmailChange(
+  _prevState: EmailChangeState,
+  formData: FormData,
+): Promise<EmailChangeState> {
+  const session = await auth()
+  if (!session?.accessToken) {
+    redirect("/")
+  }
+
+  const token = formData.get("token") as string
+
+  const res = await fetch(`${BACKEND_URL}/users/me/email/change-confirm`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token }),
+  })
+
+  if (!res.ok) {
+    const message = await extractErrorMessage(res, "メールアドレスの変更確認に失敗しました")
+    return { error: message }
   }
 
   revalidatePath("/profile")
