@@ -8,7 +8,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ account }) {
       if (!account?.access_token) {
-        return false
+        return "/auth/error?reason=no_token"
       }
 
       try {
@@ -21,13 +21,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!res.ok) {
           console.error("CreateUser API failed:", res.status, await res.text())
-          return false
+          return "/auth/error?reason=backend"
         }
 
         return true
       } catch (e) {
         console.error("CreateUser API call error:", e)
-        return false
+        return "/auth/error?reason=backend"
       }
     },
     async jwt({ token, account }) {
