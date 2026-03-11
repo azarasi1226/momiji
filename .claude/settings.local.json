@@ -43,7 +43,10 @@
       "Bash(wc -l /c/Develop/Repository/momiji/backend/src/main/kotlin/jp/momiji/**/*.kt)",
       "Bash(atlas migrate hash --dir \"file://database/migrations\")",
       "Bash(./gradlew jooqCodegen)",
-      "Bash(JAVA_HOME=\"/c/Users/seal1/.jdks/corretto-21.0.7\" ./gradlew jooqCodegen)"
+      "Bash(JAVA_HOME=\"/c/Users/seal1/.jdks/corretto-21.0.7\" ./gradlew jooqCodegen)",
+      "Bash(pnpm add next-auth@beta)",
+      "Bash(npx auth secret)",
+      "Bash(openssl rand -base64 32)"
     ],
     "deny": [
       "Bash(git push --force *)"
