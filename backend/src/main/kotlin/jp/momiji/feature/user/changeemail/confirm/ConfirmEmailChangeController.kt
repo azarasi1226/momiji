@@ -1,7 +1,5 @@
 package jp.momiji.feature.user.changeemail.confirm
 
-import jp.momiji.feature.Error
-import jp.momiji.feature.UseCaseException
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
@@ -23,7 +21,6 @@ class ConfirmEmailChangeController(
     authentication: JwtAuthenticationToken,
   ) {
     val userId = userIdResolver.resolve(authentication)
-      ?: throw UseCaseException(Error("ユーザーが見つかりません"))
 
     commandGateway.confirmEmailChange(
       ConfirmEmailChangeCommand(
