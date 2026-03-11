@@ -3,6 +3,7 @@ package jp.momiji.projection.user
 import iss.jooq.generated.tables.references.USERS
 import jp.momiji.events.user.EmailChangeConfirmed
 import jp.momiji.events.user.UserCreatedEvent
+import jp.momiji.events.user.UserDeletedEvent
 import jp.momiji.events.user.UserUpdatedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
@@ -35,6 +36,13 @@ class UserTableProjector(
       .set(USERS.ADDRESS1, event.address1)
       .set(USERS.ADDRESS2, event.address2)
       .set(USERS.UPDATED_AT, LocalDateTime.now())
+      .where(USERS.ID.eq(event.id))
+      .execute()
+  }
+
+  @EventHandler
+  fun on(event: UserDeletedEvent) {
+    dsl.deleteFrom(USERS)
       .where(USERS.ID.eq(event.id))
       .execute()
   }
