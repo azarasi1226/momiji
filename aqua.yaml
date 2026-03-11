@@ -13,3 +13,4 @@ registries:
 packages:
 - name: go-task/task@v3.46.4
 - name: ariga/atlas@v1.0.0
+- name: pnpm/pnpm@v10.32.1
