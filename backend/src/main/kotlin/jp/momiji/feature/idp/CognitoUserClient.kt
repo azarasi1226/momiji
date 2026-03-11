@@ -29,7 +29,7 @@ class CognitoUserClient(
           .build()
       )
     } catch (e: UserNotFoundException) {
-      logger.warn { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+      logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
       return
     }
 
@@ -45,7 +45,7 @@ class CognitoUserClient(
           .build()
       )
     } catch (e: UserNotFoundException) {
-      logger.warn { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+      logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
       return
     }
 
