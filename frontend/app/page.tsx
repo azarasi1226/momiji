@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { auth, signIn, signOut } from "@/auth"
 
 export default async function Home() {
@@ -15,19 +16,27 @@ export default async function Home() {
               <p>{session.user?.name}</p>
               <p>{session.user?.email}</p>
             </div>
-            <form
-              action={async () => {
-                "use server"
-                await signOut()
-              }}
-            >
-              <button
-                type="submit"
-                className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+            <div className="flex gap-4">
+              <Link
+                href="/profile"
+                className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
               >
-                ログアウト
-              </button>
-            </form>
+                プロフィール
+              </Link>
+              <form
+                action={async () => {
+                  "use server"
+                  await signOut()
+                }}
+              >
+                <button
+                  type="submit"
+                  className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+                >
+                  ログアウト
+                </button>
+              </form>
+            </div>
           </>
         ) : (
           <>
