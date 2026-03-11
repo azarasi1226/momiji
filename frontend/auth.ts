@@ -34,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account) {
         token.accessToken = account.access_token
         token.refreshToken = account.refresh_token
+        token.idToken = account.id_token
         token.expiresAt = account.expires_at ?? 0
       }
 
@@ -76,8 +77,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken as string
+      session.idToken = token.idToken as string
       session.error = token.error
       return session
+    },
+  },
+  events: {
+    async signOut(message) {
+      const token = "token" in message ? message.token : undefined
+      if (token?.idToken) {
+        const issuer = process.env.AUTH_KEYCLOAK_ISSUER!
+        const logoutUrl = new URL(`${issuer}/protocol/openid-connect/logout`)
+        logoutUrl.searchParams.set("id_token_hint", token.idToken as string)
+        logoutUrl.searchParams.set("post_logout_redirect_uri", process.env.NEXTAUTH_URL ?? "http://localhost:3000")
+        await fetch(logoutUrl.toString())
+      }
     },
   },
 })
