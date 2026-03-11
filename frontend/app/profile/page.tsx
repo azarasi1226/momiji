@@ -4,6 +4,7 @@ import { auth } from "@/auth"
 import { fetchProfile } from "./actions"
 import { ProfileForm } from "./profile-form"
 import { EmailChangeForm } from "./email-change-form"
+import { DeleteAccountButton } from "./delete-account-button"
 
 export default async function ProfilePage() {
   const session = await auth()
@@ -33,6 +34,10 @@ export default async function ProfilePage() {
         <hr className="w-full border-zinc-200 dark:border-zinc-700" />
 
         <EmailChangeForm currentEmail={profile.email} />
+
+        <hr className="w-full border-zinc-200 dark:border-zinc-700" />
+
+        <DeleteAccountButton />
       </main>
     </div>
   )

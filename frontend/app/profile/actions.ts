@@ -1,6 +1,6 @@
 "use server"
 
-import { auth, BACKEND_URL } from "@/auth"
+import { auth, signOut, BACKEND_URL } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
@@ -83,6 +83,32 @@ export async function updateProfile(
 
   revalidatePath("/profile")
   return { success: true }
+}
+
+export type DeleteAccountState = {
+  error?: string
+} | null
+
+export async function deleteAccount(): Promise<DeleteAccountState> {
+  const session = await auth()
+  if (!session?.accessToken) {
+    redirect("/")
+  }
+
+  const res = await fetch(`${BACKEND_URL}/users/me`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const message = await extractErrorMessage(res, "アカウントの削除に失敗しました")
+    return { error: message }
+  }
+
+  await signOut({ redirectTo: "/" })
+  return null
 }
 
 export type EmailChangeState = {
