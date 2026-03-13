@@ -2,7 +2,7 @@ package jp.momiji.feature.user.changeemail.request
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.events.MomijiEventTag
-import jp.momiji.events.user.EmailChangeRequested
+import jp.momiji.events.user.EmailChangeRequestedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
@@ -33,7 +33,7 @@ class RequestEmailChangeCommandHandler(
     }
 
     eventAppender.append(
-      EmailChangeRequested(
+      EmailChangeRequestedEvent(
         userId = command.userId,
         newEmail = command.newEmail,
       )

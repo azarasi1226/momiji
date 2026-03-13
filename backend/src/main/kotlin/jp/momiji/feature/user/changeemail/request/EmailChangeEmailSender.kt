@@ -1,6 +1,6 @@
 package jp.momiji.feature.user.changeemail.request
 
-import jp.momiji.events.user.EmailChangeRequested
+import jp.momiji.events.user.EmailChangeRequestedEvent
 import jp.momiji.feature.mail.MailSender
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
@@ -15,7 +15,7 @@ class EmailChangeEmailSender(
   @Value("\${momiji.base-url:http://localhost:9090}") private val baseUrl: String,
 ) {
   @EventHandler
-  fun on(event: EmailChangeRequested) {
+  fun on(event: EmailChangeRequestedEvent) {
     val token = emailChangeTokenService.sign(
       EmailChangePayload(userId = event.userId, newEmail = event.newEmail)
     )

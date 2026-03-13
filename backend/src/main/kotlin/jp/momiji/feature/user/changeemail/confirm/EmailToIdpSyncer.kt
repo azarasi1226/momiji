@@ -2,7 +2,7 @@ package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jp.momiji.events.user.EmailChangeConfirmed
+import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.feature.idp.IdentityProvider
 import jp.momiji.feature.idp.IdpUserClient
 import org.axonframework.extension.spring.config.ProcessorDefinition
@@ -20,7 +20,7 @@ class EmailToIdpSyncer(
   private val idpUserClient: IdpUserClient,
 ) {
   @EventHandler
-  fun on(event: EmailChangeConfirmed) {
+  fun on(event: EmailChangeConfirmedEvent) {
     // IdentityProviderが "LOCAL" のものだけを対象とする。　これには二つの意味がある。
     // 1. 例えば "Google" なものを変更したとしても、IDPにログインするたびにIDP内のemail属性が書き換えられるから意味がない。
     // 2. "LOCAL" はログイン時にemailを使用するので、絶対同期させる必要があるが、 "Google" などの場合はログインに使用しないし、参照もしないため。

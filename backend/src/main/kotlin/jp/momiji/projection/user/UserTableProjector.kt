@@ -1,7 +1,7 @@
 package jp.momiji.projection.user
 
 import iss.jooq.generated.tables.references.USERS
-import jp.momiji.events.user.EmailChangeConfirmed
+import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.events.user.UserDeletedEvent
 import jp.momiji.events.user.UserUpdatedEvent
@@ -48,7 +48,7 @@ class UserTableProjector(
   }
 
   @EventHandler
-  fun on(event: EmailChangeConfirmed) {
+  fun on(event: EmailChangeConfirmedEvent) {
     dsl.update(USERS)
       .set(USERS.EMAIL, event.email)
       .set(USERS.UPDATED_AT, LocalDateTime.now())

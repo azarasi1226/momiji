@@ -2,7 +2,7 @@ package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.events.MomijiEventTag
-import jp.momiji.events.user.EmailChangeConfirmed
+import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
@@ -44,7 +44,7 @@ class ConfirmEmailChangeCommandHandler(
     }
 
     eventAppender.append(
-      EmailChangeConfirmed(
+      EmailChangeConfirmedEvent(
         userId = payload.userId,
         email = payload.newEmail,
       )

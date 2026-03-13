@@ -1,7 +1,7 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import jp.momiji.events.user.EmailChangeConfirmed
+import jp.momiji.events.user.EmailChangeConfirmedEvent
 import org.axonframework.extension.spring.config.ProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
@@ -14,7 +14,7 @@ class ConfirmEmailChangeEventHandler(
   private val dsl: DSLContext,
 ) {
   @EventHandler
-  fun on(event: EmailChangeConfirmed) {
+  fun on(event: EmailChangeConfirmedEvent) {
     dsl.update(LOOKUP_EMAIL)
       .set(LOOKUP_EMAIL.EMAIL, event.email)
       .where(LOOKUP_EMAIL.USER_ID.eq(event.userId))
