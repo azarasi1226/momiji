@@ -35,3 +35,15 @@ tasks:
       - local-up
     cmds:
       - atlas migrate apply --url "mysql://root:passw0rd@localhost:3336/momiji" --dir "file://migrations" --allow-dirty
+
+  buf-lint:
+    desc: protoファイルのlintを実行
+    dir: ./grpc
+    cmds:
+      - buf lint
+
+  buf-generate:
+    desc: protoファイルからKotlin/TypeScriptコードを生成
+    dir: ./grpc
+    cmds:
+      - buf generate
