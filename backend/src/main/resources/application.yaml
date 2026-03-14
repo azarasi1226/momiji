@@ -16,6 +16,10 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:passw0rd}
 
+  grpc:
+    server:
+      port: ${GRPC_PORT:9091}
+
 momiji:
   keycloak:
     base-url: ${KEYCLOAK_BASE_URL:http://localhost:8085}
@@ -25,9 +29,3 @@ momiji:
   email-change:
     secret: ${EMAIL_CHANGE_SECRET:this-is-a-dev-secret-change-in-production-32chars!}
     expiry: PT1H
-
-springdoc:
-  swagger-ui:
-    oauth:
-      client-id: momiji-api
-      use-pkce-with-authorization-code-grant: true

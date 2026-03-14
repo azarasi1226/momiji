@@ -44,8 +44,12 @@ dependencies {
 	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 	implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 	implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8")
+
+	// gRPC
+	implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
+	implementation("io.grpc:grpc-kotlin-stub:1.5.0")
+	implementation("com.google.protobuf:protobuf-kotlin:4.34.0")
 }
 
 kotlin {
@@ -88,9 +92,12 @@ jooq {
 }
 
 sourceSets.main {
-	// jOOQのコード生成先をGradleの生成ソースディレクトリに設定
-	// これにより、自動生成されたコードがコンパイル対象に含まれるようになる
-	java.srcDirs("build/generated-sources/jooq")
+
+	java.srcDirs(
+		// jOOQの自働作成コード
+		"build/generated-sources/jooq",
+		// GRPCの自動作成コード
+		"../grpc/gen/jvm")
 }
 
 // コンパイル前にjOOQのコード生成を実行するよう設定これにより常に最新のスキーマに基づいたコードが生成される

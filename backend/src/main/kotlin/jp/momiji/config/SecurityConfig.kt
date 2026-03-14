@@ -12,7 +12,6 @@ class SecurityConfig {
     http
       .authorizeHttpRequests { authorize ->
         authorize
-          .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
           .anyRequest().authenticated()
       }
       .oauth2ResourceServer { oauth2 ->
@@ -22,3 +21,14 @@ class SecurityConfig {
     return http.build()
   }
 }
+
+// GRPC環境において↑でやってることはJwtDecoderが欲しいだけだから、↓のようにしてSpringSecurityの依存っごと削除できるんじゃね..?
+//@Configuration
+//class JwtConfig {
+//  @Bean
+//  fun jwtDecoder(): JwtDecoder {
+//    return NimbusJwtDecoder
+//      .withIssuerLocation("https://<keycloak>/realms/<realm>")
+//      .build()
+//  }
+//}
