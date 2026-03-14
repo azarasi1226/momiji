@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package momiji.user.update.v1;
+
+service UpdateUserService {
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+}
+
+message UpdateUserRequest {
+  string name = 1;
+  string phone_number = 2;
+  string postal_code = 3;
+  string address1 = 4;
+  string address2 = 5;
+}
+
+message UpdateUserResponse {}

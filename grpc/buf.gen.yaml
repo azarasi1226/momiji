@@ -1,0 +1,25 @@
+version: v2
+managed:
+  enabled: true
+  override:
+    - file_option: java_package_prefix
+      value: jp.momiji.grpc
+    - file_option: java_multiple_files
+      value: true
+plugins:
+  # Java protobuf message (kotlinのベースとなるので必須)
+  - remote: buf.build/protocolbuffers/java
+    out: gen/jvm
+  # Kotlin protobuf message (kotlin用の拡張構文を追加)
+  - remote: buf.build/protocolbuffers/kotlin
+    out: gen/jvm
+  # Java gRPC stubs (kotlinのベースとなるので必須)
+  - remote: buf.build/grpc/java
+    out: gen/jvm
+  # Kotlin gRPC stubs (コルーチン用のGrpcServiceなどを追加)
+  - remote: buf.build/grpc/kotlin
+    out: gen/jvm
+
+  # TypeScript (なんかTypeScriptで一番使われてる奴。詳細は知らん)
+  - remote: buf.build/bufbuild/es
+    out: ../frontend/grpc/gen

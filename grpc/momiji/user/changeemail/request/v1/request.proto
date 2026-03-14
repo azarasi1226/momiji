@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.user.changeemail.request.v1;
+
+service RequestEmailChangeService {
+  rpc RequestEmailChange(RequestEmailChangeRequest) returns (RequestEmailChangeResponse);
+}
+
+message RequestEmailChangeRequest {
+  string new_email = 1;
+}
+
+message RequestEmailChangeResponse {}

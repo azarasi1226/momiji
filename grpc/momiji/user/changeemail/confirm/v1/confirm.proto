@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.user.changeemail.confirm.v1;
+
+service ConfirmEmailChangeService {
+  rpc ConfirmEmailChange(ConfirmEmailChangeRequest) returns (ConfirmEmailChangeResponse);
+}
+
+message ConfirmEmailChangeRequest {
+  string token = 1;
+}
+
+message ConfirmEmailChangeResponse {}

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package momiji.user.findbyid.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service FindUserByIdService {
+  rpc FindUserById(FindUserByIdRequest) returns (FindUserByIdResponse);
+}
+
+message FindUserByIdRequest {}
+
+message FindUserByIdResponse {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string phone_number = 4;
+  string postal_code = 5;
+  string address1 = 6;
+  string address2 = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package momiji.user.delete.v1;
+
+service DeleteUserService {
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message DeleteUserRequest {}
+
+message DeleteUserResponse {}

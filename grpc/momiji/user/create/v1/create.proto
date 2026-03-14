@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package momiji.user.create.v1;
+
+service CreateUserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message CreateUserRequest {}
+
+message CreateUserResponse {}
