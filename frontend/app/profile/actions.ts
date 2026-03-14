@@ -1,17 +1,16 @@
 "use server"
 
-import { auth, signOut, BACKEND_URL } from "@/auth"
+import { auth, signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-
-async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
-  try {
-    const body = await res.json()
-    return body.error ?? fallback
-  } catch {
-    return fallback
-  }
-}
+import { createGrpcClient } from "@/lib/grpc"
+import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js"
+import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js"
+import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js"
+import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js"
+import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js"
+import { ConnectError } from "@connectrpc/connect"
+import { timestampDate } from "@bufbuild/protobuf/wkt"
 
 export type UserProfile = {
   id: string
@@ -31,18 +30,20 @@ export async function fetchProfile(): Promise<UserProfile> {
     redirect("/")
   }
 
-  const res = await fetch(`${BACKEND_URL}/users/me`, {
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    cache: "no-store",
-  })
+  const client = createGrpcClient(FindUserByIdService, session.accessToken)
+  const response = await client.findUserById({})
 
-  if (!res.ok) {
-    throw new Error("ユーザー情報の取得に失敗しました")
+  return {
+    id: response.id,
+    email: response.email,
+    name: response.name,
+    phoneNumber: response.phoneNumber,
+    postalCode: response.postalCode,
+    address1: response.address1,
+    address2: response.address2,
+    createdAt: response.createdAt ? timestampDate(response.createdAt).toISOString() : "",
+    updatedAt: response.updatedAt ? timestampDate(response.updatedAt).toISOString() : "",
   }
-
-  return res.json()
 }
 
 export type UpdateProfileState = {
@@ -59,26 +60,20 @@ export async function updateProfile(
     redirect("/")
   }
 
-  const body = {
-    name: formData.get("name") as string,
-    phoneNumber: formData.get("phoneNumber") as string,
-    postalCode: formData.get("postalCode") as string,
-    address1: formData.get("address1") as string,
-    address2: formData.get("address2") as string,
-  }
-
-  const res = await fetch(`${BACKEND_URL}/users/me`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-
-  if (!res.ok) {
-    const message = await extractErrorMessage(res, "ユーザー情報の更新に失敗しました")
-    return { error: message }
+  try {
+    const client = createGrpcClient(UpdateUserService, session.accessToken)
+    await client.updateUser({
+      name: formData.get("name") as string,
+      phoneNumber: formData.get("phoneNumber") as string,
+      postalCode: formData.get("postalCode") as string,
+      address1: formData.get("address1") as string,
+      address2: formData.get("address2") as string,
+    })
+  } catch (e) {
+    if (e instanceof ConnectError) {
+      return { error: e.message }
+    }
+    return { error: "ユーザー情報の更新に失敗しました" }
   }
 
   revalidatePath("/profile")
@@ -95,16 +90,14 @@ export async function deleteAccount(): Promise<DeleteAccountState> {
     redirect("/")
   }
 
-  const res = await fetch(`${BACKEND_URL}/users/me`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-  })
-
-  if (!res.ok) {
-    const message = await extractErrorMessage(res, "アカウントの削除に失敗しました")
-    return { error: message }
+  try {
+    const client = createGrpcClient(DeleteUserService, session.accessToken)
+    await client.deleteUser({})
+  } catch (e) {
+    if (e instanceof ConnectError) {
+      return { error: e.message }
+    }
+    return { error: "アカウントの削除に失敗しました" }
   }
 
   await signOut({ redirectTo: "/" })
@@ -125,20 +118,16 @@ export async function requestEmailChange(
     redirect("/")
   }
 
-  const newEmail = formData.get("newEmail") as string
-
-  const res = await fetch(`${BACKEND_URL}/users/me/email/change-request`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ newEmail }),
-  })
-
-  if (!res.ok) {
-    const message = await extractErrorMessage(res, "メールアドレス変更リクエストに失敗しました")
-    return { error: message }
+  try {
+    const client = createGrpcClient(RequestEmailChangeService, session.accessToken)
+    await client.requestEmailChange({
+      newEmail: formData.get("newEmail") as string,
+    })
+  } catch (e) {
+    if (e instanceof ConnectError) {
+      return { error: e.message }
+    }
+    return { error: "メールアドレス変更リクエストに失敗しました" }
   }
 
   return { success: true }
@@ -153,20 +142,16 @@ export async function confirmEmailChange(
     redirect("/")
   }
 
-  const token = formData.get("token") as string
-
-  const res = await fetch(`${BACKEND_URL}/users/me/email/change-confirm`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ token }),
-  })
-
-  if (!res.ok) {
-    const message = await extractErrorMessage(res, "メールアドレスの変更確認に失敗しました")
-    return { error: message }
+  try {
+    const client = createGrpcClient(ConfirmEmailChangeService, session.accessToken)
+    await client.confirmEmailChange({
+      token: formData.get("token") as string,
+    })
+  } catch (e) {
+    if (e instanceof ConnectError) {
+      return { error: e.message }
+    }
+    return { error: "メールアドレスの変更確認に失敗しました" }
   }
 
   revalidatePath("/profile")

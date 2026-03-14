@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import Keycloak from "next-auth/providers/keycloak"
-
-export const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:9090"
+import { createGrpcClient } from "@/lib/grpc"
+import { CreateUserService } from "@/grpc/gen/momiji/user/create/v1/create_pb.js"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Keycloak],
@@ -12,21 +12,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       try {
-        const res = await fetch(`${BACKEND_URL}/users/me`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${account.access_token}`,
-          },
-        })
-
-        if (!res.ok) {
-          console.error("CreateUser API failed:", res.status, await res.text())
-          return "/auth/error?reason=backend"
-        }
-
+        const client = createGrpcClient(CreateUserService, account.access_token)
+        await client.createUser({})
         return true
       } catch (e) {
-        console.error("CreateUser API call error:", e)
+        console.error("CreateUser gRPC call error:", e)
         return "/auth/error?reason=backend"
       }
     },
