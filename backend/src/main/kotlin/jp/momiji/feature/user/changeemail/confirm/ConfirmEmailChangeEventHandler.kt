@@ -2,7 +2,7 @@ package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.events.user.EmailChangeConfirmedEvent
-import org.axonframework.extension.spring.config.ProcessorDefinition
+import org.axonframework.extension.spring.config.EventProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
@@ -25,9 +25,9 @@ class ConfirmEmailChangeEventHandler(
   class Config {
     @Bean
     fun confirmEmailChangeEventHandlerDefinition() =
-      ProcessorDefinition
-        .subscribingProcessor(ConfirmEmailChangeEventHandler::class.simpleName)
+      EventProcessorDefinition
+        .subscribing(ConfirmEmailChangeEventHandler::class.simpleName!!)
         .assigningHandlers { it.beanType() == ConfirmEmailChangeEventHandler::class.java }
-        .withDefaultSettings()
+        .notCustomized()
   }
 }
