@@ -2,6 +2,7 @@ package jp.momiji.feature.user.changeemail.confirm
 
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.Error
+import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.annotation.TargetEntityId
 
@@ -19,5 +20,5 @@ object ConfirmEmailChangeCommandResult {
   fun userMismatch() = CommandResult.fail(Error("このメールアドレス変更リクエストは別のユーザーのものです"))
 }
 
-fun CommandGateway.confirmEmailChange(command: ConfirmEmailChangeCommand): CommandResult =
-  this.sendAndWait(command, CommandResult::class.java)
+suspend fun CommandGateway.confirmEmailChange(command: ConfirmEmailChangeCommand): CommandResult =
+  send(command, CommandResult::class.java).await()

@@ -2,6 +2,7 @@ package jp.momiji.feature.user.delete
 
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.Error
+import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.annotation.TargetEntityId
 
@@ -15,5 +16,5 @@ object DeleteUserCommandResult {
   fun userNotFound() = CommandResult.fail(Error("ユーザーが存在しませんでした"))
 }
 
-fun CommandGateway.deleteUser(command: DeleteUserCommand): CommandResult =
-  this.sendAndWait(command, CommandResult::class.java)
+suspend fun CommandGateway.deleteUser(command: DeleteUserCommand): CommandResult =
+  send(command, CommandResult::class.java).await()

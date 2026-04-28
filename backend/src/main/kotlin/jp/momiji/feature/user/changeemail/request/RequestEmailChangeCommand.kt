@@ -2,6 +2,7 @@ package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.Error
+import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.annotation.TargetEntityId
 
@@ -17,5 +18,5 @@ object RequestEmailChangeCommandResult {
   fun emailAlreadyInUse() = CommandResult.fail(Error("このメールアドレスは既に使用されています"))
 }
 
-fun CommandGateway.requestEmailChange(command: RequestEmailChangeCommand): CommandResult =
-  this.sendAndWait(command, CommandResult::class.java)
+suspend fun CommandGateway.requestEmailChange(command: RequestEmailChangeCommand): CommandResult =
+  send(command, CommandResult::class.java).await()

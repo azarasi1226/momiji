@@ -40,8 +40,11 @@ dependencies {
 	jooqCodegen("com.mysql:mysql-connector-j")
 	jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
 
+	// Axon
+	implementation(platform("org.axonframework:axon-framework-bom:5.1.0"))
+	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
+
 	// Other
-	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter:5.0.2")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 	implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
 	implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8")
@@ -50,6 +53,7 @@ dependencies {
 	implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
 	implementation("io.grpc:grpc-kotlin-stub:1.5.0")
 	implementation("com.google.protobuf:protobuf-kotlin:4.34.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 }
 
 kotlin {
