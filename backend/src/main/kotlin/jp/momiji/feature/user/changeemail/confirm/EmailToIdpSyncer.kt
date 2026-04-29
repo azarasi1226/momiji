@@ -1,15 +1,12 @@
 package jp.momiji.feature.user.changeemail.confirm
 
-import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import io.github.oshai.kotlinlogging.KotlinLogging
+import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.feature.idp.IdentityProvider
 import jp.momiji.feature.idp.IdpUserClient
-import org.axonframework.extension.spring.config.ProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {}

@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JooqConfig {
-    // mysqlはテーブル名が小文字で定義されている際、大文字でクエリが発行されるとエラーになるので、クエリを小文字に変換するカスタマイザを定義
     @Bean
     fun jooqCustomizer(): DefaultConfigurationCustomizer =
     DefaultConfigurationCustomizer { configuration: DefaultConfiguration ->
             configuration
                     .settings()
+                    // MySQLはテーブル名やプロパティ名が小文字で定義されている場合に、大文字のクエリが発行されるとエラーになるのでSQLを小文字に変換する設定
                     .withRenderNameCase(RenderNameCase.LOWER)
     }
 }
