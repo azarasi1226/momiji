@@ -43,6 +43,7 @@ dependencies {
 	// Axon
 	implementation(platform("org.axonframework:axon-framework-bom:5.1.0"))
 	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
+	implementation("io.axoniq.framework:axon-server-connector:5.1.0")
 
 	// Other
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
@@ -52,7 +53,7 @@ dependencies {
 	// gRPC
 	implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
 	implementation("io.grpc:grpc-kotlin-stub:1.5.0")
-	implementation("com.google.protobuf:protobuf-kotlin:4.34.0")
+	implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 }
 
