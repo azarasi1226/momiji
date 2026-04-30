@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:spring.io)",
+      "WebFetch(domain:central.sonatype.com)",
+      "WebFetch(domain:yidongnan.github.io)",
+      "WebFetch(domain:repo1.maven.org)",
+      "Bash(gh api:*)",
+      "Bash(python3 -c \"import sys,json; [print\\(x[''''path'''']\\) for x in json.load\\(sys.stdin\\)[''''tree''''] if ''''grpc-server-kotlin'''' in x[''''path''''] and x[''''path''''].endswith\\(\\(''''.kt'''',''''.kts'''',''''.yaml'''',''''.yml'''',''''.properties''''\\)\\)]\")",
+      "WebFetch(domain:api.github.com)",
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(sed -i 's/import net.devh.boot.grpc.server.service.GrpcService/import org.springframework.stereotype.Service/' \"$f\")",
+      "Bash(sed -i 's/@GrpcService/@Service/' \"$f\")",
+      "Bash(done)",
+      "Bash(JAVA_HOME=\"/c/Users/seal1/.jdks/corretto-21.0.7\" ./gradlew dependencies --configuration compileClasspath)",
+      "Bash(find . -path */spring-grpc* -name *.jar)",
+      "Bash(find /c/Users/seal1/.gradle -path *spring-grpc-core*1.0.2* -name *.jar)",
+      "Bash(jar tf:*)",
+      "Bash(JAVA_HOME=\"/c/Users/seal1/.jdks/corretto-21.0.7\" \"$JAVA_HOME/bin/jar\" tf /c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.springframework.grpc/spring-grpc-core/1.0.2/f4b3ad4adddbf56bfaa7e55fd0b815fdcc4e103/spring-grpc-core-1.0.2.jar)",
+      "Bash(\"/c/Users/seal1/.jdks/corretto-21.0.7/bin/jar.exe\" tf:*)",
+      "Bash(\"/c/Users/seal1/.jdks/corretto-21.0.7/bin/javap.exe\" -cp \"/c/Users/seal1/.gradle/caches/modules-2/files-2.1/org.springframework.grpc/spring-grpc-core/1.0.2/f4b3ad4adddbf56bfaa7e55fd0b815fdcc4e103/spring-grpc-core-1.0.2.jar\" org.springframework.grpc.server.exception.GrpcExceptionHandler)",
+      "Bash(pnpm install:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:google.aip.dev)",
+      "Bash(rm c:/Develop/Repository/momiji/grpc/momiji/user/changeemail/v1/changeemail.proto)",
+      "Bash(rmdir c:/Develop/Repository/momiji/grpc/momiji/user/changeemail/v1)",
+      "Bash(rm -rf gen/jvm ../frontend/grpc/gen)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:api.npmjs.org)",
+      "Bash(./gradlew.bat dependencies:*)",
+      "Bash(bash gradlew:*)"
+    ]
+  }
+}
