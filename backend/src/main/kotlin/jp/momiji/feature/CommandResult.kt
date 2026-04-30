@@ -1,10 +1,13 @@
 package jp.momiji.feature
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class Error(
   val message: String,
 )
 
-class CommandResult private constructor(
+class CommandResult(
   val success: Boolean,
   val error: Error? = null
 ) {
