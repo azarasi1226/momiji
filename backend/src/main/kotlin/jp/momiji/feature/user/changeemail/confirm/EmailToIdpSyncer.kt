@@ -13,23 +13,25 @@ private val logger = KotlinLogging.logger {}
 
 @Component
 class EmailToIdpSyncer(
-  private val dsl: DSLContext,
-  private val idpUserClient: IdpUserClient,
+    private val dsl: DSLContext,
+    private val idpUserClient: IdpUserClient,
 ) {
-  @EventHandler
-  fun on(event: EmailChangeConfirmedEvent) {
-    // IdentityProviderが "LOCAL" のものだけを対象とする。　これには二つの意味がある。
-    // 1. 例えば "Google" なものを変更したとしても、IDPにログインするたびにIDP内のemail属性が書き換えられるから意味がない。
-    // 2. "LOCAL" はログイン時にemailを使用するので、絶対同期させる必要があるが、 "Google" などの場合はログインに使用しないし、参照もしないため。
-    val oidcSubjects = dsl.select(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
-      .from(LOOKUP_EXTERNAL_IDENTITIES)
-      .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(event.userId))
-        .and(LOOKUP_EXTERNAL_IDENTITIES.IDENTITY_PROVIDER.eq(IdentityProvider.LOCAL.name))
-      .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
+    @EventHandler
+    fun on(event: EmailChangeConfirmedEvent) {
+        // IdentityProviderが "LOCAL" のものだけを対象とする。　これには二つの意味がある。
+        // 1. 例えば "Google" なものを変更したとしても、IDPにログインするたびにIDP内のemail属性が書き換えられるから意味がない。
+        // 2. "LOCAL" はログイン時にemailを使用するので、絶対同期させる必要があるが、 "Google" などの場合はログインに使用しないし、参照もしないため。
+        val oidcSubjects =
+            dsl
+                .select(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
+                .from(LOOKUP_EXTERNAL_IDENTITIES)
+                .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(event.userId))
+                .and(LOOKUP_EXTERNAL_IDENTITIES.IDENTITY_PROVIDER.eq(IdentityProvider.LOCAL.name))
+                .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
 
-    oidcSubjects.forEach { oidcSubject ->
-      // テーブルのカラムはNOT NULL 制約にしてるので "!!" しているよ。
-      idpUserClient.updateEmail(oidcSubject!!, event.email)
+        oidcSubjects.forEach { oidcSubject ->
+            // テーブルのカラムはNOT NULL 制約にしてるので "!!" しているよ。
+            idpUserClient.updateEmail(oidcSubject!!, event.email)
+        }
     }
-  }
 }

@@ -6,13 +6,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class SmtpMailSender(
-  private val javaMailSender: JavaMailSender,
+    private val javaMailSender: JavaMailSender,
 ) : MailSender {
-  override fun send(to: String, subject: String, body: String) {
-    val message = SimpleMailMessage()
-    message.setTo(to)
-    message.subject = subject
-    message.text = body
-    javaMailSender.send(message)
-  }
+    override fun send(
+        to: String,
+        subject: String,
+        body: String,
+    ) {
+        val message = SimpleMailMessage()
+        message.setTo(to)
+        message.subject = subject
+        message.text = body
+        javaMailSender.send(message)
+    }
 }

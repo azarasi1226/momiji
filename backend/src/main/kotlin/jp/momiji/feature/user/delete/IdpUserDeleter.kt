@@ -10,12 +10,12 @@ private val logger = KotlinLogging.logger {}
 
 @Component
 class IdpUserDeleter(
-  private val idpUserClient: IdpUserClient,
+    private val idpUserClient: IdpUserClient,
 ) {
-  @EventHandler
-  fun on(event: UserDeletedEvent) {
-    event.oidcSubjects.forEach { oidcSubject ->
-      idpUserClient.deleteUser(oidcSubject)
+    @EventHandler
+    fun on(event: UserDeletedEvent) {
+        event.oidcSubjects.forEach { oidcSubject ->
+            idpUserClient.deleteUser(oidcSubject)
+        }
     }
-  }
 }

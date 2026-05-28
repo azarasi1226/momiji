@@ -9,23 +9,23 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserIdResolver(
-  private val dsl: DSLContext,
+    private val dsl: DSLContext,
 ) {
-  fun resolve(authentication: JwtAuthenticationToken): String {
-    return findUserId(authentication)
-      ?: throw UseCaseException(Error("ユーザーが登録されていません"))
-  }
+    fun resolve(authentication: JwtAuthenticationToken): String =
+        findUserId(authentication)
+            ?: throw UseCaseException(Error("ユーザーが登録されていません"))
 
-  private fun findUserId(authentication: JwtAuthenticationToken): String? {
-    val issuer = authentication.token.issuer.toString()
-    val subject = authentication.token.subject
+    private fun findUserId(authentication: JwtAuthenticationToken): String? {
+        val issuer = authentication.token.issuer.toString()
+        val subject = authentication.token.subject
 
-    return dsl.select(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
-      .from(LOOKUP_EXTERNAL_IDENTITIES)
-      .where(
-        LOOKUP_EXTERNAL_IDENTITIES.OIDC_ISSUER.eq(issuer)
-          .and(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT.eq(subject))
-      )
-      .fetchOne(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
-  }
+        return dsl
+            .select(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
+            .from(LOOKUP_EXTERNAL_IDENTITIES)
+            .where(
+                LOOKUP_EXTERNAL_IDENTITIES.OIDC_ISSUER
+                    .eq(issuer)
+                    .and(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT.eq(subject)),
+            ).fetchOne(LOOKUP_EXTERNAL_IDENTITIES.USER_ID)
+    }
 }

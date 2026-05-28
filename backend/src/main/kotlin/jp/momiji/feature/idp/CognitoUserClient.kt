@@ -13,64 +13,83 @@ private val logger = KotlinLogging.logger {}
 
 @Component
 class CognitoUserClient(
-  @Value("\${momiji.cognito.user-pool-id}") private val userPoolId: String,
-  private val cognitoClient: CognitoIdentityProviderClient,
+    @Value("\${momiji.cognito.user-pool-id}") private val userPoolId: String,
+    private val cognitoClient: CognitoIdentityProviderClient,
 ) : IdpUserClient {
-  override fun updateEmail(oidcSubject: String, newEmail: String) {
-    try {
-      cognitoClient.adminUpdateUserAttributes(
-        AdminUpdateUserAttributesRequest.builder()
-          .userPoolId(userPoolId)
-          .username(oidcSubject)
-          .userAttributes(
-            AttributeType.builder().name("email").value(newEmail).build(),
-            AttributeType.builder().name("email_verified").value("true").build(),
-          )
-          .build()
-      )
-    } catch (e: UserNotFoundException) {
-      logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
-      return
+    override fun updateEmail(
+        oidcSubject: String,
+        newEmail: String,
+    ) {
+        try {
+            cognitoClient.adminUpdateUserAttributes(
+                AdminUpdateUserAttributesRequest
+                    .builder()
+                    .userPoolId(userPoolId)
+                    .username(oidcSubject)
+                    .userAttributes(
+                        AttributeType
+                            .builder()
+                            .name("email")
+                            .value(newEmail)
+                            .build(),
+                        AttributeType
+                            .builder()
+                            .name("email_verified")
+                            .value("true")
+                            .build(),
+                    ).build(),
+            )
+        } catch (e: UserNotFoundException) {
+            logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            return
+        }
+
+        logger.info { "Cognitoユーザーのメールアドレスを更新しました: oidcSubject=$oidcSubject" }
     }
 
-    logger.info { "Cognitoユーザーのメールアドレスを更新しました: oidcSubject=$oidcSubject" }
-  }
+    override fun deleteUser(oidcSubject: String) {
+        try {
+            cognitoClient.adminDeleteUser(
+                software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDeleteUserRequest
+                    .builder()
+                    .userPoolId(userPoolId)
+                    .username(oidcSubject)
+                    .build(),
+            )
+        } catch (e: UserNotFoundException) {
+            logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            return
+        }
 
-  override fun deleteUser(oidcSubject: String) {
-    try {
-      cognitoClient.adminDeleteUser(
-        software.amazon.awssdk.services.cognitoidentityprovider.model.AdminDeleteUserRequest.builder()
-          .userPoolId(userPoolId)
-          .username(oidcSubject)
-          .build()
-      )
-    } catch (e: UserNotFoundException) {
-      logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
-      return
+        logger.info { "Cognitoユーザーを削除しました: oidcSubject=$oidcSubject" }
     }
 
-    logger.info { "Cognitoユーザーを削除しました: oidcSubject=$oidcSubject" }
-  }
+    override fun getIdentityProvider(accessToken: String): IdentityProvider {
+        val claims =
+            com.nimbusds.jwt.SignedJWT
+                .parse(accessToken)
+                .jwtClaimsSet
+        val sub = claims.subject
 
-  override fun getIdentityProvider(accessToken: String): IdentityProvider {
-    val claims = com.nimbusds.jwt.SignedJWT.parse(accessToken).jwtClaimsSet
-    val sub = claims.subject
+        val response =
+            cognitoClient.adminGetUser(
+                AdminGetUserRequest
+                    .builder()
+                    .userPoolId(userPoolId)
+                    .username(sub)
+                    .build(),
+            )
 
-    val response = cognitoClient.adminGetUser(
-      AdminGetUserRequest.builder()
-        .userPoolId(userPoolId)
-        .username(sub)
-        .build()
-    )
+        val identities =
+            response
+                .userAttributes()
+                .firstOrNull { it.name() == "identities" }
+                ?.value()
 
-    val identities = response.userAttributes()
-      .firstOrNull { it.name() == "identities" }
-      ?.value()
+        if (identities != null && identities.contains("Google")) {
+            return IdentityProvider.GOOGLE
+        }
 
-    if (identities != null && identities.contains("Google")) {
-      return IdentityProvider.GOOGLE
+        return IdentityProvider.LOCAL
     }
-
-    return IdentityProvider.LOCAL
-  }
 }

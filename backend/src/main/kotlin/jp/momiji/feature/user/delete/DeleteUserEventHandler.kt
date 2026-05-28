@@ -13,28 +13,30 @@ import org.springframework.stereotype.Component
 
 @Component
 class DeleteUserEventHandler(
-  private val dsl: DSLContext
+    private val dsl: DSLContext,
 ) {
-  @EventHandler
-  fun on(event: UserDeletedEvent) {
-    dsl.transaction { config ->
-      val tx = DSL.using(config)
-      tx.deleteFrom(LOOKUP_EMAIL)
-        .where(LOOKUP_EMAIL.USER_ID.eq(event.id))
-        .execute()
+    @EventHandler
+    fun on(event: UserDeletedEvent) {
+        dsl.transaction { config ->
+            val tx = DSL.using(config)
+            tx
+                .deleteFrom(LOOKUP_EMAIL)
+                .where(LOOKUP_EMAIL.USER_ID.eq(event.id))
+                .execute()
 
-      tx.deleteFrom(LOOKUP_EXTERNAL_IDENTITIES)
-        .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(event.id))
-        .execute()
+            tx
+                .deleteFrom(LOOKUP_EXTERNAL_IDENTITIES)
+                .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(event.id))
+                .execute()
+        }
     }
-  }
 
-  @Configuration
-  class Config {
-    @Bean
-    fun deleteUserEventHandlerDefinition() =
-      EventProcessorDefinition
-        .subscribing(DeleteUserEventHandler::class.simpleName!!)
-        .assigningHandlers { it.beanType() == DeleteUserEventHandler::class.java }
-  }
+    @Configuration
+    class Config {
+        @Bean
+        fun deleteUserEventHandlerDefinition() =
+            EventProcessorDefinition
+                .subscribing(DeleteUserEventHandler::class.simpleName!!)
+                .assigningHandlers { it.beanType() == DeleteUserEventHandler::class.java }
+    }
 }

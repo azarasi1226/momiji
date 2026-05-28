@@ -16,55 +16,55 @@ import org.springframework.stereotype.Component
 
 @Component
 class DeleteUserCommandHandler(
-  private val dsl: DSLContext
+    private val dsl: DSLContext,
 ) {
-  @CommandHandler
-  fun handle(
-    command: DeleteUserCommand,
-    @InjectEntity state: State,
-    eventAppender: EventAppender
-  ): CommandResult {
-    if (!state.created) {
-      return DeleteUserCommandResult.userNotFound()
+    @CommandHandler
+    fun handle(
+        command: DeleteUserCommand,
+        @InjectEntity state: State,
+        eventAppender: EventAppender,
+    ): CommandResult {
+        if (!state.created) {
+            return DeleteUserCommandResult.userNotFound()
+        }
+
+        if (state.deleted) {
+            return DeleteUserCommandResult.success()
+        }
+
+        eventAppender.append(
+            UserDeletedEvent(id = command.id, oidcSubjects = findOidcSubjects(command.id)),
+        )
+        return DeleteUserCommandResult.success()
     }
 
-    if (state.deleted) {
-      return DeleteUserCommandResult.success()
+    private fun findOidcSubjects(userId: String): List<String> =
+        dsl
+            .select(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
+            .from(LOOKUP_EXTERNAL_IDENTITIES)
+            .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(userId))
+            .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
+            .filterNotNull()
+
+    @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
+    class State(
+        var created: Boolean,
+        var deleted: Boolean,
+    ) {
+        @EntityCreator
+        constructor() : this(
+            created = false,
+            deleted = false,
+        )
+
+        @EventSourcingHandler
+        fun evolve(event: UserCreatedEvent) {
+            created = true
+        }
+
+        @EventSourcingHandler
+        fun evolve(event: UserDeletedEvent) {
+            deleted = true
+        }
     }
-
-    eventAppender.append(
-      UserDeletedEvent(id = command.id, oidcSubjects = findOidcSubjects(command.id))
-    )
-    return DeleteUserCommandResult.success()
-  }
-
-  private fun findOidcSubjects(userId: String): List<String> {
-    return dsl.select(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
-      .from(LOOKUP_EXTERNAL_IDENTITIES)
-      .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(userId))
-      .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
-      .filterNotNull()
-  }
-
-  @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
-  class State(
-    var created: Boolean,
-    var deleted: Boolean,
-  ) {
-    @EntityCreator
-    constructor() : this(
-      created = false,
-      deleted = false,
-    )
-
-    @EventSourcingHandler
-    fun evolve(event: UserCreatedEvent) {
-      created = true
-    }
-
-    @EventSourcingHandler
-    fun evolve(event: UserDeletedEvent) {
-      deleted = true
-    }
-  }
 }

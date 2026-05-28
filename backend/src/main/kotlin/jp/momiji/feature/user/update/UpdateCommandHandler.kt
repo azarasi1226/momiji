@@ -14,41 +14,41 @@ import org.springframework.stereotype.Component
 
 @Component
 class UpdateCommandHandler {
-  @CommandHandler
-  fun handle(
-    command: UpdateUserCommand,
-    @InjectEntity state: State,
-    eventAppender: EventAppender
-  ): CommandResult {
-    if(!state.created) {
-       return UpdateUserCommandResult.userNotFound()
+    @CommandHandler
+    fun handle(
+        command: UpdateUserCommand,
+        @InjectEntity state: State,
+        eventAppender: EventAppender,
+    ): CommandResult {
+        if (!state.created) {
+            return UpdateUserCommandResult.userNotFound()
+        }
+
+        eventAppender.append(
+            UserUpdatedEvent(
+                id = command.id,
+                name = command.name,
+                phoneNumber = command.phoneNumber,
+                postalCode = command.postalCode,
+                address1 = command.address1,
+                address2 = command.address2,
+            ),
+        )
+        return UpdateUserCommandResult.success()
     }
 
-    eventAppender.append(
-      UserUpdatedEvent(
-        id = command.id,
-        name = command.name,
-        phoneNumber = command.phoneNumber,
-        postalCode = command.postalCode,
-        address1 = command.address1,
-        address2 = command.address2
-      )
-    )
-    return UpdateUserCommandResult.success()
-  }
+    @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
+    class State(
+        var created: Boolean,
+    ) {
+        @EntityCreator
+        constructor() : this(
+            created = false,
+        )
 
-  @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
-  class State(
-    var created: Boolean,
-  ) {
-    @EntityCreator
-    constructor() : this(
-      created = false,
-    )
-
-    @EventSourcingHandler
-    fun evolve(event: UserCreatedEvent) {
-       created = true
+        @EventSourcingHandler
+        fun evolve(event: UserCreatedEvent) {
+            created = true
+        }
     }
-  }
 }

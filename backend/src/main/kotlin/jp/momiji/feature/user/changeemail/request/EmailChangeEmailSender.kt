@@ -10,27 +10,29 @@ import org.springframework.stereotype.Component
 
 @Component
 class EmailChangeEmailSender(
-  private val emailChangeTokenService: EmailChangeTokenService,
-  private val mailSender: MailSender,
-  @Value("\${momiji.base-url:http://localhost:9090}") private val baseUrl: String,
+    private val emailChangeTokenService: EmailChangeTokenService,
+    private val mailSender: MailSender,
+    @Value("\${momiji.base-url:http://localhost:9090}") private val baseUrl: String,
 ) {
-  @EventHandler
-  fun on(event: EmailChangeRequestedEvent) {
-    val token = emailChangeTokenService.sign(
-      EmailChangePayload(userId = event.userId, newEmail = event.newEmail)
-    )
+    @EventHandler
+    fun on(event: EmailChangeRequestedEvent) {
+        val token =
+            emailChangeTokenService.sign(
+                EmailChangePayload(userId = event.userId, newEmail = event.newEmail),
+            )
 
-    mailSender.send(
-      to = event.newEmail,
-      subject = "メールアドレス変更の確認",
-      body = """
-        メールアドレスの変更がリクエストされました。
-        以下のトークンを入力してください
+        mailSender.send(
+            to = event.newEmail,
+            subject = "メールアドレス変更の確認",
+            body =
+                """
+                メールアドレスの変更がリクエストされました。
+                以下のトークンを入力してください
 
-        $token
+                $token
 
-        このリクエストに心当たりがない場合は、このメールを無視してください。
-      """.trimIndent(),
-    )
-  }
+                このリクエストに心当たりがない場合は、このメールを無視してください。
+                """.trimIndent(),
+        )
+    }
 }

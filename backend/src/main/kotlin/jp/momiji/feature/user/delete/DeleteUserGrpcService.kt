@@ -6,23 +6,23 @@ import jp.momiji.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserRequest
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserResponse
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserServiceGrpcKt
-import org.springframework.stereotype.Service
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
+import org.springframework.stereotype.Service
 
 @Service
 class DeleteUserGrpcService(
-  private val commandGateway: CommandGateway,
-  private val userIdResolver: UserIdResolver,
+    private val commandGateway: CommandGateway,
+    private val userIdResolver: UserIdResolver,
 ) : DeleteUserServiceGrpcKt.DeleteUserServiceCoroutineImplBase() {
+    override suspend fun deleteUser(request: DeleteUserRequest): DeleteUserResponse {
+        val auth = GrpcAuthContext.current()
+        val userId = userIdResolver.resolve(auth)
 
-  override suspend fun deleteUser(request: DeleteUserRequest): DeleteUserResponse {
-    val auth = GrpcAuthContext.current()
-    val userId = userIdResolver.resolve(auth)
+        commandGateway
+            .deleteUser(
+                DeleteUserCommand(id = userId),
+            ).throwIfError()
 
-    commandGateway.deleteUser(
-      DeleteUserCommand(id = userId)
-    ).throwIfError()
-
-    return DeleteUserResponse.getDefaultInstance()
-  }
+        return DeleteUserResponse.getDefaultInstance()
+    }
 }

@@ -7,28 +7,28 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 class SecurityConfig {
-  @Bean
-  fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-    http
-      .authorizeHttpRequests { authorize ->
-        authorize
-          .anyRequest().authenticated()
-      }
-      .oauth2ResourceServer { oauth2 ->
-        oauth2.jwt { }
-      }
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .authorizeHttpRequests { authorize ->
+                authorize
+                    .anyRequest()
+                    .authenticated()
+            }.oauth2ResourceServer { oauth2 ->
+                oauth2.jwt { }
+            }
 
-    return http.build()
-  }
+        return http.build()
+    }
 }
 
 // GRPC環境において↑でやってることはJwtDecoderが欲しいだけだから、↓のようにしてSpringSecurityの依存っごと削除できるんじゃね..?
-//@Configuration
-//class JwtConfig {
+// @Configuration
+// class JwtConfig {
 //  @Bean
 //  fun jwtDecoder(): JwtDecoder {
 //    return NimbusJwtDecoder
 //      .withIssuerLocation("https://<keycloak>/realms/<realm>")
 //      .build()
 //  }
-//}
+// }
