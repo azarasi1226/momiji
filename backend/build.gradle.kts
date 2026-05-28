@@ -1,7 +1,7 @@
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "4.0.3"
+	kotlin("jvm") version "2.3.21"
+	kotlin("plugin.spring") version "2.3.21"
+	id("org.springframework.boot") version "4.0.6"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("org.jooq.jooq-codegen-gradle") version "3.20.11"
 }
@@ -41,9 +41,9 @@ dependencies {
 	jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
 
 	// Axon
-	implementation(platform("org.axonframework:axon-framework-bom:5.1.0"))
+	implementation(platform("org.axonframework:axon-framework-bom:5.1.1"))
 	implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
-	implementation("io.axoniq.framework:axon-server-connector:5.1.0")
+	implementation("io.axoniq.framework:axon-server-connector:5.1.1")
 
 	// Other
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
