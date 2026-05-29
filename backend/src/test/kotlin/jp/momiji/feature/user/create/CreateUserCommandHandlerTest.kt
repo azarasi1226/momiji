@@ -5,7 +5,7 @@ import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.feature.MomijiIntegrationTestBase
+import jp.momiji.MomijiIntegrationTestBase
 import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.Test
 

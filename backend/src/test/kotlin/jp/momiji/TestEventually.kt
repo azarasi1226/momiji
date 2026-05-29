@@ -1,4 +1,4 @@
-package jp.momiji.feature
+package jp.momiji
 
 /**
  * 非同期で発生する状態の確定を待つためのリトライ・ヘルパ。

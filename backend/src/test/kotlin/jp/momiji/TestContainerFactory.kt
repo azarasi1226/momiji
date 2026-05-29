@@ -1,4 +1,4 @@
-package jp.momiji.feature
+package jp.momiji
 
 import io.axoniq.framework.testcontainer.AxonServerContainer
 import org.testcontainers.mysql.MySQLContainer

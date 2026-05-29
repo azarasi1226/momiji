@@ -1,10 +1,9 @@
-package jp.momiji.feature
+package jp.momiji
 
 import com.ninjasquad.springmockk.MockkBean
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.USERS
-import jp.momiji.DemoApplication
 import jp.momiji.feature.idp.IdpUserClient
 import jp.momiji.feature.mail.MailSender
 import jp.momiji.feature.user.create.OidcUserInfoFetcher

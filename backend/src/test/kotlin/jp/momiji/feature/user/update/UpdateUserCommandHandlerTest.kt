@@ -8,7 +8,7 @@ import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.events.user.UserUpdatedEvent
-import jp.momiji.feature.MomijiIntegrationTestBase
+import jp.momiji.MomijiIntegrationTestBase
 import org.junit.jupiter.api.Test
 
 class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {

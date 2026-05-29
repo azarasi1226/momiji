@@ -4,8 +4,8 @@ import io.mockk.verify
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
-import jp.momiji.feature.MomijiIntegrationTestBase
-import jp.momiji.feature.eventually
+import jp.momiji.MomijiIntegrationTestBase
+import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 
 /**
