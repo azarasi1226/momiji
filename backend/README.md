@@ -10,10 +10,11 @@
 1. [技術スタック](#技術スタック)
 2. [ディレクトリ構造](#ディレクトリ構造)
 3. [起動と開発フロー](#起動と開発フロー)
-4. [gRPC まわり](#grpc-まわり)
-5. [自動生成コード](#自動生成コード)
-6. [ビルド設定の要点](#ビルド設定の要点)
-7. [TODO](#todo)
+4. [プロファイルと環境変数](#プロファイルと環境変数)
+5. [gRPC まわり](#grpc-まわり)
+6. [自動生成コード](#自動生成コード)
+7. [ビルド設定の要点](#ビルド設定の要点)
+8. [TODO](#todo)
 
 ---
 
@@ -91,6 +92,27 @@ cd backend
 ```
 
 ---
+
+## プロファイルと環境変数
+
+`spring.profiles.active` で環境を切り替える。デフォルトは `local`。
+
+| プロファイル | 構成 | 用途 |
+|---|---|---|
+| `local`（デフォルト） | app-common + app-local + datastore-mysql + idp-keycloak + mail | ローカル開発（Docker Compose 経由） |
+| `test` | app-common + app-test + datastore-mysql + idp-cognito + mail | CI/テスト環境（実Cognito） |
+| `prod` | app-common + app-prod + datastore-mysql + idp-cognito + mail | 本番 |
+| `integration-test` | app-integration-test のみ | 統合テスト（DataSource等はTestContainers側で組む想定） |
+
+### 必須環境変数（fail-fast）
+
+未設定だと **起動時に例外で落ちる**。`local` profile では [application-app-local.yaml](src/main/resources/application-app-local.yaml) が値を提供するので環境変数の設定は不要。
+
+| 環境変数 | 必須profile | 説明 |
+|---|---|---|
+| `JWT_ISSUER_URI` | test / prod | OIDC issuer URI（Cognitoなら `https://cognito-idp.{region}.amazonaws.com/{poolId}`） |
+| `EMAIL_CHANGE_SECRET` | test / prod | メール変更トークン署名鍵（**HS256のため32byte以上必須**、[EmailChangeTokenService](src/main/kotlin/jp/momiji/feature/user/changeemail/EmailChangeTokenService.kt) で長さ検証あり） |
+| `COGNITO_USER_POOL_ID` | test / prod | Cognito User Pool ID |
 
 ## gRPC まわりのお作法
 ### 非認証エンドポイントを作りたい

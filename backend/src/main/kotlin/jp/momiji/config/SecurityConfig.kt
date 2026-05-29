@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 class SecurityConfig {
     @Bean
     fun jwtDecoder(
-        @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") issuerUri: String,
+        @Value("\${momiji.oidc.issuer-uri}") issuerUri: String,
     ): JwtDecoder =
         NimbusJwtDecoder
             .withIssuerLocation(issuerUri)

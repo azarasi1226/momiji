@@ -1,31 +1,26 @@
-server:
-  port: ${SERVER_PORT:9090}
-
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8085/realms/momiji}
-  mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1025}
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:3336}/${SPRING_DATASOURCE_DATABASE:momiji}?createDatabaseIfNotExist=true
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:passw0rd}
-
-  grpc:
-    server:
-      port: ${GRPC_PORT:9091}
-
-momiji:
-  keycloak:
-    base-url: ${KEYCLOAK_BASE_URL:http://localhost:8085}
-    realm: ${KEYCLOAK_REALM:momiji}
-    admin-username: ${KEYCLOAK_ADMIN_USERNAME:admin}
-    admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
-  email-change:
-    secret: ${EMAIL_CHANGE_SECRET:this-is-a-dev-secret-change-in-production-32chars!}
-    expiry: PT1H
+  # docker compose の起動はTaskfile側で制御するため、Spring Bootの自動起動はoff
+  docker-compose-enabled: false
+  profiles:
+    active: local
+    group:
+      integration-test:
+        - app-integration-test
+      local:
+        - app-common
+        - app-local
+        - datastore-mysql
+        - idp-keycloak
+        - mail
+      test:
+        - app-common
+        - app-test
+        - datastore-mysql
+        - idp-cognito
+        - mail
+      prod:
+        - app-common
+        - app-prod
+        - datastore-mysql
+        - idp-cognito
+        - mail

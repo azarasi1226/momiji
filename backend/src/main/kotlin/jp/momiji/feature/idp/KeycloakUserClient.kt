@@ -2,6 +2,7 @@ package jp.momiji.feature.idp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClient
 private val logger = KotlinLogging.logger {}
 
 @Component
+@Profile("local")
 class KeycloakUserClient(
     @Value("\${momiji.keycloak.base-url}") private val baseUrl: String,
     @Value("\${momiji.keycloak.realm}") private val realm: String,

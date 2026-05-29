@@ -1,0 +1,13 @@
+momiji:
+  oidc:
+    # ローカル開発用 issuer URI（docker-compose の Keycloak realm）
+    issuer-uri: http://localhost:8085/realms/momiji
+  email-change:
+    # ローカル開発用ダミー鍵（HS256のため32byte以上）。本番では絶対使わない
+    secret: this-is-a-dev-secret-change-in-production-32chars!
+
+logging:
+  level:
+    jp.momiji: DEBUG
+    # jOOQ SQLログ出力 (DEBUGにすると発行SQLが全部見える)
+    org.jooq.tools.LoggerListener: DEBUG

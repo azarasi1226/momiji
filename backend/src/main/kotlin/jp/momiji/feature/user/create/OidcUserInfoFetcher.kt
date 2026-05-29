@@ -13,7 +13,7 @@ data class OidcUserInfo(
 
 @Component
 class OidcUserInfoFetcher(
-    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") private val issuerUri: String,
+    @Value("\${momiji.oidc.issuer-uri}") private val issuerUri: String,
 ) {
     private val restClient = RestClient.create()
     private val userinfoEndpoint: String

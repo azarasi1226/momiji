@@ -1,0 +1,20 @@
+server:
+  port: ${SERVER_PORT:9090}
+
+spring:
+  application:
+    name: ${APPLICATION_NAME:momiji-backend}
+  grpc:
+    server:
+      port: ${GRPC_PORT:9091}
+
+momiji:
+  oidc:
+    # 原則 issuer-uri は環境変数 JWT_ISSUER_URI から取得する。これは設定忘れを防止するためである。
+    # 例外としてローカル開発時のみ app-local.yaml で上書きされるようにしている。
+    issuer-uri: ${JWT_ISSUER_URI}
+  email-change:
+    # 原則秘密鍵は環境変数 EMAIL_CHANGE_SECRET から取得する。これは設定忘れを防止するためである。
+    # 例外としてローカル開発時のみ app-local.yaml で上書きされるようにしている。
+    secret: ${EMAIL_CHANGE_SECRET}
+    expiry: PT1H

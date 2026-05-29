@@ -1,0 +1,4 @@
+momiji:
+  cognito:
+    user-pool-id: ${COGNITO_USER_POOL_ID}
+    region: ${AWS_REGION:ap-northeast-1}
