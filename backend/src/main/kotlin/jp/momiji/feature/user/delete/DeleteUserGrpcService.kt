@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.delete
 
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
-import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserRequest
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserResponse
 import jp.momiji.grpc.momiji.user.delete.v1.DeleteUserServiceGrpcKt

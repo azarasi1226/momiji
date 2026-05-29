@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.update
 
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
-import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserRequest
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserResponse
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserServiceGrpcKt

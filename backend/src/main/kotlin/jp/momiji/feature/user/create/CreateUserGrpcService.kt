@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.create
 
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.idp.IdpUserClient
 import jp.momiji.feature.throwIfError
-import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.create.v1.CreateUserRequest
 import jp.momiji.grpc.momiji.user.create.v1.CreateUserResponse
 import jp.momiji.grpc.momiji.user.create.v1.CreateUserServiceGrpcKt

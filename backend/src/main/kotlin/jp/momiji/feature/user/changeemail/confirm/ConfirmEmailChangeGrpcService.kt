@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.changeemail.confirm
 
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
-import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeRequest
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeResponse
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeServiceGrpcKt
