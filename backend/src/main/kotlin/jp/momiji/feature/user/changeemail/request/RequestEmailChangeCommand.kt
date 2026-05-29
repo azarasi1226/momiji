@@ -1,6 +1,7 @@
 package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.domain.BusinessError
+import jp.momiji.domain.user.Email
 import jp.momiji.feature.CommandResult
 import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
@@ -9,7 +10,7 @@ import org.axonframework.modelling.annotation.TargetEntityId
 data class RequestEmailChangeCommand(
     @TargetEntityId
     val userId: String,
-    val newEmail: String,
+    val newEmail: Email,
 )
 
 object RequestEmailChangeCommandResult {

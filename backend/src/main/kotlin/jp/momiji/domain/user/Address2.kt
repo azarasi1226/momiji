@@ -19,7 +19,7 @@ data class Address2 internal constructor(
             if (input.length > MAX_LENGTH) return Err(TooLong)
             return Ok(Address2(input))
         }
-
-        object TooLong : DomainError("address2", "住所2 は $MAX_LENGTH 文字以内で入力してください")
     }
+
+    object TooLong : DomainError("address2", "住所2 は $MAX_LENGTH 文字以内で入力してください")
 }

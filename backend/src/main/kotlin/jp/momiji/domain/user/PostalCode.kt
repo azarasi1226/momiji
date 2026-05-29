@@ -16,7 +16,7 @@ data class PostalCode internal constructor(
             if (!PATTERN.matches(input)) return Err(Invalid)
             return Ok(PostalCode(input))
         }
-
-        object Invalid : DomainError("postalCode", "郵便番号は ハイフン区切り (例: 100-0000) で入力してください")
     }
+
+    object Invalid : DomainError("postalCode", "郵便番号は ハイフン区切り (例: 100-0000) で入力してください")
 }

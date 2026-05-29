@@ -20,9 +20,11 @@ data class Name internal constructor(
             if (input.length > MAX_LENGTH) return Err(TooLong)
             return Ok(Name(input))
         }
-
-        object Blank : DomainError("name", "名前は必須です")
-
-        object TooLong : DomainError("name", "名前は $MAX_LENGTH 文字以内で入力してください")
     }
+
+    // nested object を companion object の中に置くと `Name.Blank` で参照できなくなる
+    // (Kotlin の companion shortcut は nested object 定義には効かない)。 class 直下に置く。
+    object Blank : DomainError("name", "名前は必須です")
+
+    object TooLong : DomainError("name", "名前は $MAX_LENGTH 文字以内で入力してください")
 }

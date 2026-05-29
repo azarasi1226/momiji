@@ -16,7 +16,7 @@ data class PhoneNumber internal constructor(
             if (!PATTERN.matches(input)) return Err(Invalid)
             return Ok(PhoneNumber(input))
         }
-
-        object Invalid : DomainError("phoneNumber", "電話番号は ハイフン区切り (例: 090-0000-0000) で入力してください")
     }
+
+    object Invalid : DomainError("phoneNumber", "電話番号は ハイフン区切り (例: 090-0000-0000) で入力してください")
 }

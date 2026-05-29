@@ -28,14 +28,15 @@ class RequestEmailChangeCommandHandler(
             return RequestEmailChangeCommandResult.userNotFound()
         }
 
-        if (emailAlreadyExists(command.newEmail)) {
+        if (emailAlreadyExists(command.newEmail.value)) {
             return RequestEmailChangeCommandResult.emailAlreadyInUse()
         }
 
         eventAppender.append(
+            // Event は将来のスキーマ進化のためあえて String のまま。
             EmailChangeRequestedEvent(
                 userId = command.userId,
-                newEmail = command.newEmail,
+                newEmail = command.newEmail.value,
             ),
         )
         return RequestEmailChangeCommandResult.success()

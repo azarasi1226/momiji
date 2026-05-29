@@ -1,5 +1,7 @@
 package jp.momiji.feature.user.changeemail.request
 
+import com.github.michaelbull.result.get
+import jp.momiji.domain.user.Email
 import jp.momiji.events.user.EmailChangeRequestedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
@@ -19,7 +21,7 @@ class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
             .command(
                 RequestEmailChangeCommand(
                     userId = userId,
-                    newEmail = newEmail,
+                    newEmail = Email.create(newEmail).get()!!,
                 ),
             ).then()
             .resultMessagePayload(RequestEmailChangeCommandResult.success())
@@ -42,7 +44,7 @@ class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
             .command(
                 RequestEmailChangeCommand(
                     userId = userId,
-                    newEmail = "newemail@example.com",
+                    newEmail = Email.create("newemail@example.com").get()!!,
                 ),
             ).then()
             .resultMessagePayload(RequestEmailChangeCommandResult.userNotFound())
@@ -64,7 +66,7 @@ class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
             .command(
                 RequestEmailChangeCommand(
                     userId = userId,
-                    newEmail = takenEmail, // 別ユーザーが既に使用中
+                    newEmail = Email.create(takenEmail).get()!!, // 別ユーザーが既に使用中
                 ),
             ).then()
             .resultMessagePayload(RequestEmailChangeCommandResult.emailAlreadyInUse())

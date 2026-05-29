@@ -1,6 +1,9 @@
 package jp.momiji.feature.user.changeemail.request
 
+import com.github.michaelbull.result.getOrElse
 import jp.momiji.config.grpc.GrpcAuthContext
+import jp.momiji.domain.ValidationException
+import jp.momiji.domain.user.Email
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
 import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeRequest
@@ -18,11 +21,17 @@ class RequestEmailChangeGrpcService(
         val auth = GrpcAuthContext.current()
         val userId = userIdResolver.resolve(auth)
 
+        // 単一フィールドなので zipOrAccumulate 不要、 getOrElse で 1 エラー → ValidationException に変換。
+        val newEmail =
+            Email.create(request.newEmail).getOrElse {
+                throw ValidationException(listOf(it))
+            }
+
         commandGateway
             .requestEmailChange(
                 RequestEmailChangeCommand(
                     userId = userId,
-                    newEmail = request.newEmail,
+                    newEmail = newEmail,
                 ),
             ).throwIfError()
 
