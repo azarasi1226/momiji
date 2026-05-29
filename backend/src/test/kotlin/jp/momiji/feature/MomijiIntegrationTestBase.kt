@@ -96,6 +96,7 @@ abstract class MomijiIntegrationTestBase {
         // コンテナを並列で起動
         val mysql = TestContainerFactory.mysql()
         val axonServer = TestContainerFactory.axonServer()
+
         init {
             runBlocking {
                 listOf<Startable>(mysql, axonServer)

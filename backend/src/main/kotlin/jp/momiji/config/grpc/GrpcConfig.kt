@@ -4,12 +4,14 @@ import io.grpc.ServerInterceptor
 import io.grpc.Status
 import io.grpc.StatusException
 import jp.momiji.feature.UseCaseException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.grpc.server.GlobalServerInterceptor
 import org.springframework.grpc.server.exception.GrpcExceptionHandler
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 
 /**
  * gRPCサーバーの横断設定。
@@ -22,6 +24,20 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
  */
 @Configuration
 class GrpcConfig {
+    /**
+     * IDP の OIDC discovery から公開鍵を取得して JWT 署名を検証する Decoder。
+     *
+     * このプロジェクトでは JwtDecoder は gRPC 認証 ([GrpcAuthInterceptor]) でしか使わないので
+     * Security 系の独立 Config を分けずにこちらに置く。
+     */
+    @Bean
+    fun jwtDecoder(
+        @Value("\${momiji.oidc.issuer-uri}") issuerUri: String,
+    ): JwtDecoder =
+        NimbusJwtDecoder
+            .withIssuerLocation(issuerUri)
+            .build()
+
     /**
      * 全 gRPC コールに対して JWT 認証をかけるグローバルInterceptor。
      *
