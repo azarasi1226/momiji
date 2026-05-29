@@ -47,7 +47,7 @@ dependencies {
     // Axon
     implementation(platform("org.axonframework:axon-framework-bom:5.1.1"))
     implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
-    implementation("io.axoniq.framework:axon-server-connector:5.1.1")
+    implementation("io.axoniq.framework:axon-server-connector:5.1.1") // AxonFramework5.1からはAxonServerConnectorが別モジュールになったため、明示的に追加する必要がある。
 
     // gRPC
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
@@ -55,10 +55,10 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
 
     // Other
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14") // ロギング
-    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")             // ロギング
+    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")          // ULID生成
     implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8") // Cognitoクライアント
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")         // Coroutines (GRPC、Axon Command Gatewayで使用)
 }
 
 kotlin {
@@ -71,8 +71,18 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+sourceSets.main {
+
+    java.srcDirs(
+        // jOOQの自働作成コード
+        "build/generated-sources/jooq",
+        // GRPCの自動作成コード
+        "build/generated-sources/grpc",
+    )
+}
+
 // =====================================================
-// ======================jacoco=========================
+// ======================jooq=========================
 // =====================================================
 jooq {
     configuration {
@@ -100,16 +110,6 @@ jooq {
     }
 }
 
-sourceSets.main {
-
-    java.srcDirs(
-        // jOOQの自働作成コード
-        "build/generated-sources/jooq",
-        // GRPCの自動作成コード
-        "build/generated-sources/grpc",
-    )
-}
-
 // コンパイル前にjOOQのコード生成を実行するよう設定これにより常に最新のスキーマに基づいたコードが生成される
 // 幸いDDLDatabaseを使っているため、DBサーバーへの接続は発生しない完全ローカル完結...最高すぎかよ...
 tasks.named("compileKotlin") {
@@ -119,15 +119,15 @@ tasks.named("compileKotlin") {
 // =====================================================
 // ====================IntelliJ IDEA====================
 // =====================================================
-// IntelliJ に「ここは自動生成コードだから干渉しないで」と伝える
-// → Find Usages / 検索 / インスペクション / リファクタの対象から外れる
 idea {
     module {
+        // IntelliJ に「ここは自動生成コードだから干渉しないで」と伝える
+        // → Find Usages / 検索 / インスペクション / リファクタの対象から外れる
         generatedSourceDirs.addAll(
             files(
                 "build/generated-sources/jooq",
                 "build/generated-sources/grpc",
-            )
+            ),
         )
     }
 }
