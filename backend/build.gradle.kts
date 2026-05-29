@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     idea
 
@@ -16,7 +18,7 @@ description = "Identity Service Demo"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -26,7 +28,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jooq")
-    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -62,7 +63,13 @@ dependencies {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+        jvmTarget = JvmTarget.JVM_25
+        freeCompilerArgs.addAll(
+            // Java側のNull性アノテーション（@NonNull/@Nullable等）をKotlinが「警告」ではなく「エラー」として扱うようにする。
+            "-Xjsr305=strict",
+            // data classのコンストラクタ引数に書いたアノテーションを、プロパティ側にも適用する。
+            "-Xannotation-default-target=param-property",
+        )
     }
 }
 
@@ -84,7 +91,7 @@ sourceSets.main {
 }
 
 // =====================================================
-// ======================jooq=========================
+// ======================jooq===========================
 // =====================================================
 jooq {
     configuration {

@@ -1,34 +1,18 @@
 package jp.momiji.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 
 @Configuration
 class SecurityConfig {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-            .authorizeHttpRequests { authorize ->
-                authorize
-                    .anyRequest()
-                    .authenticated()
-            }.oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { }
-            }
-
-        return http.build()
-    }
+    fun jwtDecoder(
+        @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") issuerUri: String,
+    ): JwtDecoder =
+        NimbusJwtDecoder
+            .withIssuerLocation(issuerUri)
+            .build()
 }
-
-// GRPC環境において↑でやってることはJwtDecoderが欲しいだけだから、↓のようにしてSpringSecurityの依存っごと削除できるんじゃね..?
-// @Configuration
-// class JwtConfig {
-//  @Bean
-//  fun jwtDecoder(): JwtDecoder {
-//    return NimbusJwtDecoder
-//      .withIssuerLocation("https://<keycloak>/realms/<realm>")
-//      .build()
-//  }
-// }
