@@ -1,14 +1,12 @@
-package jp.momiji.feature.user
+package jp.momiji.feature.user.create
 
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
-import jp.momiji.feature.user.create.CreateUserCommand
-import jp.momiji.feature.user.create.CreateUserCommandResult
 import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.Test
 
-class CreateUserTest : MomijiIntegrationTestBase() {
+class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
     @Test
     fun `正常系_完全新規ユーザー作成は2イベント発行`() {
         // UserCreatedEvent.id / ExternalIdentityLinkedEvent.userId は CommandHandler 内で

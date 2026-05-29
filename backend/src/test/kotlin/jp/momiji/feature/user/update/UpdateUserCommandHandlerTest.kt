@@ -1,13 +1,11 @@
-package jp.momiji.feature.user
+package jp.momiji.feature.user.update
 
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.events.user.UserUpdatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
-import jp.momiji.feature.user.update.UpdateUserCommand
-import jp.momiji.feature.user.update.UpdateUserCommandResult
 import org.junit.jupiter.api.Test
 
-class UpdateUserTest : MomijiIntegrationTestBase() {
+class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {
     @Test
     fun `正常系_ユーザー更新成功`() {
         val userId = "01HXYZTESTUSER0000000000001"

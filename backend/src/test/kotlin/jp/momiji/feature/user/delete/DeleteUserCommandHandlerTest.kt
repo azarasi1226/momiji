@@ -1,13 +1,11 @@
-package jp.momiji.feature.user
+package jp.momiji.feature.user.delete
 
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.events.user.UserDeletedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
-import jp.momiji.feature.user.delete.DeleteUserCommand
-import jp.momiji.feature.user.delete.DeleteUserCommandResult
 import org.junit.jupiter.api.Test
 
-class DeleteUserTest : MomijiIntegrationTestBase() {
+class DeleteUserCommandHandlerTest : MomijiIntegrationTestBase() {
     @Test
     fun `正常系_ユーザー削除成功`() {
         val userId = "01HXYZTESTUSER0000000000010"

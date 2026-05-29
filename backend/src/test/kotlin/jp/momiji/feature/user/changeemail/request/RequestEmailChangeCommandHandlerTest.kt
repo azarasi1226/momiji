@@ -1,13 +1,11 @@
-package jp.momiji.feature.user
+package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.events.user.EmailChangeRequestedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
-import jp.momiji.feature.user.changeemail.request.RequestEmailChangeCommand
-import jp.momiji.feature.user.changeemail.request.RequestEmailChangeCommandResult
 import org.junit.jupiter.api.Test
 
-class RequestEmailChangeTest : MomijiIntegrationTestBase() {
+class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
     @Test
     fun `正常系_メール変更リクエスト成功`() {
         val userId = "01HXYZREQMAIL0000000000001"

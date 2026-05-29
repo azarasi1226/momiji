@@ -1,16 +1,14 @@
-package jp.momiji.feature.user
+package jp.momiji.feature.user.changeemail.confirm
 
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
-import jp.momiji.feature.user.changeemail.confirm.ConfirmEmailChangeCommand
-import jp.momiji.feature.user.changeemail.confirm.ConfirmEmailChangeCommandResult
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ConfirmEmailChangeTest : MomijiIntegrationTestBase() {
+class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
     @Autowired
     lateinit var tokenService: EmailChangeTokenService
 
