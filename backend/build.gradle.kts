@@ -78,9 +78,7 @@ val grpcGeneratedDir = "$generatedSourcesDir/grpc"
 // 自動生成コードを main ソースセットの一部として認識させる
 sourceSets.main {
     java.srcDirs(
-        // jOOQの自動生成コード
         jooqGeneratedDir,
-        // gRPCの自動生成コード
         grpcGeneratedDir,
     )
 }
