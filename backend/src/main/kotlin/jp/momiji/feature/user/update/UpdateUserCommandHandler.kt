@@ -13,7 +13,7 @@ import org.axonframework.modelling.annotation.InjectEntity
 import org.springframework.stereotype.Component
 
 @Component
-class UpdateCommandHandler {
+class UpdateUserCommandHandler {
     @CommandHandler
     fun handle(
         command: UpdateUserCommand,

@@ -22,8 +22,21 @@ class EmailChangeTokenService(
     @Value("\${momiji.email-change.secret}") private val secret: String,
     @Value("\${momiji.email-change.expiry:PT1H}") private val expiry: Duration,
 ) {
+    init {
+        // HS256は最低256bit(=32byte)のキーが必要。短いと MACSigner が実行時に KeyLengthException を投げるので、
+        // アプリ起動時に明確なメッセージで fail-fast させる。
+        require(secret.toByteArray().size >= MIN_SECRET_BYTES) {
+            "momiji.email-change.secret は HS256 のため最低 $MIN_SECRET_BYTES バイト(256bit)必要です。" +
+                "現在の長さ: ${secret.toByteArray().size} バイト"
+        }
+    }
+
     private val signer = MACSigner(secret.toByteArray())
     private val verifier = MACVerifier(secret.toByteArray())
+
+    companion object {
+        private const val MIN_SECRET_BYTES = 32
+    }
 
     fun sign(payload: EmailChangePayload): String {
         val claims =

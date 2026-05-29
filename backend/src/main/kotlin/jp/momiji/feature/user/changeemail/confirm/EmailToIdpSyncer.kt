@@ -28,10 +28,10 @@ class EmailToIdpSyncer(
                 .where(LOOKUP_EXTERNAL_IDENTITIES.USER_ID.eq(event.userId))
                 .and(LOOKUP_EXTERNAL_IDENTITIES.IDENTITY_PROVIDER.eq(IdentityProvider.LOCAL.name))
                 .fetch(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
+                .filterNotNull()
 
         oidcSubjects.forEach { oidcSubject ->
-            // テーブルのカラムはNOT NULL 制約にしてるので "!!" しているよ。
-            idpUserClient.updateEmail(oidcSubject!!, event.email)
+            idpUserClient.updateEmail(oidcSubject, event.email)
         }
     }
 }
