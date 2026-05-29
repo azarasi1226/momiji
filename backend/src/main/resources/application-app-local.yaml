@@ -1,3 +1,10 @@
+spring:
+  datasource:
+    # ローカル開発用 DB接続情報（docker-compose の MySQL）
+    url: jdbc:mysql://localhost:3336/momiji?createDatabaseIfNotExist=true
+    username: root
+    password: passw0rd
+
 momiji:
   oidc:
     # ローカル開発用 issuer URI（docker-compose の Keycloak realm）

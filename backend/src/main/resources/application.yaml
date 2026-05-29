@@ -8,10 +8,12 @@ spring:
         - app-integration-test
       local:
         - app-common
-        - app-local
         - datastore-mysql
         - idp-keycloak
         - mail
+        # app-local は最後に置く。
+        # 環境変数をローカル開発用の具体値で上書きさせたいため。
+        - app-local
       test:
         - app-common
         - app-test

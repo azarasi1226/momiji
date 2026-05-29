@@ -104,7 +104,7 @@ cd backend
 | `prod` | app-common + app-prod + datastore-mysql + idp-cognito + mail | 本番 |
 | `integration-test` | app-integration-test のみ | 統合テスト（DataSource等はTestContainers側で組む想定） |
 
-### 必須環境変数（fail-fast）
+### テスト・本番環境にて必須の環境変数（fail-fast）
 
 未設定だと **起動時に例外で落ちる**。`local` profile では [application-app-local.yaml](src/main/resources/application-app-local.yaml) が値を提供するので環境変数の設定は不要。
 
@@ -113,6 +113,11 @@ cd backend
 | `JWT_ISSUER_URI` | test / prod | OIDC issuer URI（Cognitoなら `https://cognito-idp.{region}.amazonaws.com/{poolId}`） |
 | `EMAIL_CHANGE_SECRET` | test / prod | メール変更トークン署名鍵（**HS256のため32byte以上必須**、[EmailChangeTokenService](src/main/kotlin/jp/momiji/feature/user/changeemail/EmailChangeTokenService.kt) で長さ検証あり） |
 | `COGNITO_USER_POOL_ID` | test / prod | Cognito User Pool ID |
+| `SPRING_DATASOURCE_HOST` | test / prod | MySQL host |
+| `SPRING_DATASOURCE_PORT` | test / prod | MySQL port |
+| `SPRING_DATASOURCE_DATABASE` | test / prod | MySQL database name |
+| `SPRING_DATASOURCE_USERNAME` | test / prod | MySQL username |
+| `SPRING_DATASOURCE_PASSWORD` | test / prod | MySQL password |
 
 ## gRPC まわりのお作法
 ### 非認証エンドポイントを作りたい
