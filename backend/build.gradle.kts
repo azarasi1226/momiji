@@ -55,10 +55,10 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
 
     // Other
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
-    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")
-    implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14") // ロギング
+    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
+    implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8") // Cognitoクライアント
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
 }
 
 kotlin {
@@ -114,4 +114,20 @@ sourceSets.main {
 // 幸いDDLDatabaseを使っているため、DBサーバーへの接続は発生しない完全ローカル完結...最高すぎかよ...
 tasks.named("compileKotlin") {
     dependsOn("jooqCodegen")
+}
+
+// =====================================================
+// ====================IntelliJ IDEA====================
+// =====================================================
+// IntelliJ に「ここは自動生成コードだから干渉しないで」と伝える
+// → Find Usages / 検索 / インスペクション / リファクタの対象から外れる
+idea {
+    module {
+        generatedSourceDirs.addAll(
+            files(
+                "build/generated-sources/jooq",
+                "build/generated-sources/grpc",
+            )
+        )
+    }
 }
