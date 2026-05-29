@@ -1,10 +1,10 @@
 package jp.momiji.feature.user.changeemail.request
 
 import com.github.michaelbull.result.get
+import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.user.Email
 import jp.momiji.events.user.EmailChangeRequestedEvent
 import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.MomijiIntegrationTestBase
 import org.junit.jupiter.api.Test
 
 class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {

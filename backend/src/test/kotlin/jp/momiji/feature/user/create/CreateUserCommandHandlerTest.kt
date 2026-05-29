@@ -1,11 +1,11 @@
 package jp.momiji.feature.user.create
 
 import com.github.michaelbull.result.get
+import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.MomijiIntegrationTestBase
 import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.Test
 

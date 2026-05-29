@@ -1,10 +1,10 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import com.github.michaelbull.result.get
+import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.user.EmailChangeToken
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
 import org.junit.jupiter.api.Test

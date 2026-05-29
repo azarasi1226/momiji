@@ -1,6 +1,7 @@
 package jp.momiji.feature.user.update
 
 import com.github.michaelbull.result.get
+import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.user.Address1
 import jp.momiji.domain.user.Address2
 import jp.momiji.domain.user.Name
@@ -8,7 +9,6 @@ import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.events.user.UserUpdatedEvent
-import jp.momiji.MomijiIntegrationTestBase
 import org.junit.jupiter.api.Test
 
 class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {

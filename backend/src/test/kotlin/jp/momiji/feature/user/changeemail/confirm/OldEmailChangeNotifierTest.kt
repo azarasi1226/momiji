@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import io.mockk.verify
-import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.MomijiIntegrationTestBase
+import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 
