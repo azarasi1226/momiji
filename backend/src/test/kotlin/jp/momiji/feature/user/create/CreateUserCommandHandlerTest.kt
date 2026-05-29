@@ -1,6 +1,7 @@
 package jp.momiji.feature.user.create
 
 import com.github.michaelbull.result.get
+import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
@@ -30,7 +31,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     CreateUserCommand(
                         oidcIssuer = "https://idp.example.com",
                         oidcSubject = "subj-brand-new",
-                        oidcIdentityProvider = "LOCAL",
+                        oidcIdentityProvider = IdentityProvider.LOCAL,
                         email = Email.create("brandnew@example.com").get()!!,
                         emailVerified = true,
                     ),
@@ -46,7 +47,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     ExternalIdentityLinkedEvent(
                         oidcIssuer = "https://idp.example.com",
                         oidcSubject = "subj-brand-new",
-                        oidcIdentityProvider = "LOCAL",
+                        oidcIdentityProvider = IdentityProvider.LOCAL.name,
                         userId = "<ignored-by-registerIgnoredField>",
                     ),
                 )
@@ -65,7 +66,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                 CreateUserCommand(
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-not-verified",
-                    oidcIdentityProvider = "LOCAL",
+                    oidcIdentityProvider = IdentityProvider.LOCAL,
                     email = Email.create("notverified@example.com").get()!!,
                     emailVerified = false,
                 ),
@@ -86,14 +87,14 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     userId = existingUserId,
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-idempotent",
-                    oidcIdentityProvider = "LOCAL",
+                    oidcIdentityProvider = IdentityProvider.LOCAL.name,
                 ),
             ).`when`()
             .command(
                 CreateUserCommand(
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-idempotent", // 同一subject
-                    oidcIdentityProvider = "LOCAL",
+                    oidcIdentityProvider = IdentityProvider.LOCAL,
                     email = Email.create("idempotent@example.com").get()!!,
                     emailVerified = true,
                 ),
@@ -114,14 +115,14 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     userId = existingUserId,
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-existing",
-                    oidcIdentityProvider = "LOCAL",
+                    oidcIdentityProvider = IdentityProvider.LOCAL.name,
                 ),
             ).`when`()
             .command(
                 CreateUserCommand(
                     oidcIssuer = "https://accounts.google.com",
                     oidcSubject = "subj-google-link",
-                    oidcIdentityProvider = "GOOGLE",
+                    oidcIdentityProvider = IdentityProvider.GOOGLE,
                     email = Email.create("link@example.com").get()!!, // 既存ユーザーと同じemail
                     emailVerified = true,
                 ),
@@ -132,7 +133,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     userId = existingUserId,
                     oidcIssuer = "https://accounts.google.com",
                     oidcSubject = "subj-google-link",
-                    oidcIdentityProvider = "GOOGLE",
+                    oidcIdentityProvider = IdentityProvider.GOOGLE.name,
                 ),
             )
     }

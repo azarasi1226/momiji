@@ -41,7 +41,7 @@ class CreateUserCommandHandler(
                     userId = existingUserId,
                     oidcIssuer = command.oidcIssuer,
                     oidcSubject = command.oidcSubject,
-                    oidcIdentityProvider = command.oidcIdentityProvider,
+                    oidcIdentityProvider = command.oidcIdentityProvider.name,
                 ),
             )
             return CreateUserCommandResult.success()
@@ -59,7 +59,7 @@ class CreateUserCommandHandler(
                 userId = newUserId,
                 oidcIssuer = command.oidcIssuer,
                 oidcSubject = command.oidcSubject,
-                oidcIdentityProvider = command.oidcIdentityProvider,
+                oidcIdentityProvider = command.oidcIdentityProvider.name,
             ),
         )
         return CreateUserCommandResult.success()

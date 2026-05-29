@@ -1,12 +1,6 @@
 package jp.momiji.feature.idp
 
-enum class IdentityProvider {
-    /** Keycloak, Auth0, Cognitoなどの親元のIDPを表す */
-    LOCAL,
-
-    /** 親元のIDPと連携しているGoogleIDP */
-    GOOGLE,
-}
+import jp.momiji.domain.idp.IdentityProvider
 
 interface IdpUserClient {
     fun updateEmail(

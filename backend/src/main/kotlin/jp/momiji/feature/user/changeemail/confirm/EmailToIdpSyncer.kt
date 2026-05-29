@@ -2,8 +2,8 @@ package jp.momiji.feature.user.changeemail.confirm
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
+import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.events.user.EmailChangeConfirmedEvent
-import jp.momiji.feature.idp.IdentityProvider
 import jp.momiji.feature.idp.IdpUserClient
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext

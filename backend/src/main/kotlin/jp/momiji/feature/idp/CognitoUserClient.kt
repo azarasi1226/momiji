@@ -1,6 +1,7 @@
 package jp.momiji.feature.idp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jp.momiji.domain.idp.IdentityProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component

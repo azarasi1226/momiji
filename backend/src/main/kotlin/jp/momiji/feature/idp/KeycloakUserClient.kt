@@ -1,6 +1,7 @@
 package jp.momiji.feature.idp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jp.momiji.domain.idp.IdentityProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
@@ -68,6 +69,9 @@ class KeycloakUserClient(
                 .jwtClaimsSet
         val idp = claims.getStringClaim("identity_provider") ?: return IdentityProvider.LOCAL
 
+        // Keycloak 固有の文字列 → IdentityProvider への変換は ここに閉じる。
+        // ドメイン側 (IdentityProvider) にこの変換ロジックを持たせると、 Keycloak の実装詳細 (小文字)
+        // を domain 層が抱え込む形になり凝集度が崩れる。
         return when (idp) {
             "google" -> IdentityProvider.GOOGLE
             else -> IdentityProvider.LOCAL

@@ -1,11 +1,11 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import io.mockk.verify
+import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
 import jp.momiji.feature.eventually
-import jp.momiji.feature.idp.IdentityProvider
 import org.junit.jupiter.api.Test
 
 /**

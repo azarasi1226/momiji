@@ -35,7 +35,7 @@ class CreateUserGrpcService(
                 CreateUserCommand(
                     oidcSubject = userInfo.subject,
                     oidcIssuer = userInfo.issuer,
-                    oidcIdentityProvider = idp.toString(),
+                    oidcIdentityProvider = idp,
                     email = email,
                     emailVerified = userInfo.emailVerified,
                 ),

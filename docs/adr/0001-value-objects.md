@@ -31,7 +31,11 @@ domain/                         ← ドメイン概念 (vertical slice に依存
     ├── PostalCode.kt
     ├── Address1.kt
     ├── Address2.kt
-    └── EmailChangeToken.kt      ← JWT 風 3 セグメント形式の確認用トークン
+    ├── EmailChangeToken.kt      ← JWT 風 3 セグメント形式の確認用トークン
+    └── (User コンテキストの値オブジェクト)
+
+domain/idp/                     ← IDP コンテキストの値オブジェクト
+└── IdentityProvider.kt          ← OIDC リンク先 IDP enum (LOCAL / GOOGLE)。 文字列からの変換は各 IDP 実装側
 ```
 
 `feature/` (use case 層) は `domain/` に一方向依存。 逆方向の依存は無い。
@@ -136,7 +140,7 @@ CommandHandler 内で `command.name.value` で平文を取り出して event に
 |---|---|---|
 | `UpdateUserCommand` | name / phoneNumber / postalCode / address1 / address2 | `zipOrAccumulate` で 5 フィールド集約 |
 | `RequestEmailChangeCommand` | newEmail (Email 型) | 単一フィールドなので `getOrElse` |
-| `CreateUserCommand` | email (Email 型) | IDP 経由 (信頼境界内) だが broken IDP への防御 |
+| `CreateUserCommand` | email (Email 型) / oidcIdentityProvider (IdentityProvider enum) | IDP 経由 (信頼境界内) だが broken IDP への防御。 enum は `domain/idp/` に集約、 文字列→enum 変換は各 IDP 実装側 (`KeycloakUserClient`, `CognitoUserClient`) で行い、 ドメイン層に IDP 固有の文字列フォーマットを抱え込ませない |
 | `ConfirmEmailChangeCommand` | token (EmailChangeToken 型) | 形式チェックを値オブジェクトに、 署名/期限検証は `EmailChangeTokenService` |
 | `DeleteUserCommand` | (id のみ、 型化対象なし) | 内部 userId は信頼境界 |
 
