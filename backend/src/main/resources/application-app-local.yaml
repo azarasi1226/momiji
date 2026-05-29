@@ -16,5 +16,4 @@ momiji:
 logging:
   level:
     jp.momiji: DEBUG
-    # jOOQ SQLログ出力 (DEBUGにすると発行SQLが全部見える)
     org.jooq.tools.LoggerListener: DEBUG
