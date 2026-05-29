@@ -1,10 +1,12 @@
 package jp.momiji.feature.mail
 
+import org.springframework.context.annotation.Profile
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("mail-smtp")
 class SmtpMailSender(
     private val javaMailSender: JavaMailSender,
 ) : MailSender {
