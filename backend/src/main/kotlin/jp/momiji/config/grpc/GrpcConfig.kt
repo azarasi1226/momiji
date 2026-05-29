@@ -1,18 +1,10 @@
 package jp.momiji.config.grpc
 
-import com.google.protobuf.Any
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.grpc.ServerInterceptor
 import io.grpc.Status
-import io.grpc.StatusException
-import io.grpc.protobuf.StatusProto
 import jp.momiji.domain.UseCaseException
 import jp.momiji.domain.ValidationException
-import jp.momiji.grpc.momiji.common.v1.ErrorDetail
-import jp.momiji.grpc.momiji.common.v1.FieldError
-import jp.momiji.grpc.momiji.common.v1.UnknownError
-import jp.momiji.grpc.momiji.common.v1.UseCaseError
-import jp.momiji.grpc.momiji.common.v1.ValidationError
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,7 +14,6 @@ import org.springframework.grpc.server.exception.GrpcExceptionHandler
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import java.util.UUID
-import com.google.rpc.Status as RpcStatus
 
 private val logger = KotlinLogging.logger {}
 
@@ -34,6 +25,8 @@ private val logger = KotlinLogging.logger {}
  *
  * を Bean として提供する。`spring-grpc-spring-boot-starter` が起動時にこれらを拾い上げ、
  * 自動構成されるgRPCサーバに組み込む。
+ *
+ * 例外 → ErrorDetail の変換 と StatusException 組み立て は [ErrorDetailMapping] (拡張関数群) に切り出し済み。
  */
 @Configuration
 class GrpcConfig {
@@ -69,11 +62,11 @@ class GrpcConfig {
     /**
      * ハンドラ内で投げた業務例外を、 gRPC Status + 構造化 details にマッピングするハンドラ。
      *
-     * - [UseCaseException] → `INVALID_ARGUMENT` + [ErrorDetail.use_case_error] (message 1つ)
-     * - [ValidationException] → `INVALID_ARGUMENT` + [ErrorDetail.validation_error] (field 別エラーリスト)
-     * - その他は `UNKNOWN` + [ErrorDetail.unknown_error] でクライアントが「予期せぬエラー」 として表示できるようにする
+     * - [ValidationException] → `INVALID_ARGUMENT` + ValidationError (field 別エラーリスト)
+     * - [UseCaseException]    → `INVALID_ARGUMENT` + UseCaseError (message 1つ)
+     * - その他                → `UNKNOWN` + UnknownError (固定メッセージ + correlationId、 詳細はサーバーログ)
      *
-     * フロント側は ConnectError.findDetails(ErrorDetailSchema) で type-safe に取り出せる。
+     * 詳細は ADR 0002 と [ErrorDetailMapping] 参照。
      */
     @Bean
     fun grpcExceptionHandler(): GrpcExceptionHandler =
@@ -83,83 +76,23 @@ class GrpcConfig {
                     buildStatusException(
                         Status.INVALID_ARGUMENT,
                         ex.message ?: "validation error",
-                        buildValidationDetail(ex),
+                        ex.toErrorDetail(),
                     )
                 is UseCaseException ->
                     buildStatusException(
                         Status.INVALID_ARGUMENT,
                         ex.error.message,
-                        buildUseCaseDetail(ex),
+                        ex.toErrorDetail(),
                     )
                 else -> {
-                    // 想定外例外: 内部情報をクライアントに漏らさないため、
-                    // 詳細はサーバーログにだけ書き、 クライアントには correlationId を渡して
-                    // 後でサポート側でログ突合できるようにする。
                     val correlationId = UUID.randomUUID().toString()
                     logger.error(ex) { "予期せぬエラー correlationId=$correlationId" }
                     buildStatusException(
                         Status.UNKNOWN,
                         "サーバーエラーが発生しました",
-                        buildUnknownDetail(correlationId),
+                        unknownErrorDetail(correlationId),
                     )
                 }
             }
         }
-
-    private fun buildValidationDetail(ex: ValidationException): ErrorDetail =
-        ErrorDetail
-            .newBuilder()
-            .setValidationError(
-                ValidationError
-                    .newBuilder()
-                    .addAllErrors(
-                        ex.errors.map { err ->
-                            FieldError
-                                .newBuilder()
-                                .setFieldName(err.field)
-                                .setMessage(err.message)
-                                .build()
-                        },
-                    ).build(),
-            ).build()
-
-    private fun buildUseCaseDetail(ex: UseCaseException): ErrorDetail =
-        ErrorDetail
-            .newBuilder()
-            .setUseCaseError(
-                UseCaseError
-                    .newBuilder()
-                    .setMessage(ex.error.message)
-                    .build(),
-            ).build()
-
-    /**
-     * 想定外例外を構造化する。 内部実装情報 (SQL カラム名、 内部ホスト名、 ファイルパス 等) を
-     * クライアントに漏らさないため、 message は固定文字列、 correlationId はサポート問合せ用 UUID。
-     */
-    private fun buildUnknownDetail(correlationId: String): ErrorDetail =
-        ErrorDetail
-            .newBuilder()
-            .setUnknownError(
-                UnknownError
-                    .newBuilder()
-                    .setMessage("サーバーエラーが発生しました")
-                    .setCorrelationId(correlationId)
-                    .build(),
-            ).build()
-
-    private fun buildStatusException(
-        status: Status,
-        message: String,
-        detail: ErrorDetail,
-    ): StatusException {
-        val rpcStatus =
-            RpcStatus
-                .newBuilder()
-                .setCode(status.code.value())
-                .setMessage(message)
-                .addDetails(Any.pack(detail))
-                .build()
-        return StatusProto.toStatusException(rpcStatus)
-    }
 }
