@@ -106,7 +106,7 @@ sourceSets.main {
         // jOOQの自働作成コード
         "build/generated-sources/jooq",
         // GRPCの自動作成コード
-        "../grpc/gen/jvm",
+        "build/generated-sources/grpc",
     )
 }
 

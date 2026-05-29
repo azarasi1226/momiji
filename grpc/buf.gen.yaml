@@ -9,16 +9,16 @@ managed:
 plugins:
   # Java protobuf message (kotlinのベースとなるので必須)
   - remote: buf.build/protocolbuffers/java:v34.1
-    out: gen/jvm
+    out: ../backend/build/generated-sources/grpc
   # Kotlin protobuf message (kotlin用の拡張構文を追加)
   - remote: buf.build/protocolbuffers/kotlin:v34.1
-    out: gen/jvm
+    out: ../backend/build/generated-sources/grpc
   # Java gRPC stubs (kotlinのベースとなるので必須)
   - remote: buf.build/grpc/java:v1.80.0
-    out: gen/jvm
+    out: ../backend/build/generated-sources/grpc
   # Kotlin gRPC stubs (コルーチン用のGrpcServiceなどを追加)
   - remote: buf.build/grpc/kotlin:v1.5.0
-    out: gen/jvm
+    out: ../backend/build/generated-sources/grpc
 
   # TypeScript (なんかTypeScriptで一番使われてる奴。詳細は知らん)
   - remote: buf.build/bufbuild/es

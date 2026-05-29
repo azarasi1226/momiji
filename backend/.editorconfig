@@ -1,0 +1,6 @@
+# すべてのkotlinファイルに対する共通設定
+[*.{kt,kts}]
+
+# 自動生成されたコードは除外（jOOQ / gRPC など build/generated-sources 配下全部）
+[**/generated-sources/**]
+ktlint = disabled
