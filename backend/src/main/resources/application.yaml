@@ -6,10 +6,9 @@ spring:
     group:
       integration-test:
         - app-common
-        # IDPはKeycloakで固定（TestContainerで本物のKeycloakを立ち上げて接続）。
-        # idp-keycloak.yaml のプロパティは @DynamicPropertySource で実コンテナの値に上書きされる。
-        - idp-keycloak
-        - mail-smtp
+        # IDP / Mail / JwtDecoder / OidcUserInfoFetcher は @MockkBean で置き換えるため、
+        # 本物の bean を作る idp-* / mail-* profile は外す。 これにより Keycloak / MailHog
+        # の TestContainer を起動する必要もなくなる。
         - app-integration-test
       local:
         - app-common

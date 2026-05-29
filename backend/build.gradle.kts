@@ -44,9 +44,7 @@ dependencies {
     testImplementation("org.axonframework:axon-test")
     // 5.1から AxonServerContainer / AxonServerContainerUtils は別group (io.axoniq.framework) に分離されたため明示
     testImplementation("io.axoniq.framework:axoniq-testcontainer:5.1.1")
-    // Keycloak の TestContainer ラッパー（実Keycloakで JWT検証 / 管理API を統合テスト）
-    testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
-    // Kotlin-first な spring mocking: @SpykBean (= @SpyBean MockK 版) と MockK の verify 構文が使える
+    // Kotlin-first な spring mocking: @MockkBean / @MockkSpyBean と MockK の verify 構文が使える
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
