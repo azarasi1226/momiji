@@ -1,15 +1,16 @@
 "use server"
 
-import { auth, signOut } from "@/auth"
+import { signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createGrpcClient } from "@/lib/grpc"
+import { requireValidSession } from "@/lib/session"
 import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js"
 import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js"
 import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js"
 import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js"
 import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js"
-import { ConnectError } from "@connectrpc/connect"
+import { Code, ConnectError } from "@connectrpc/connect"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 
 export type UserProfile = {
@@ -24,25 +25,39 @@ export type UserProfile = {
   updatedAt: string
 }
 
-export async function fetchProfile(): Promise<UserProfile> {
-  const session = await auth()
-  if (!session?.accessToken) {
+/**
+ * gRPC 呼び出し中に backend から UNAUTHENTICATED が返った場合の共通ハンドラ。
+ * Server Action / Server Component から呼んで、 "/" に飛ばして再ログインを促す。
+ *
+ * frontend で「期限切れ」 を検出しきれなかった race も含めて、 backend 判断を信用する最後の砦。
+ */
+function redirectIfUnauthenticated(e: unknown): never | void {
+  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
     redirect("/")
   }
+}
 
-  const client = createGrpcClient(FindUserByIdService, session.accessToken)
-  const response = await client.findUserById({})
+export async function fetchProfile(): Promise<UserProfile> {
+  const session = await requireValidSession()
 
-  return {
-    id: response.id,
-    email: response.email,
-    name: response.name,
-    phoneNumber: response.phoneNumber,
-    postalCode: response.postalCode,
-    address1: response.address1,
-    address2: response.address2,
-    createdAt: response.createdAt ? timestampDate(response.createdAt).toISOString() : "",
-    updatedAt: response.updatedAt ? timestampDate(response.updatedAt).toISOString() : "",
+  try {
+    const client = createGrpcClient(FindUserByIdService, session.accessToken)
+    const response = await client.findUserById({})
+
+    return {
+      id: response.id,
+      email: response.email,
+      name: response.name,
+      phoneNumber: response.phoneNumber,
+      postalCode: response.postalCode,
+      address1: response.address1,
+      address2: response.address2,
+      createdAt: response.createdAt ? timestampDate(response.createdAt).toISOString() : "",
+      updatedAt: response.updatedAt ? timestampDate(response.updatedAt).toISOString() : "",
+    }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
   }
 }
 
@@ -55,10 +70,7 @@ export async function updateProfile(
   _prevState: UpdateProfileState,
   formData: FormData,
 ): Promise<UpdateProfileState> {
-  const session = await auth()
-  if (!session?.accessToken) {
-    redirect("/")
-  }
+  const session = await requireValidSession()
 
   try {
     const client = createGrpcClient(UpdateUserService, session.accessToken)
@@ -70,6 +82,7 @@ export async function updateProfile(
       address2: formData.get("address2") as string,
     })
   } catch (e) {
+    redirectIfUnauthenticated(e)
     if (e instanceof ConnectError) {
       return { error: e.message }
     }
@@ -85,15 +98,13 @@ export type DeleteAccountState = {
 } | null
 
 export async function deleteAccount(): Promise<DeleteAccountState> {
-  const session = await auth()
-  if (!session?.accessToken) {
-    redirect("/")
-  }
+  const session = await requireValidSession()
 
   try {
     const client = createGrpcClient(DeleteUserService, session.accessToken)
     await client.deleteUser({})
   } catch (e) {
+    redirectIfUnauthenticated(e)
     if (e instanceof ConnectError) {
       return { error: e.message }
     }
@@ -113,10 +124,7 @@ export async function requestEmailChange(
   _prevState: EmailChangeState,
   formData: FormData,
 ): Promise<EmailChangeState> {
-  const session = await auth()
-  if (!session?.accessToken) {
-    redirect("/")
-  }
+  const session = await requireValidSession()
 
   try {
     const client = createGrpcClient(RequestEmailChangeService, session.accessToken)
@@ -124,6 +132,7 @@ export async function requestEmailChange(
       newEmail: formData.get("newEmail") as string,
     })
   } catch (e) {
+    redirectIfUnauthenticated(e)
     if (e instanceof ConnectError) {
       return { error: e.message }
     }
@@ -137,10 +146,7 @@ export async function confirmEmailChange(
   _prevState: EmailChangeState,
   formData: FormData,
 ): Promise<EmailChangeState> {
-  const session = await auth()
-  if (!session?.accessToken) {
-    redirect("/")
-  }
+  const session = await requireValidSession()
 
   try {
     const client = createGrpcClient(ConfirmEmailChangeService, session.accessToken)
@@ -148,6 +154,7 @@ export async function confirmEmailChange(
       token: formData.get("token") as string,
     })
   } catch (e) {
+    redirectIfUnauthenticated(e)
     if (e instanceof ConnectError) {
       return { error: e.message }
     }

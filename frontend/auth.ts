@@ -50,7 +50,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const data = await res.json()
 
         if (!res.ok) {
-          console.error("Token refresh failed:", data)
+          // status code も一緒に出すことで invalid_grant (refresh token 期限切れ) と
+          // 設定不整合 (invalid_client 等) を切り分けやすくする。
+          console.error(`Token refresh failed (status ${res.status}):`, data)
           return { ...token, error: "RefreshTokenError" }
         }
 
