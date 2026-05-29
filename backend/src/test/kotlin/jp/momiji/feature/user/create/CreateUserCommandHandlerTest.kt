@@ -1,5 +1,7 @@
 package jp.momiji.feature.user.create
 
+import com.github.michaelbull.result.get
+import jp.momiji.domain.user.Email
 import jp.momiji.events.user.ExternalIdentityLinkedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
@@ -29,7 +31,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                         oidcIssuer = "https://idp.example.com",
                         oidcSubject = "subj-brand-new",
                         oidcIdentityProvider = "LOCAL",
-                        email = "brandnew@example.com",
+                        email = Email.create("brandnew@example.com").get()!!,
                         emailVerified = true,
                     ),
                 ).then()
@@ -64,7 +66,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-not-verified",
                     oidcIdentityProvider = "LOCAL",
-                    email = "notverified@example.com",
+                    email = Email.create("notverified@example.com").get()!!,
                     emailVerified = false,
                 ),
             ).then()
@@ -92,7 +94,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     oidcIssuer = "https://idp.example.com",
                     oidcSubject = "subj-idempotent", // 同一subject
                     oidcIdentityProvider = "LOCAL",
-                    email = "idempotent@example.com",
+                    email = Email.create("idempotent@example.com").get()!!,
                     emailVerified = true,
                 ),
             ).then()
@@ -120,7 +122,7 @@ class CreateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     oidcIssuer = "https://accounts.google.com",
                     oidcSubject = "subj-google-link",
                     oidcIdentityProvider = "GOOGLE",
-                    email = "link@example.com", // 既存ユーザーと同じemail
+                    email = Email.create("link@example.com").get()!!, // 既存ユーザーと同じemail
                     emailVerified = true,
                 ),
             ).then()

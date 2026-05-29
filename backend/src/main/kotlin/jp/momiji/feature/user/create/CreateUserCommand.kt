@@ -1,6 +1,7 @@
 package jp.momiji.feature.user.create
 
 import jp.momiji.domain.BusinessError
+import jp.momiji.domain.user.Email
 import jp.momiji.feature.CommandResult
 import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
@@ -9,7 +10,7 @@ data class CreateUserCommand(
     val oidcIssuer: String,
     val oidcSubject: String,
     val oidcIdentityProvider: String,
-    val email: String,
+    val email: Email,
     val emailVerified: Boolean,
 )
 

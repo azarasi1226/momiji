@@ -13,7 +13,7 @@ import org.axonframework.modelling.annotation.TargetEntityId
 
 /**
  * CommandHandler に渡される時点で「全フィールド検証済み」であることを型で保証する。
- * 検証は gRPC 入口で [jp.momiji.domain.zipAll] で集約検証して組み立てる。
+ * 検証は gRPC 入口で `kotlin-result` の `zipOrAccumulate` で集約検証して組み立てる。
  */
 data class UpdateUserCommand(
     @TargetEntityId

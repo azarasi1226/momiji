@@ -1,6 +1,6 @@
 # ADR 0001: 値オブジェクトと Result 型による検証集約
 
-- **ステータス**: 採用 (PoC: UpdateUser / RequestEmailChange)
+- **ステータス**: 採用 (全 Command 適用済: UpdateUser / RequestEmailChange / CreateUser / ConfirmEmailChange)
 - **作成日**: 2026-05-29
 - **関連 PR**: (今回の値オブジェクト導入)
 
@@ -30,7 +30,8 @@ domain/                         ← ドメイン概念 (vertical slice に依存
     ├── PhoneNumber.kt
     ├── PostalCode.kt
     ├── Address1.kt
-    └── Address2.kt
+    ├── Address2.kt
+    └── EmailChangeToken.kt      ← JWT 風 3 セグメント形式の確認用トークン
 ```
 
 `feature/` (use case 層) は `domain/` に一方向依存。 逆方向の依存は無い。
@@ -119,7 +120,7 @@ Command は値オブジェクト型を持つが、 Event (例: `UserUpdatedEvent
 
 CommandHandler 内で `command.name.value` で平文を取り出して event に積む。
 
-### 5. なぜ Address1 + Address2 を 1 つの `Address` にまとめないか
+### 7. なぜ Address1 + Address2 を 1 つの `Address` にまとめないか
 
 「住所」 を `Address(line1, line2)` の 1 つの値オブジェクトにまとめると DDD としては綺麗だが、 以下の技術制約がある:
 
@@ -127,20 +128,19 @@ CommandHandler 内で `command.name.value` で平文を取り出して event に
 - 他の値オブジェクトは `Result<T, DomainError>` (単一エラー)
 - `zipOrAccumulate` は **E 型を統一** する必要があるため、 上記の混在は型レベルで合成不可
 
-回避策として `AddressLine1` / `AddressLine2` を内部値オブジェクトに分けて `Address` 集合体にすることはできるが、 結局 line1 / line2 を別々に検証する点では現状の `Address1` / `Address2` と等価。 PoC 範囲では現状維持。
+回避策として gRPC 層で `buildList` による自前集約に切り替える方法もあるが、 `zipOrAccumulate` の優雅さを失う trade-off があり、 当面は `Address1` / `Address2` の分割を維持する。
 
-### 6. なぜ全 Command を型化していないか
+### 6. 全 Command の型化状況
 
-PoC は `UpdateUserCommand` と `RequestEmailChangeCommand` のみ。 残りは:
+| Command | 型化フィールド | 備考 |
+|---|---|---|
+| `UpdateUserCommand` | name / phoneNumber / postalCode / address1 / address2 | `zipOrAccumulate` で 5 フィールド集約 |
+| `RequestEmailChangeCommand` | newEmail (Email 型) | 単一フィールドなので `getOrElse` |
+| `CreateUserCommand` | email (Email 型) | IDP 経由 (信頼境界内) だが broken IDP への防御 |
+| `ConfirmEmailChangeCommand` | token (EmailChangeToken 型) | 形式チェックを値オブジェクトに、 署名/期限検証は `EmailChangeTokenService` |
+| `DeleteUserCommand` | (id のみ、 型化対象なし) | 内部 userId は信頼境界 |
 
-- `CreateUserCommand.email` — IDP 経由で取得した値 (内部信頼境界)、 防御的に型化する価値はあるが優先度低
-- `ConfirmEmailChangeCommand.token` — JWT decode が CommandHandler 内で起こる構造、 値オブジェクト化は decode 後の `newEmail` が対象になり構造変更が大きい
-
-実運用への適用順序:
-
-1. 外部入力を直接受ける `Update`, `RequestEmailChange` (済)
-2. IDP 経由の信頼境界寄り `CreateUser` の `email` (next)
-3. JWT decode 後の `ConfirmEmailChange` (構造変更案件)
+`Address1` / `Address2` を 1 つの `Address(line1, line2)` にまとめる案は検討したが見送り (理由は §7)。
 
 ## 帰結
 

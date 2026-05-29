@@ -30,7 +30,9 @@ class ConfirmEmailChangeCommandHandler(
             return ConfirmEmailChangeCommandResult.userNotFound()
         }
 
-        val payload = emailChangeTokenService.verify(command.token)
+        // 形式チェックは EmailChangeToken 値オブジェクトが gRPC 入口で済ませているので、
+        // ここでは平文を取り出して 署名 + 期限 検証する。
+        val payload = emailChangeTokenService.verify(command.token.value)
         if (payload == null) {
             return ConfirmEmailChangeCommandResult.invalidToken()
         }

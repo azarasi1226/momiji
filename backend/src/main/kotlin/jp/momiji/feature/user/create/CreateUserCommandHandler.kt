@@ -34,7 +34,7 @@ class CreateUserCommandHandler(
         }
 
         // ③すでにemailアドレスが登録されていたら、既存ユーザーとIDPのIDをリンクする
-        val existingUserId = findUserIdByEmail(command.email)
+        val existingUserId = findUserIdByEmail(command.email.value)
         if (existingUserId != null) {
             eventAppender.append(
                 ExternalIdentityLinkedEvent(
@@ -48,11 +48,12 @@ class CreateUserCommandHandler(
         }
 
         // ④新規ユーザー登録だった場合は、"ユーザー作成" "IDリンク"の２個イベントを出す
+        // Event は将来のスキーマ進化のためあえて String のまま (値オブジェクト型を持ち込まない)。
         val newUserId = ulid.nextULID()
         eventAppender.append(
             UserCreatedEvent(
                 id = newUserId,
-                email = command.email,
+                email = command.email.value,
             ),
             ExternalIdentityLinkedEvent(
                 userId = newUserId,

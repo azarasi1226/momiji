@@ -1,6 +1,9 @@
 package jp.momiji.feature.user.changeemail.confirm
 
+import com.github.michaelbull.result.getOrElse
 import jp.momiji.config.grpc.GrpcAuthContext
+import jp.momiji.domain.ValidationException
+import jp.momiji.domain.user.EmailChangeToken
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeRequest
@@ -18,11 +21,17 @@ class ConfirmEmailChangeGrpcService(
         val auth = GrpcAuthContext.current()
         val userId = userIdResolver.resolve(auth)
 
+        // 形式チェックだけ値オブジェクトで担う。 署名 + 期限の検証は CommandHandler 側。
+        val token =
+            EmailChangeToken.create(request.token).getOrElse {
+                throw ValidationException(listOf(it))
+            }
+
         commandGateway
             .confirmEmailChange(
                 ConfirmEmailChangeCommand(
                     userId = userId,
-                    token = request.token,
+                    token = token,
                 ),
             ).throwIfError()
 

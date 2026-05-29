@@ -1,5 +1,7 @@
 package jp.momiji.feature.user.changeemail.confirm
 
+import com.github.michaelbull.result.get
+import jp.momiji.domain.user.EmailChangeToken
 import jp.momiji.events.user.EmailChangeConfirmedEvent
 import jp.momiji.events.user.UserCreatedEvent
 import jp.momiji.feature.MomijiIntegrationTestBase
@@ -17,7 +19,7 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
         val userId = "01HXYZCONFMAIL0000000000001"
         val previousEmail = "alice@example.com"
         val newEmail = "newalice@example.com"
-        val token = tokenService.sign(EmailChangePayload(userId = userId, newEmail = newEmail))
+        val token = EmailChangeToken.create(tokenService.sign(EmailChangePayload(userId = userId, newEmail = newEmail))).get()!!
 
         fixture
             .given()
@@ -43,7 +45,7 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
     @Test
     fun `異常系_ユーザー未作成ならuserNotFound`() {
         val userId = "01HXYZCONFMAIL0000000000002"
-        val token = tokenService.sign(EmailChangePayload(userId = userId, newEmail = "new@example.com"))
+        val token = EmailChangeToken.create(tokenService.sign(EmailChangePayload(userId = userId, newEmail = "new@example.com"))).get()!!
 
         fixture
             .given()
@@ -60,8 +62,11 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
     }
 
     @Test
-    fun `異常系_無効なトークンならinvalidToken`() {
+    fun `異常系_署名不正のトークンならinvalidToken`() {
+        // 形式 (header.payload.signature の 3 セグメント) は OK だが署名が偽物
+        // → 値オブジェクト層は通り、 CommandHandler の verify で弾かれる経路
         val userId = "01HXYZCONFMAIL0000000000003"
+        val tamperedToken = EmailChangeToken.create("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ4In0.invalid-signature").get()!!
 
         fixture
             .given()
@@ -71,7 +76,7 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
             .command(
                 ConfirmEmailChangeCommand(
                     userId = userId,
-                    token = "this-is-not-a-valid-jwt",
+                    token = tamperedToken,
                 ),
             ).then()
             .resultMessagePayload(ConfirmEmailChangeCommandResult.invalidToken())
@@ -83,7 +88,10 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
         val userId = "01HXYZCONFMAIL0000000000004"
         val otherUserId = "01HXYZCONFMAIL0000000000005"
         // 別ユーザー(otherUserId)宛に発行したtokenを userId が使おうとする
-        val token = tokenService.sign(EmailChangePayload(userId = otherUserId, newEmail = "new@example.com"))
+        val token =
+            EmailChangeToken
+                .create(tokenService.sign(EmailChangePayload(userId = otherUserId, newEmail = "new@example.com")))
+                .get()!!
 
         fixture
             .given()
@@ -105,7 +113,7 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
         val userId = "01HXYZCONFMAIL0000000000006"
         val otherUserId = "01HXYZCONFMAIL0000000000007"
         val takenEmail = "taken@example.com"
-        val token = tokenService.sign(EmailChangePayload(userId = userId, newEmail = takenEmail))
+        val token = EmailChangeToken.create(tokenService.sign(EmailChangePayload(userId = userId, newEmail = takenEmail))).get()!!
 
         fixture
             .given()
