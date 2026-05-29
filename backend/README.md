@@ -60,36 +60,33 @@ backend/src/main/kotlin/jp/momiji/
 
 ## 起動と開発フロー
 
+リポジトリルートに [Taskfile](https://taskfile.dev/) を用意してある。ローカル環境の上げ下げ・コード生成・DBマイグレーションは `task` 経由で叩く前提。`task --list-all` で全タスク一覧。
+
 ### 必要なもの
 
 - JDK 25
-- Docker（MySQL / Axon Server / Keycloak 用、`docker-compose.yaml` がルートにある）
-- `buf` CLI（gRPCコード生成用）
-
-### 初回セットアップ
+- Docker / Docker Compose
+- [`aqua`](https://aquaproj.github.io/) — CLIバージョン管理ツール。リポジトリルートの [`aqua.yaml`](../aqua.yaml) に `task` / `buf` / `atlas` / `pnpm` のバージョンが宣言されていて、`aqua install` で全部入る。
 
 ```bash
-# リポジトリルートで Docker 環境起動
-docker compose up -d
+aqua install   # task / buf / atlas / pnpm をインストール
+```
 
-# gRPC コード生成（grpc/ 配下のproto → backend/build/generated-sources/grpc）
-cd grpc
-buf generate
+### 初回セットアップ（リポジトリルートで実行）
 
-# backend ビルド
-cd ../backend
+```bash
+task local-up              # MySQL / Axon Server / Keycloak をコンテナで起動
+task buf-generate          # proto → Kotlin / TypeScript 生成
+task atlas-migrate-apply   # マイグレーション適用（local-up に依存しているので未起動でも自動で立ち上がる）
+
+cd backend
 ./gradlew build
 ```
 
-`./gradlew build` は内部で以下を自動実行する:
-- `jooqCodegen`（schema.sql → Kotlinコード生成）
-- `compileKotlin`
-- `ktlintCheck`
-- `test`
-
-### 起動
+### バックエンドの起動
 
 ```bash
+cd backend
 ./gradlew bootRun
 ```
 
