@@ -68,6 +68,7 @@ dependencies {
     implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
     implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8") // Cognitoクライアント
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1") // Result<V, E> 型 (値オブジェクトの validation 用)
 }
 
 kotlin {
@@ -78,6 +79,11 @@ kotlin {
             "-Xjsr305=strict",
             // data classのコンストラクタ引数に書いたアノテーションを、プロパティ側にも適用する。
             "-Xannotation-default-target=param-property",
+            // data class の自動生成 copy() の visibility を primary constructor に揃える。
+            // 例: internal constructor のとき copy() も internal に。
+            // これにより、 値オブジェクトの validation を copy() でバイパスされる脆弱性を防ぐ。
+            // 将来 Kotlin の default 挙動になる予定なので先取りしておく。
+            "-Xconsistent-data-class-copy-visibility",
         )
     }
 }

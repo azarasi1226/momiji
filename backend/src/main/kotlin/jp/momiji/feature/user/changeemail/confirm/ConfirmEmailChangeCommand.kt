@@ -1,7 +1,7 @@
 package jp.momiji.feature.user.changeemail.confirm
 
+import jp.momiji.domain.BusinessError
 import jp.momiji.feature.CommandResult
-import jp.momiji.feature.Error
 import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.annotation.TargetEntityId
@@ -15,13 +15,13 @@ data class ConfirmEmailChangeCommand(
 object ConfirmEmailChangeCommandResult {
     fun success() = CommandResult.success()
 
-    fun userNotFound() = CommandResult.fail(Error("ユーザーが存在しませんでした"))
+    fun userNotFound() = CommandResult.fail(BusinessError("ユーザーが存在しませんでした"))
 
-    fun invalidToken() = CommandResult.fail(Error("無効または期限切れのトークンです"))
+    fun invalidToken() = CommandResult.fail(BusinessError("無効または期限切れのトークンです"))
 
-    fun emailAlreadyInUse() = CommandResult.fail(Error("このメールアドレスは既に使用されています"))
+    fun emailAlreadyInUse() = CommandResult.fail(BusinessError("このメールアドレスは既に使用されています"))
 
-    fun userMismatch() = CommandResult.fail(Error("このメールアドレス変更リクエストは別のユーザーのものです"))
+    fun userMismatch() = CommandResult.fail(BusinessError("このメールアドレス変更リクエストは別のユーザーのものです"))
 }
 
 suspend fun CommandGateway.confirmEmailChange(command: ConfirmEmailChangeCommand): CommandResult =

@@ -3,7 +3,8 @@ package jp.momiji.config.grpc
 import io.grpc.ServerInterceptor
 import io.grpc.Status
 import io.grpc.StatusException
-import jp.momiji.feature.UseCaseException
+import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.ValidationException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -67,6 +68,7 @@ class GrpcConfig {
     fun grpcExceptionHandler(): GrpcExceptionHandler =
         GrpcExceptionHandler { ex ->
             when (ex) {
+                is ValidationException -> StatusException(Status.INVALID_ARGUMENT.withDescription(ex.message))
                 is UseCaseException -> StatusException(Status.INVALID_ARGUMENT.withDescription(ex.error.message))
                 else -> null
             }

@@ -27,11 +27,11 @@ class UpdateUserCommandHandler {
         eventAppender.append(
             UserUpdatedEvent(
                 id = command.id,
-                name = command.name,
-                phoneNumber = command.phoneNumber,
-                postalCode = command.postalCode,
-                address1 = command.address1,
-                address2 = command.address2,
+                name = command.name.value,
+                phoneNumber = command.phoneNumber.value,
+                postalCode = command.postalCode.value,
+                address1 = command.address1.value,
+                address2 = command.address2.value,
             ),
         )
         return UpdateUserCommandResult.success()
