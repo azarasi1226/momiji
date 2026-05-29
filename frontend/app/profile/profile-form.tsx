@@ -3,11 +3,25 @@
 import { useActionState } from "react"
 import { updateProfile, type UpdateProfileState, type UserProfile } from "./actions"
 
+// 共通スタイル。 fieldError 有無で border 色を切り替える。
+function inputClassName(hasError: boolean): string {
+  const base = "rounded-lg border px-4 py-2 dark:bg-zinc-900 dark:text-zinc-50"
+  return hasError
+    ? `${base} border-red-500 dark:border-red-400`
+    : `${base} border-zinc-200 dark:border-zinc-700`
+}
+
+function FieldErrorMessage({ message }: { message?: string }) {
+  if (!message) return null
+  return <p className="text-xs text-red-500 dark:text-red-400">{message}</p>
+}
+
 export function ProfileForm({ profile }: { profile: UserProfile }) {
   const [state, formAction, isPending] = useActionState<UpdateProfileState, FormData>(
     updateProfile,
     null,
   )
+  const fieldErrors = state?.fieldErrors
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
@@ -34,8 +48,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           type="text"
           defaultValue={profile.name}
           required
-          className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+          className={inputClassName(!!fieldErrors?.name)}
         />
+        <FieldErrorMessage message={fieldErrors?.name} />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -48,8 +63,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           type="tel"
           defaultValue={profile.phoneNumber}
           required
-          className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+          className={inputClassName(!!fieldErrors?.phoneNumber)}
         />
+        <FieldErrorMessage message={fieldErrors?.phoneNumber} />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -62,8 +78,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           type="text"
           defaultValue={profile.postalCode}
           required
-          className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+          className={inputClassName(!!fieldErrors?.postalCode)}
         />
+        <FieldErrorMessage message={fieldErrors?.postalCode} />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -76,8 +93,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           type="text"
           defaultValue={profile.address1}
           required
-          className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+          className={inputClassName(!!fieldErrors?.address1)}
         />
+        <FieldErrorMessage message={fieldErrors?.address1} />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -90,8 +108,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           type="text"
           defaultValue={profile.address2}
           required
-          className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+          className={inputClassName(!!fieldErrors?.address2)}
         />
+        <FieldErrorMessage message={fieldErrors?.address2} />
       </div>
 
       {state?.error && (

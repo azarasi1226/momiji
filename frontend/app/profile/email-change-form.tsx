@@ -7,6 +7,18 @@ import {
   type EmailChangeState,
 } from "./actions"
 
+function inputClassName(hasError: boolean): string {
+  const base = "rounded-lg border px-4 py-2 dark:bg-zinc-900 dark:text-zinc-50"
+  return hasError
+    ? `${base} border-red-500 dark:border-red-400`
+    : `${base} border-zinc-200 dark:border-zinc-700`
+}
+
+function FieldErrorMessage({ message }: { message?: string }) {
+  if (!message) return null
+  return <p className="text-xs text-red-500 dark:text-red-400">{message}</p>
+}
+
 export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
   const [step, setStep] = useState<"request" | "confirm">("request")
 
@@ -27,6 +39,7 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
   )
 
   if (step === "confirm") {
+    const tokenError = confirmState?.fieldErrors?.token
     return (
       <div className="flex w-full flex-col gap-4">
         <h2 className="text-lg font-medium text-black dark:text-zinc-50">
@@ -46,8 +59,9 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
               name="token"
               type="text"
               required
-              className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+              className={inputClassName(!!tokenError)}
             />
+            <FieldErrorMessage message={tokenError} />
           </div>
 
           {confirmState?.error && (
@@ -82,6 +96,8 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
     )
   }
 
+  const newEmailError = requestState?.fieldErrors?.email
+
   return (
     <div className="flex w-full flex-col gap-4">
       <h2 className="text-lg font-medium text-black dark:text-zinc-50">
@@ -101,8 +117,9 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
             name="newEmail"
             type="email"
             required
-            className="rounded-lg border border-zinc-200 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+            className={inputClassName(!!newEmailError)}
           />
+          <FieldErrorMessage message={newEmailError} />
         </div>
 
         {requestState?.error && (

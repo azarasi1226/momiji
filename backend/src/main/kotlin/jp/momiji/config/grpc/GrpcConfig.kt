@@ -1,10 +1,16 @@
 package jp.momiji.config.grpc
 
+import com.google.protobuf.Any
 import io.grpc.ServerInterceptor
 import io.grpc.Status
 import io.grpc.StatusException
+import io.grpc.protobuf.StatusProto
 import jp.momiji.domain.UseCaseException
 import jp.momiji.domain.ValidationException
+import jp.momiji.grpc.momiji.common.v1.ErrorDetail
+import jp.momiji.grpc.momiji.common.v1.FieldError
+import jp.momiji.grpc.momiji.common.v1.UseCaseError
+import jp.momiji.grpc.momiji.common.v1.ValidationError
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,6 +19,7 @@ import org.springframework.grpc.server.GlobalServerInterceptor
 import org.springframework.grpc.server.exception.GrpcExceptionHandler
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import com.google.rpc.Status as RpcStatus
 
 /**
  * gRPCサーバーの横断設定。
@@ -55,22 +62,73 @@ class GrpcConfig {
     ): ServerInterceptor = GrpcAuthInterceptor(jwtDecoder, publicEndpointRegistry)
 
     /**
-     * ハンドラ内で投げた業務例外を、適切な gRPC Status にマッピングするハンドラ。
+     * ハンドラ内で投げた業務例外を、 gRPC Status + 構造化 details にマッピングするハンドラ。
      *
-     * 現状の方針:
-     *   - [UseCaseException] （バリデーション失敗・ビジネスルール違反） → `INVALID_ARGUMENT`
-     *   - その他の例外は `null` を返して spring-grpc 既定の処理（`UNKNOWN` 等）に委ねる
+     * - [UseCaseException] → `INVALID_ARGUMENT` + [ErrorDetail.use_case_error] (message 1つ)
+     * - [ValidationException] → `INVALID_ARGUMENT` + [ErrorDetail.validation_error] (field 別エラーリスト)
+     * - その他は `null` を返して spring-grpc 既定 (`UNKNOWN`) に委ねる
      *
-     * 改善余地: 「ユーザー未存在」「メール重複」など意味別に `NOT_FOUND` / `ALREADY_EXISTS` /
-     * `PERMISSION_DENIED` に分けたほうが、クライアント側でハンドリングしやすい。
+     * フロント側は ConnectError.findDetails(ErrorDetailSchema) で type-safe に取り出せる。
      */
     @Bean
     fun grpcExceptionHandler(): GrpcExceptionHandler =
         GrpcExceptionHandler { ex ->
             when (ex) {
-                is ValidationException -> StatusException(Status.INVALID_ARGUMENT.withDescription(ex.message))
-                is UseCaseException -> StatusException(Status.INVALID_ARGUMENT.withDescription(ex.error.message))
+                is ValidationException ->
+                    buildStatusException(
+                        Status.INVALID_ARGUMENT,
+                        ex.message ?: "validation error",
+                        buildValidationDetail(ex),
+                    )
+                is UseCaseException ->
+                    buildStatusException(
+                        Status.INVALID_ARGUMENT,
+                        ex.error.message,
+                        buildUseCaseDetail(ex),
+                    )
                 else -> null
             }
         }
+
+    private fun buildValidationDetail(ex: ValidationException): ErrorDetail =
+        ErrorDetail
+            .newBuilder()
+            .setValidationError(
+                ValidationError
+                    .newBuilder()
+                    .addAllErrors(
+                        ex.errors.map { err ->
+                            FieldError
+                                .newBuilder()
+                                .setFieldName(err.field)
+                                .setMessage(err.message)
+                                .build()
+                        },
+                    ).build(),
+            ).build()
+
+    private fun buildUseCaseDetail(ex: UseCaseException): ErrorDetail =
+        ErrorDetail
+            .newBuilder()
+            .setUseCaseError(
+                UseCaseError
+                    .newBuilder()
+                    .setMessage(ex.error.message)
+                    .build(),
+            ).build()
+
+    private fun buildStatusException(
+        status: Status,
+        message: String,
+        detail: ErrorDetail,
+    ): StatusException {
+        val rpcStatus =
+            RpcStatus
+                .newBuilder()
+                .setCode(status.code.value())
+                .setMessage(message)
+                .addDetails(Any.pack(detail))
+                .build()
+        return StatusProto.toStatusException(rpcStatus)
+    }
 }
