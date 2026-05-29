@@ -28,7 +28,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -55,10 +54,10 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
 
     // Other
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")             // ロギング
-    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0")          // ULID生成
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14") // ロギング
+    implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
     implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8") // Cognitoクライアント
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")         // Coroutines (GRPC、Axon Command Gatewayで使用)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
 }
 
 kotlin {
@@ -71,13 +70,18 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-sourceSets.main {
+// 自動生成コードの出力先（jOOQ / gRPC など）
+val generatedSourcesDir = "build/generated-sources"
+val jooqGeneratedDir = "$generatedSourcesDir/jooq"
+val grpcGeneratedDir = "$generatedSourcesDir/grpc"
 
+// 自動生成コードを main ソースセットの一部として認識させる
+sourceSets.main {
     java.srcDirs(
-        // jOOQの自働作成コード
-        "build/generated-sources/jooq",
-        // GRPCの自動作成コード
-        "build/generated-sources/grpc",
+        // jOOQの自動生成コード
+        jooqGeneratedDir,
+        // gRPCの自動生成コード
+        grpcGeneratedDir,
     )
 }
 
@@ -105,6 +109,8 @@ jooq {
             }
             target {
                 packageName = "iss.jooq.generated"
+                // 出力先を明示（sourceSetsで参照しているパスと一致させる）
+                directory = jooqGeneratedDir
             }
         }
     }
@@ -123,11 +129,17 @@ idea {
     module {
         // IntelliJ に「ここは自動生成コードだから干渉しないで」と伝える
         // → Find Usages / 検索 / インスペクション / リファクタの対象から外れる
-        generatedSourceDirs.addAll(
-            files(
-                "build/generated-sources/jooq",
-                "build/generated-sources/grpc",
-            ),
-        )
+        // 親ディレクトリだけ登録しておけば、配下に増えるgenerator（jOOQ/gRPC/...）も自動でカバーされる
+        generatedSourceDirs.add(file(generatedSourcesDir))
     }
+}
+
+// =====================================================
+// ======================ktlint=========================
+// =====================================================
+// ktlintタスク（runKtlintCheckOverMainSourceSet 等）はsourceSetsを介して
+// build/generated-sources/jooq を入力に持つため、jooqCodegen より後に走らせる必要がある。
+// .editorconfigでlint対象のフォルダ絞っているのだが、Gradle 9.x の strict implicit-dependency 検出が有効になっていると、jooqCodegen → runKtlintCheckOverMainSourceSet の依存関係が明示されていないためにエラーになる。
+tasks.matching { it.name.startsWith("runKtlint") }.configureEach {
+    dependsOn("jooqCodegen")
 }
