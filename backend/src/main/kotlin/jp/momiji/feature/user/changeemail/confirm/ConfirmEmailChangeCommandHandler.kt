@@ -47,6 +47,7 @@ class ConfirmEmailChangeCommandHandler(
             EmailChangeConfirmedEvent(
                 userId = payload.userId,
                 email = payload.newEmail,
+                previousEmail = state.currentEmail,
             ),
         )
         return ConfirmEmailChangeCommandResult.success()
@@ -61,15 +62,24 @@ class ConfirmEmailChangeCommandHandler(
     @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
     class State(
         var created: Boolean,
+        // 旧メール通知の宛先として、EmailChangeConfirmedEvent.previousEmail に渡すために保持
+        var currentEmail: String,
     ) {
         @EntityCreator
         constructor() : this(
             created = false,
+            currentEmail = "",
         )
 
         @EventSourcingHandler
         fun evolve(event: UserCreatedEvent) {
             created = true
+            currentEmail = event.email
+        }
+
+        @EventSourcingHandler
+        fun evolve(event: EmailChangeConfirmedEvent) {
+            currentEmail = event.email
         }
     }
 }

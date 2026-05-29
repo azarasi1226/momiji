@@ -15,15 +15,16 @@ class ConfirmEmailChangeTest : MomijiIntegrationTestBase() {
     lateinit var tokenService: EmailChangeTokenService
 
     @Test
-    fun `正常系_メール変更確認成功`() {
+    fun `正常系_メール変更確認成功でpreviousEmail付きEvent発行`() {
         val userId = "01HXYZCONFMAIL0000000000001"
+        val previousEmail = "alice@example.com"
         val newEmail = "newalice@example.com"
         val token = tokenService.sign(EmailChangePayload(userId = userId, newEmail = newEmail))
 
         fixture
             .given()
             .events(
-                UserCreatedEvent(id = userId, email = "alice@example.com"),
+                UserCreatedEvent(id = userId, email = previousEmail),
             ).`when`()
             .command(
                 ConfirmEmailChangeCommand(
@@ -36,6 +37,7 @@ class ConfirmEmailChangeTest : MomijiIntegrationTestBase() {
                 EmailChangeConfirmedEvent(
                     userId = userId,
                     email = newEmail,
+                    previousEmail = previousEmail,
                 ),
             )
     }

@@ -7,4 +7,5 @@ data class EmailChangeConfirmedEvent(
     @EventTag(key = MomijiEventTag.USER_ID)
     val userId: String,
     val email: String,
+    val previousEmail: String,
 )
