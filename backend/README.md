@@ -183,9 +183,9 @@ ktlint・IntelliJ が共通参照する設定。生成コードを `[**/generate
 ---
 
 ## TODO
-- [ ] **テストコードサンプル拡充**
+- [* ] **テストコードサンプル拡充**
 - [ ] **gRPC Status の細分化**：すべて `INVALID_ARGUMENT` に潰しているのを意味別 (`NOT_FOUND` / `ALREADY_EXISTS` / `PERMISSION_DENIED`) に
 - [ ] **観測性**：Micrometer / OpenTelemetry の導入
-- [ ] プロファイルによって、環境を切り替える仕組みの導入
+- [* ] プロファイルによって、環境を切り替える仕組みの導入
 - [ ] **Event スキーマバージョニング戦略**：Event Sourcing 前提なので将来必須
-- [ ] **AWS Cognito 実装の決着**：[CognitoUserClient](src/main/kotlin/jp/momiji/feature/idp/CognitoUserClient.kt) はコメントアウト中、関連依存も含めて削除 or 復活させるか判断
+- [ ] テストにおいて、Mockの扱いをどうするか。現在のSpy運用派きつくない？Docker追加で立てるのも重いし
