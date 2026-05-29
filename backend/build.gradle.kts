@@ -33,10 +33,19 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
-    testImplementation("org.springframework.boot:spring-boot-starter-security-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+
+    // テスト
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-mysql")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.axonframework:axon-test")
+    // 5.1から AxonServerContainer / AxonServerContainerUtils は別group (io.axoniq.framework) に分離されたため明示
+    testImplementation("io.axoniq.framework:axoniq-testcontainer:5.1.1")
+    // Keycloak の TestContainer ラッパー（実Keycloakで JWT検証 / 管理API を統合テスト）
+    testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
 
     // jooq
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
