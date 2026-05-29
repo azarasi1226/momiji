@@ -1,3 +1,5 @@
+name: momiji
+
 services:
   axon-server:
     image: axoniq/axonserver:2025.2.5-nonroot

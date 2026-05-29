@@ -8,10 +8,14 @@ momiji
 ├─ frontend (NextJS)
 ├─ backend (server side kotlin)
 │   └─ database
+├─ grpc (proto + buf 設定)
+├─ local (docker-compose / keycloak realm 等のローカル環境構築用)
+│   ├─ docker-compose.yaml
+│   └─ keycloak/momiji-realm.json
+├─ docs
+│   └─ sample.md
 ├─ README.md
-├─ docker-compose.yaml
-└─ docs
-└─ sample.md
+└─ taskfile.yaml
 ```
 
 ## 特徴
