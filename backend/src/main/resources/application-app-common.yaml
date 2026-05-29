@@ -18,3 +18,7 @@ momiji:
     # 例外としてローカル開発時のみ app-local.yaml で上書きされるようにしている。
     secret: ${EMAIL_CHANGE_SECRET}
     expiry: PT1H
+  mail:
+    # 送信元アドレスは環境ごとに必須。 未設定だと jakarta.mail が送信を拒否する。
+    # 例外としてローカル開発時のみ app-local.yaml で上書きされるようにしている。
+    from: ${MAIL_FROM}
