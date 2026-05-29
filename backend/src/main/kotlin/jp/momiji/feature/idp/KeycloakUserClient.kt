@@ -11,7 +11,7 @@ import org.springframework.web.client.RestClient
 private val logger = KotlinLogging.logger {}
 
 @Component
-@Profile("local")
+@Profile("idp-keycloak")
 class KeycloakUserClient(
     @Value("\${momiji.keycloak.base-url}") private val baseUrl: String,
     @Value("\${momiji.keycloak.realm}") private val realm: String,

@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoun
 private val logger = KotlinLogging.logger {}
 
 @Component
-@Profile("test", "prod")
+@Profile("idp-cognito")
 class CognitoUserClient(
     @Value("\${momiji.cognito.user-pool-id}") private val userPoolId: String,
     private val cognitoClient: CognitoIdentityProviderClient,
