@@ -5,12 +5,17 @@ spring:
     active: local
     group:
       integration-test:
+        - app-common
+        # IDPはKeycloakで固定（TestContainerで本物のKeycloakを立ち上げて接続）。
+        # idp-keycloak.yaml のプロパティは @DynamicPropertySource で実コンテナの値に上書きされる。
+        - idp-keycloak
+        - mail-smtp
         - app-integration-test
       local:
         - app-common
         - datastore-mysql
         - idp-keycloak
-        - mail
+        - mail-smtp
         # app-local は最後に置く。
         # 環境変数をローカル開発用の具体値で上書きさせたいため。
         - app-local
@@ -19,10 +24,10 @@ spring:
         - app-test
         - datastore-mysql
         - idp-cognito
-        - mail
+        - mail-smtp
       prod:
         - app-common
         - app-prod
         - datastore-mysql
         - idp-cognito
-        - mail
+        - mail-smtp

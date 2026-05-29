@@ -1,3 +1,7 @@
+# 統合テスト用設定
+# DataSource / Axon Server / Keycloak / MailHog の接続先は、TestContainersが起動した
+# コンテナの値を MomijiIntegrationTestBase の @DynamicPropertySource が動的に設定する
+
 # 統合テストは並列で実行されるため、ポートはエフェメラル割当
 server:
   port: 0
@@ -6,6 +10,11 @@ spring:
   grpc:
     server:
       port: 0
+
+momiji:
+  email-change:
+    # 統合テスト用ダミー鍵（EmailChangeTokenService の init で 32byte 以上の検証あり）
+    secret: integration-test-secret-must-be-32-bytes-long
 
 logging:
   level:
