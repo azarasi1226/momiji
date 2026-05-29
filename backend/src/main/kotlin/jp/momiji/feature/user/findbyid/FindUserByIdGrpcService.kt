@@ -4,7 +4,7 @@ import com.google.protobuf.timestamp
 import jp.momiji.feature.Error
 import jp.momiji.feature.UseCaseException
 import jp.momiji.feature.user.UserIdResolver
-import jp.momiji.grpc.GrpcAuthContext
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdRequest
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdResponse
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdServiceGrpcKt

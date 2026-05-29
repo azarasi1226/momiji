@@ -1,4 +1,4 @@
-package jp.momiji.grpc
+package jp.momiji.config.grpc
 
 import io.grpc.Context
 import io.grpc.Status

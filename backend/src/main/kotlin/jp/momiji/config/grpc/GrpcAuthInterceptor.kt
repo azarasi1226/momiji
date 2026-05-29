@@ -1,5 +1,6 @@
-package jp.momiji.grpc
+package jp.momiji.config.grpc
 
+import io.grpc.Context
 import io.grpc.Contexts
 import io.grpc.Metadata
 import io.grpc.ServerCall
@@ -12,6 +13,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 
 class GrpcAuthInterceptor(
     private val jwtDecoder: JwtDecoder,
+    private val publicEndpointRegistry: PublicEndpointRegistry,
 ) : ServerInterceptor {
     companion object {
         private val AUTHORIZATION_KEY: Metadata.Key<String> =
@@ -23,6 +25,11 @@ class GrpcAuthInterceptor(
         headers: Metadata,
         next: ServerCallHandler<ReqT, RespT>,
     ): ServerCall.Listener<ReqT> {
+        // @PublicEndpoint が付いているメソッドは認証をスキップする
+        if (call.methodDescriptor.fullMethodName in publicEndpointRegistry.publicMethods) {
+            return next.startCall(call, headers)
+        }
+
         // Hedearに認証JwtTokenが存在するか検証
         val authHeader =
             headers.get(AUTHORIZATION_KEY)
@@ -40,7 +47,7 @@ class GrpcAuthInterceptor(
         // JwtTokenの検証に成功したらContextにTokenを埋め込む
         val authentication = JwtAuthenticationToken(jwt)
         val context =
-            io.grpc.Context
+            Context
                 .current()
                 .withValue(GrpcAuthContext.AUTH_KEY, authentication)
         return Contexts.interceptCall(context, call, headers, next)

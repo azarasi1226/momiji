@@ -2,7 +2,7 @@ package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.feature.throwIfError
 import jp.momiji.feature.user.UserIdResolver
-import jp.momiji.grpc.GrpcAuthContext
+import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeRequest
 import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeResponse
 import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeServiceGrpcKt
