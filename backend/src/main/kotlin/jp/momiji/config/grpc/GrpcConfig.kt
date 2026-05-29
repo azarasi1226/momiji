@@ -1,6 +1,7 @@
 package jp.momiji.config.grpc
 
 import com.google.protobuf.Any
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.grpc.ServerInterceptor
 import io.grpc.Status
 import io.grpc.StatusException
@@ -9,6 +10,7 @@ import jp.momiji.domain.UseCaseException
 import jp.momiji.domain.ValidationException
 import jp.momiji.grpc.momiji.common.v1.ErrorDetail
 import jp.momiji.grpc.momiji.common.v1.FieldError
+import jp.momiji.grpc.momiji.common.v1.UnknownError
 import jp.momiji.grpc.momiji.common.v1.UseCaseError
 import jp.momiji.grpc.momiji.common.v1.ValidationError
 import org.springframework.beans.factory.annotation.Value
@@ -19,7 +21,10 @@ import org.springframework.grpc.server.GlobalServerInterceptor
 import org.springframework.grpc.server.exception.GrpcExceptionHandler
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import java.util.UUID
 import com.google.rpc.Status as RpcStatus
+
+private val logger = KotlinLogging.logger {}
 
 /**
  * gRPCサーバーの横断設定。
@@ -66,7 +71,7 @@ class GrpcConfig {
      *
      * - [UseCaseException] → `INVALID_ARGUMENT` + [ErrorDetail.use_case_error] (message 1つ)
      * - [ValidationException] → `INVALID_ARGUMENT` + [ErrorDetail.validation_error] (field 別エラーリスト)
-     * - その他は `null` を返して spring-grpc 既定 (`UNKNOWN`) に委ねる
+     * - その他は `UNKNOWN` + [ErrorDetail.unknown_error] でクライアントが「予期せぬエラー」 として表示できるようにする
      *
      * フロント側は ConnectError.findDetails(ErrorDetailSchema) で type-safe に取り出せる。
      */
@@ -86,7 +91,18 @@ class GrpcConfig {
                         ex.error.message,
                         buildUseCaseDetail(ex),
                     )
-                else -> null
+                else -> {
+                    // 想定外例外: 内部情報をクライアントに漏らさないため、
+                    // 詳細はサーバーログにだけ書き、 クライアントには correlationId を渡して
+                    // 後でサポート側でログ突合できるようにする。
+                    val correlationId = UUID.randomUUID().toString()
+                    logger.error(ex) { "予期せぬエラー correlationId=$correlationId" }
+                    buildStatusException(
+                        Status.UNKNOWN,
+                        "サーバーエラーが発生しました",
+                        buildUnknownDetail(correlationId),
+                    )
+                }
             }
         }
 
@@ -114,6 +130,21 @@ class GrpcConfig {
                 UseCaseError
                     .newBuilder()
                     .setMessage(ex.error.message)
+                    .build(),
+            ).build()
+
+    /**
+     * 想定外例外を構造化する。 内部実装情報 (SQL カラム名、 内部ホスト名、 ファイルパス 等) を
+     * クライアントに漏らさないため、 message は固定文字列、 correlationId はサポート問合せ用 UUID。
+     */
+    private fun buildUnknownDetail(correlationId: String): ErrorDetail =
+        ErrorDetail
+            .newBuilder()
+            .setUnknownError(
+                UnknownError
+                    .newBuilder()
+                    .setMessage("サーバーエラーが発生しました")
+                    .setCorrelationId(correlationId)
                     .build(),
             ).build()
 

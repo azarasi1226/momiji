@@ -164,4 +164,5 @@ CommandHandler 内で `command.name.value` で平文を取り出して event に
 
 - [kotlin-result 公式](https://github.com/michaelbull/kotlin-result)
 - [Kotlin: data class consistent copy visibility](https://kotlinlang.org/docs/whatsnew21.html#improved-handling-of-non-public-members-in-data-classes)
+- [ADR 0002](./0002-grpc-error-response.md): 値オブジェクトの `ValidationException` がどう gRPC 構造化エラーに変換されるか
 - ソースコード: `backend/src/main/kotlin/jp/momiji/domain/`

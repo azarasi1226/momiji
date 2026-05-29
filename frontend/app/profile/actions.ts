@@ -41,6 +41,7 @@ export type UserProfile = {
 function parseConnectError(e: unknown): {
   useCaseError?: string
   fieldErrors?: Record<string, string>
+  unknownError?: { message: string; correlationId: string }
   fallback?: string
 } | null {
   if (!(e instanceof ConnectError)) return null
@@ -56,6 +57,14 @@ function parseConnectError(e: unknown): {
       fieldErrors[fe.fieldName] = fe.message
     }
     return { fieldErrors }
+  }
+  if (detail.error.case === "unknownError") {
+    return {
+      unknownError: {
+        message: detail.error.value.message,
+        correlationId: detail.error.value.correlationId,
+      },
+    }
   }
   return { fallback: e.message }
 }
@@ -120,6 +129,11 @@ export async function updateProfile(
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
     if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.unknownError) {
+      return {
+        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+      }
+    }
     if (parsed?.fallback) return { error: parsed.fallback }
     return { error: "ユーザー情報の更新に失敗しました" }
   }
@@ -142,6 +156,11 @@ export async function deleteAccount(): Promise<DeleteAccountState> {
     redirectIfUnauthenticated(e)
     const parsed = parseConnectError(e)
     if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.unknownError) {
+      return {
+        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+      }
+    }
     if (parsed?.fallback) return { error: parsed.fallback }
     return { error: "アカウントの削除に失敗しました" }
   }
@@ -172,6 +191,11 @@ export async function requestEmailChange(
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
     if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.unknownError) {
+      return {
+        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+      }
+    }
     if (parsed?.fallback) return { error: parsed.fallback }
     return { error: "メールアドレス変更リクエストに失敗しました" }
   }
@@ -195,6 +219,11 @@ export async function confirmEmailChange(
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
     if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.unknownError) {
+      return {
+        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+      }
+    }
     if (parsed?.fallback) return { error: parsed.fallback }
     return { error: "メールアドレスの変更確認に失敗しました" }
   }

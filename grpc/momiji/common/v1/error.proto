@@ -12,6 +12,7 @@ message ErrorDetail {
   oneof error {
     UseCaseError use_case_error = 1;
     ValidationError validation_error = 2;
+    UnknownError unknown_error = 3;
   }
 }
 
@@ -34,4 +35,17 @@ message FieldError {
   string field_name = 1;
   // クライアント向け人間可読メッセージ。
   string message = 2;
+}
+
+// 想定外 (UseCaseException / ValidationException 以外) の例外。
+//
+// クライアントには内部実装情報 (例: SQL カラム名、 内部ホスト名、 ファイルパス) を漏らさないため
+// [message] は固定メッセージ ("サーバーエラーが発生しました" 等) にとどめ、
+// 詳細は backend のログにのみ出す。 ユーザーがサポートに問い合わせる際は
+// [correlation_id] を伝えてもらい、 backend のログと突き合わせて原因特定する設計。
+message UnknownError {
+  // クライアント表示用の固定メッセージ。
+  string message = 1;
+  // backend ログとの突合用 UUID。 ユーザーがサポートに伝える。
+  string correlation_id = 2;
 }
