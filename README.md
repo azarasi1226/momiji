@@ -9,14 +9,33 @@ momiji
 ├─ backend (server side kotlin)
 │   └─ database
 ├─ grpc (proto + buf 設定)
-├─ local (docker-compose / keycloak realm 等のローカル環境構築用)
+├─ local (docker-compose / 各種 provisioning 等のローカル環境構築用)
 │   ├─ docker-compose.yaml
-│   └─ keycloak/momiji-realm.json
+│   ├─ keycloak/momiji-realm.json
+│   ├─ prometheus/prometheus.yaml     ← メトリクス scrape 設定
+│   └─ grafana/provisioning/          ← Grafana 自動セットアップ
+│       ├─ datasources/prometheus.yaml
+│       └─ dashboards/momiji-backend.json
 ├─ docs
+│   ├─ adr/                            ← Architecture Decision Records
 │   └─ sample.md
 ├─ README.md
 └─ taskfile.yaml
 ```
+
+## ローカル開発ポート一覧
+
+| サービス | ポート | URL |
+|---|---|---|
+| frontend (NextJS) | 3000 | http://localhost:3000 |
+| backend gRPC | 9091 | (gRPC client から) |
+| Axon Server UI | 8024 | http://localhost:8024 |
+| MySQL | 3336 | mysql://localhost:3336 |
+| Keycloak | 8085 | http://localhost:8085 |
+| Mailpit (SMTP / UI) | 1025 / 8025 | http://localhost:8025 |
+| **Prometheus** | 19090 | http://localhost:19090 |
+| **Grafana** | 3001 | http://localhost:3001 (匿名 Admin で自動ログイン) |
+| **Tempo** (trace API) | 3200 | http://localhost:3200 (UI は持たない、 Grafana から読み出し) |
 
 ## 特徴
 * IDP は Cognito, Auth0, Keycloak などのメジャーな OIDC 準拠 IDP を使用でき、破壊的な変更なしにいつでも交換できる

@@ -1,0 +1,9 @@
+apiVersion: 1 # Grafana provisioning API のバージョン
+
+providers:
+  - name: momiji # provider 識別子 (一意)
+    folder: momiji # Grafana 上でこのフォルダ配下に dashboard が並ぶ
+    type: file # ファイル ベースの provider
+    allowUiUpdates: true # UI で編集した dashboard を JSON ファイルに書き戻すことを許可
+    options:
+      path: /etc/grafana/provisioning/dashboards # この path 配下の JSON を全部読み込む

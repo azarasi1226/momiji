@@ -1,0 +1,2 @@
+# backend は OTLP push 型 (--web.enable-otlp-receiver) なので scrape も rule も無し。
+# 設定値はすべて Prometheus デフォルトで OK。

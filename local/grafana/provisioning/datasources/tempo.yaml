@@ -1,0 +1,7 @@
+apiVersion: 1 # Grafana provisioning API のバージョン
+
+datasources:
+  - name: Tempo # Grafana UI 上の表示名
+    uid: tempo # dashboard 等から参照する固定 ID (省くと毎回ランダム生成されて参照が壊れる)
+    type: tempo # データソース種別
+    url: http://tempo:3200 # docker network 内の Tempo HTTP API

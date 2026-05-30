@@ -1,0 +1,14 @@
+distributor: # backend から span を受け取る入口
+  receivers:
+    otlp:
+      protocols:
+        http: # OTLP HTTP receiver
+          endpoint: 0.0.0.0:4318 # v3 で default が 127.0.0.1 になりコンテナ外から繋げないため明示
+
+storage: # 受け取った span の保存先
+  trace:
+    backend: local
+    wal:
+      path: /var/tempo/wal # 書き込み中の一時バッファ
+    local:
+      path: /var/tempo/blocks # 確定後の永続ブロック

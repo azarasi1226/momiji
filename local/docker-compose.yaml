@@ -36,8 +36,8 @@ services:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev --import-realm
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     volumes:
       - ./keycloak/momiji-realm.json:/opt/keycloak/data/import/momiji-realm.json:ro
       - momiji-keycloak-data:/opt/keycloak/data
@@ -54,9 +54,52 @@ services:
       - "8025:8025"
       - "1025:1025"
 
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+      # OTLP HTTP receiver を有効化 (POST /api/v1/otlp/v1/metrics でメトリクスを受け取る)
+      - "--web.enable-otlp-receiver"
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - momiji-prometheus-data:/prometheus
+    ports:
+      - "19090:9090"
+
+  tempo:
+    image: grafana/tempo:latest
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - momiji-tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo HTTP API (Grafana datasource はここを叩く)
+      - "4318:4318"   # OTLP HTTP receiver
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      # ローカル開発時は認証不要で開く (admin 権限)
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - momiji-grafana-data:/var/lib/grafana
+    ports:
+      # frontend が 3000 を使うので 3001
+      - "3001:3000"
+    depends_on:
+      - prometheus
+      - tempo
+
 volumes:
   momiji-mysql-data:
   momiji-axonserver-data:
   momiji-axonserver-events:
   momiji-keycloak-data:
   momiji-mailpit-data:
+  momiji-prometheus-data:
+  momiji-grafana-data:
+  momiji-tempo-data:
