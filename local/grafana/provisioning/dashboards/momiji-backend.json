@@ -18,7 +18,7 @@
       },
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "id": 10,
-      "options": { "colorMode": "value", "graphMode": "area", "textMode": "value_and_name", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "options": { "colorMode": "value", "graphMode": "area", "textMode": "value", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "targets": [
         {
           "expr": "process_uptime_milliseconds{job=\"momiji-backend\"}",
@@ -371,6 +371,6 @@
   "timezone": "",
   "title": "Momiji Backend Overview",
   "uid": "momiji-backend",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
