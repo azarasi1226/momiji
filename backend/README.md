@@ -1,7 +1,27 @@
 # Momiji Backend
 
-基本理念は **CQRS + Event Sourcing + DCB（Dynamic Consistency Boundary）**。
-実装には [Axon Framework 5](https://www.axoniq.io/) を採用し、コードは **vertical slice アーキテクチャ**（ユースケース単位のフォルダ分割）で並べている。
+基本となるアーキテクチャは最近話題の設計パターンの詰め合わせ。 サンプルコードなので 「実際に積んだらどうなるか」 を検証する目的で意図的に盛っている。
+
+### CQRS ( Command Query Responsibility Segregation )
+書き込みと読み込みを別データストアに分離するパターン。 書き込み側は整合性を厳密に守り、 読み込み側は表示 / 検索用にスキーマ・インデックスを最適化できる。  
+momiji では書き込みを Axon の Command 経由で処理しイベントとして AxonServer に保存、 読み込み側は イベントをMySQL にプロジェクションしてリードモデルを構築している。
+
+### Event Sourcing
+Git みたいに、 過去のイベントをもとに現在の状態を作るパターン。 「現状」 をそのまま保存せず、 「何が起きたか」 のイベント列だけを永続化して、 必要な時に再生して状態を組み立てる。  
+副産物として監査ログがタダで手に入る + 任意時点に巻き戻せる + 将来 Read model を追加したくなっても過去イベント再生で初期化できる。
+
+### DCB ( Dynamic Consistency Boundary )
+Axon Framework 5 の新機能。 従来の DDD では Aggregate という整合性境界を予め設計しておく必要があったが、 DCB は **Command ごとに** 「このコマンドが触る Event タグの集合」 を動的に整合性境界として扱う。  
+結果として Aggregate を事前設計する必要がなくなり、 集約をまたぐ整合性チェックも自然に書けるようになり、 細粒度な並列性も出る。
+
+### 垂直スライス アーキテクチャ ( Vertical Slice )
+レイヤー ( Controller / UseCase / Infra ) ではなく **ユースケース単位** でフォルダを切る方式。  
+例えば「ユーザー更新」 に関する `XxxGrpcService` / `XxxCommandHandler` / `XxxEventHandler` / `XxxCommand` は全部 `feature/user/update/` に同居。 機能追加 / 削除時の影響範囲がそのフォルダに閉じる。  
+DCB との相性が良く、 集約という共通の概念がない分、 ユースケースごとに必要なコードを簡潔にまとめやすい。
+
+### DDD (一部)
+このプロジェクトでは **値オブジェクトだけ** を取り入れている。  
+集約もRepositoryも存在しない。
 
 ---
 
@@ -20,18 +40,19 @@
 
 ## バックエンド技術スタック
 
-| 項目 | 採用                                   |
-|---|--------------------------------------|
-| 言語 | Kotlin                               |
-| ランタイム | Java 25                              |
-| アプリケーション | Spring Boot 4系                       |
-| API | gRPC                                 |
-| Event Store / CQRS基盤 | Axon Framework 5.1.1 + Axon Server   |
-| Read 側のクエリ | jOOQ                                 |
-| DB | MySQL                                |
-| DBスキーマ管理 | Atlas（`database/schema.mysql.sql` をマスタとし、jOOQ がそれを読んでコード生成） |
-| 認証 | OIDC（Keycloak / Cognito 等）+ JWT      |
-| Lint | ktlint（Gradleプラグイン）+ `.editorconfig` |
+| 項目                   | 採用                                                      |
+|----------------------|---------------------------------------------------------|
+| 言語                   | Kotlin                                                  |
+| ランタイム                | Java 25                                                 |
+| アプリケーション             | Spring Boot 4系                                          |
+| API                  | gRPC                                                    |
+| Event Store / CQRS基盤 | Axon Framework 5.1.1 + Axon Server                      |
+| ORM                  | jOOQ                                                    |
+| DB                   | MySQL                                                   |
+| DBスキーマ管理             | Atlas（`database/schema.mysql.sql` をマスタとし、jOOQ がそれを読んでコード生成） |
+| 認証                   | OIDC（Keycloak / Cognito 等）+ JWT                         |
+| オブザービリティ             | OpenTelemetory                                          |
+| Lint                 | ktlint（Gradleプラグイン）+ `.editorconfig`                    |
 
 ---
 
@@ -40,7 +61,8 @@
 ```
 backend/src/main/kotlin/jp/momiji/
 ├─ DemoApplication.kt    … Spring Boot エントリポイント
-├─ config/               … 設定群（Axon / jOOQ / Security / gRPC）
+├─ config/               … 設定群（Axon / jOOQ / Security / gRPC / 観測の Aspect・Sampler）
+├─ domain/               … ドメインオブジェクト
 ├─ events/               … ドメインイベント
 ├─ feature/              … 1ユースケース1パッケージ（vertical slice）
 └─ projection/           … Read model 構築（Projector）
@@ -52,7 +74,6 @@ backend/src/main/kotlin/jp/momiji/
 |---|---|
 | `XxxCommand.kt` | Command + Result + Gateway拡張 |
 | `XxxCommandHandler.kt` | `@CommandHandler` 本体（必要なら State も同居） |
-| `XxxEventHandler.kt` | イベント受けの副作用（Lookup更新・外部連携） |
 | `XxxGrpcService.kt` | gRPC受口（実装は薄く保つ） |
 
 ※ そのユースケースに特化したクラスが増える場合は適宜追加。あくまで「このユースケースに関するコードはこのパッケージに集約されている」という状態を目指す。
@@ -76,7 +97,7 @@ aqua install   # task / buf / atlas / pnpm をインストール
 ### 初回セットアップ（リポジトリルートで実行）
 
 ```bash
-task local-up              # MySQL / Axon Server / Keycloak をコンテナで起動
+task local-up              # docker-compose のサービス全部起動 (MySQL / Axon Server / Keycloak / Mailpit / Prometheus / Tempo / Grafana)
 task buf-generate          # proto → Kotlin / TypeScript 生成
 task atlas-migrate-apply   # マイグレーション適用（local-up に依存しているので未起動でも自動で立ち上がる）
 
@@ -87,37 +108,40 @@ cd backend
 ### バックエンドの起動
 
 ```bash
-cd backend
-./gradlew bootRun
+task backend-run          # Taskfile 経由
+./gradlew bootRun         # 直接 ( IntelliJ デバッグ起動も同じ )
 ```
 
+ローカル用の env var は [local.env.properties](src/main/resources/local.env.properties) ( docker-compose のサービスを指す固定値 ) に書いてあり、 `local` プロファイル起動時に [application-app-local.yaml](src/main/resources/application-app-local.yaml) の `spring.config.import` 経由で自動読込される。 起動方法は問わない ( IDE デバッグ起動でも効く )。
+
 ---
+### 環境変数
 
-## プロファイルと環境変数
+application.yaml では `${...}` プレースホルダで値を参照しており、 起動時に解決される。 解決元は環境によって違う:
 
-`spring.profiles.active` で環境を切り替える。デフォルトは `local`。
+- **ローカル開発**: [local.env.properties](src/main/resources/local.env.properties) ( resources/ 配下に commit 済み ) が `application-app-local.yaml` の `spring.config.import` 経由で読み込まれて値を提供する。 開発者が自分で env var をセットする必要は無い。
+- **test / prod**: 環境変数 ( k8s の Secret / ConfigMap や ECS の task definition 等で渡す想定 ) から解決される。
 
-| プロファイル | 構成 | 用途 |
-|---|---|---|
-| `local`（デフォルト） | app-common + app-local + datastore-mysql + idp-keycloak + mail | ローカル開発（Docker Compose 経由） |
-| `test` | app-common + app-test + datastore-mysql + idp-cognito + mail | CI/テスト環境（実Cognito） |
-| `prod` | app-common + app-prod + datastore-mysql + idp-cognito + mail | 本番 |
-| `integration-test` | app-integration-test のみ | 統合テスト（DataSource等はTestContainers側で組む想定） |
+**必須** のものが未設定だと yaml の `${...}` が解決できず **起動時例外で落ちる** ( fail-fast )
 
-### テスト・本番環境にて必須の環境変数（fail-fast）
-
-未設定だと **起動時に例外で落ちる**。`local` profile では [application-app-local.yaml](src/main/resources/application-app-local.yaml) が値を提供するので環境変数の設定は不要。
-
-| 環境変数 | 必須profile | 説明 |
-|---|---|---|
-| `JWT_ISSUER_URI` | test / prod | OIDC issuer URI（Cognitoなら `https://cognito-idp.{region}.amazonaws.com/{poolId}`） |
-| `EMAIL_CHANGE_SECRET` | test / prod | メール変更トークン署名鍵（**HS256のため32byte以上必須**、[EmailChangeTokenService](src/main/kotlin/jp/momiji/feature/user/changeemail/EmailChangeTokenService.kt) で長さ検証あり） |
-| `COGNITO_USER_POOL_ID` | test / prod | Cognito User Pool ID |
-| `SPRING_DATASOURCE_HOST` | test / prod | MySQL host |
-| `SPRING_DATASOURCE_PORT` | test / prod | MySQL port |
-| `SPRING_DATASOURCE_DATABASE` | test / prod | MySQL database name |
-| `SPRING_DATASOURCE_USERNAME` | test / prod | MySQL username |
-| `SPRING_DATASOURCE_PASSWORD` | test / prod | MySQL password |
+| 環境変数 | 必須 | 定義元 yaml | 説明 |
+|---|---|---|---|
+| `SERVER_PORT` | ❌ ( default: `9090` ) | [app-common](src/main/resources/application-app-common.yaml) | HTTP server port ( ※ 現状 web server は持たないので未使用 ) |
+| `GRPC_PORT` | ❌ ( default: `9091` ) | [app-common](src/main/resources/application-app-common.yaml) | gRPC server port |
+| `APPLICATION_NAME` | ❌ ( default: `momiji-backend` ) | [app-common](src/main/resources/application-app-common.yaml) | アプリケーション名 ( メトリクス / トレースの `service.name` にも使われる ) |
+| `JWT_ISSUER_URI` | ✅ | [app-common](src/main/resources/application-app-common.yaml) | OIDC issuer URI ( Cognito なら `https://cognito-idp.{region}.amazonaws.com/{poolId}` ) |
+| `EMAIL_CHANGE_SECRET` | ✅ | [app-common](src/main/resources/application-app-common.yaml) | メール変更トークン署名鍵 ( **HS256 のため 32byte 以上必須**、 [EmailChangeTokenService](src/main/kotlin/jp/momiji/feature/user/changeemail/EmailChangeTokenService.kt) で長さ検証あり ) |
+| `MAIL_FROM` | ✅ | [app-common](src/main/resources/application-app-common.yaml) | メール送信元アドレス |
+| `COGNITO_USER_POOL_ID` | ✅ ( idp-cognito 時 ) | [idp-cognito](src/main/resources/application-idp-cognito.yaml) | Cognito User Pool ID |
+| `AWS_REGION` | ❌ ( default: `ap-northeast-1` ) | [idp-cognito](src/main/resources/application-idp-cognito.yaml) | AWS リージョン ( idp-cognito 時 ) |
+| `SPRING_DATASOURCE_HOST` | ✅ | [datastore-mysql](src/main/resources/application-datastore-mysql.yaml) | MySQL host |
+| `SPRING_DATASOURCE_PORT` | ✅ | [datastore-mysql](src/main/resources/application-datastore-mysql.yaml) | MySQL port |
+| `SPRING_DATASOURCE_DATABASE` | ✅ | [datastore-mysql](src/main/resources/application-datastore-mysql.yaml) | MySQL database name |
+| `SPRING_DATASOURCE_USERNAME` | ✅ | [datastore-mysql](src/main/resources/application-datastore-mysql.yaml) | MySQL username |
+| `SPRING_DATASOURCE_PASSWORD` | ✅ | [datastore-mysql](src/main/resources/application-datastore-mysql.yaml) | MySQL password |
+| `OTLP_METRICS_URL` | ✅ | [observability-otlp](src/main/resources/application-observability-otlp.yaml) | メトリクスの OTLP push 先 URL ( 例: `http://otel-collector:4318/v1/metrics` ) |
+| `OTLP_TRACES_ENDPOINT` | ✅ | [observability-otlp](src/main/resources/application-observability-otlp.yaml) | トレースの OTLP push 先 URL ( 例: `http://tempo:4318/v1/traces` ) |
+| `TRACE_SAMPLING_PROBABILITY` | ✅ | [observability-otlp](src/main/resources/application-observability-otlp.yaml) | トレース sampling 比率 ( 0.0 〜 1.0、 本番 0.1 程度推奨 ) |
 
 ## gRPC まわりのお作法
 ### 非認証エンドポイントを作りたい
@@ -183,9 +207,5 @@ ktlint・IntelliJ が共通参照する設定。生成コードを `[**/generate
 ---
 
 ## TODO
-- [* ] **テストコードサンプル拡充**
-- [ ] **gRPC Status の細分化**：すべて `INVALID_ARGUMENT` に潰しているのを意味別 (`NOT_FOUND` / `ALREADY_EXISTS` / `PERMISSION_DENIED`) に
-- [ ] **観測性**：Micrometer / OpenTelemetry の導入
-- [* ] プロファイルによって、環境を切り替える仕組みの導入
-- [ ] **Event スキーマバージョニング戦略**：Event Sourcing 前提なので将来必須
-- [ ] テストにおいて、Mockの扱いをどうするか。現在のSpy運用派きつくない？Docker追加で立てるのも重いし
+- **Axon Command / Event の Span**：Axon Framework 5.2.0 で `axon-tracing-opentelemetry` の autoconfig が復活予定 ( [issue #3594](https://github.com/AxonIQ/AxonFramework/issues/3594) )。 5.2 にバージョン上げて再度試す
+- **Event スキーマバージョニング戦略**：Event Sourcing 前提なので将来必須
