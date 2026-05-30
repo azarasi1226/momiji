@@ -1,7 +1,7 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import jp.momiji.events.user.EmailChangeConfirmedEvent
+import jp.momiji.event.user.EmailChangeConfirmedEvent
 import org.axonframework.extension.spring.config.EventProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext

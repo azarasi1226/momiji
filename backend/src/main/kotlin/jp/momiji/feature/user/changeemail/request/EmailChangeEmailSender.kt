@@ -1,6 +1,6 @@
 package jp.momiji.feature.user.changeemail.request
 
-import jp.momiji.events.user.EmailChangeRequestedEvent
+import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.feature.mail.MailSender
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService

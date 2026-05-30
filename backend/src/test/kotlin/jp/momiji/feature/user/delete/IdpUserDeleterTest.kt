@@ -2,7 +2,7 @@ package jp.momiji.feature.user.delete
 
 import io.mockk.verify
 import jp.momiji.MomijiIntegrationTestBase
-import jp.momiji.events.user.UserDeletedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 

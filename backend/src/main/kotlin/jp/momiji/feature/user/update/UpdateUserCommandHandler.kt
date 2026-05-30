@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.update
 
-import jp.momiji.events.MomijiEventTag
-import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.events.user.UserUpdatedEvent
+import jp.momiji.event.MomijiEventTag
+import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserUpdatedEvent
 import jp.momiji.feature.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator

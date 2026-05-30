@@ -3,8 +3,8 @@ package jp.momiji.feature.user.changeemail.confirm
 import io.mockk.verify
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.idp.IdentityProvider
-import jp.momiji.events.user.EmailChangeConfirmedEvent
-import jp.momiji.events.user.ExternalIdentityLinkedEvent
+import jp.momiji.event.user.EmailChangeConfirmedEvent
+import jp.momiji.event.user.ExternalIdentityLinkedEvent
 import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 

@@ -3,7 +3,7 @@ package jp.momiji.feature.user.changeemail.request
 import io.mockk.slot
 import io.mockk.verify
 import jp.momiji.MomijiIntegrationTestBase
-import jp.momiji.events.user.EmailChangeRequestedEvent
+import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue

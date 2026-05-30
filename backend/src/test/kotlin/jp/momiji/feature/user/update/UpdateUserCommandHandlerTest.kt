@@ -7,8 +7,8 @@ import jp.momiji.domain.user.Address2
 import jp.momiji.domain.user.Name
 import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
-import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.events.user.UserUpdatedEvent
+import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserUpdatedEvent
 import org.junit.jupiter.api.Test
 
 class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {

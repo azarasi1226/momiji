@@ -1,6 +1,6 @@
 package jp.momiji.feature.user.changeemail.confirm
 
-import jp.momiji.events.user.EmailChangeConfirmedEvent
+import jp.momiji.event.user.EmailChangeConfirmedEvent
 import jp.momiji.feature.mail.MailSender
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.springframework.stereotype.Component

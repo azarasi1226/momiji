@@ -1,7 +1,7 @@
 package jp.momiji.feature.user.delete
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jp.momiji.events.user.UserDeletedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.idp.IdpUserClient
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.springframework.stereotype.Component

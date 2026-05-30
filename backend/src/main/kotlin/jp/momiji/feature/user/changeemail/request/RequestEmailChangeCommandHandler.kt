@@ -1,9 +1,9 @@
 package jp.momiji.feature.user.changeemail.request
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import jp.momiji.events.MomijiEventTag
-import jp.momiji.events.user.EmailChangeRequestedEvent
-import jp.momiji.events.user.UserCreatedEvent
+import jp.momiji.event.MomijiEventTag
+import jp.momiji.event.user.EmailChangeRequestedEvent
+import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.feature.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator

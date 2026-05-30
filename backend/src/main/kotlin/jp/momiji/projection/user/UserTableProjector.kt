@@ -1,10 +1,10 @@
 package jp.momiji.projection.user
 
 import iss.jooq.generated.tables.references.USERS
-import jp.momiji.events.user.EmailChangeConfirmedEvent
-import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.events.user.UserDeletedEvent
-import jp.momiji.events.user.UserUpdatedEvent
+import jp.momiji.event.user.EmailChangeConfirmedEvent
+import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
+import jp.momiji.event.user.UserUpdatedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component

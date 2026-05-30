@@ -4,8 +4,8 @@ import com.github.michaelbull.result.get
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
-import jp.momiji.events.user.ExternalIdentityLinkedEvent
-import jp.momiji.events.user.UserCreatedEvent
+import jp.momiji.event.user.ExternalIdentityLinkedEvent
+import jp.momiji.event.user.UserCreatedEvent
 import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.Test
 

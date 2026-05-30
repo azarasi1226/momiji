@@ -2,7 +2,7 @@ package jp.momiji.feature.user.delete
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import jp.momiji.events.user.UserDeletedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import org.axonframework.extension.spring.config.EventProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext

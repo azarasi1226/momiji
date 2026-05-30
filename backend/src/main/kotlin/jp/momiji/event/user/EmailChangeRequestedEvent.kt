@@ -1,6 +1,6 @@
-package jp.momiji.events.user
+package jp.momiji.event.user
 
-import jp.momiji.events.MomijiEventTag
+import jp.momiji.event.MomijiEventTag
 import org.axonframework.eventsourcing.annotation.EventTag
 
 data class EmailChangeRequestedEvent(

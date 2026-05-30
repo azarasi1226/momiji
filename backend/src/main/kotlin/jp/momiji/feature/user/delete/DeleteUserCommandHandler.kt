@@ -1,9 +1,9 @@
 package jp.momiji.feature.user.delete
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
-import jp.momiji.events.MomijiEventTag
-import jp.momiji.events.user.UserCreatedEvent
-import jp.momiji.events.user.UserDeletedEvent
+import jp.momiji.event.MomijiEventTag
+import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
