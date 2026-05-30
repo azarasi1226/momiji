@@ -1,3 +1,4 @@
+# テスト / 本番環境での利用を想定
 momiji:
   cognito:
     user-pool-id: ${COGNITO_USER_POOL_ID}

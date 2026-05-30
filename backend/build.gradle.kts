@@ -34,6 +34,15 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    // O11y
+    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
+    // JDBC observation を提供するライブラリ。 これを入れると JDBC クエリが自動的に span 化される。
+    implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.2.1")
+    // UseCaseLogicTracingAspect が `@Aspect` / `@Around` / `ProceedingJoinPoint` を使うため必要。
+    // spring-aop 自体は spring-context の transitive で既に入っているが、 これらの annotation の
+    // parsing には aspectjweaver が別途必要。
+    implementation("org.aspectj:aspectjweaver")
+
     // テスト
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -42,9 +51,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-mysql")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.axonframework:axon-test")
-    // 5.1から AxonServerContainer / AxonServerContainerUtils は別group (io.axoniq.framework) に分離されたため明示
-    testImplementation("io.axoniq.framework:axoniq-testcontainer:5.1.1")
-    // Kotlin-first な spring mocking: @MockkBean / @MockkSpyBean と MockK の verify 構文が使える
+    testImplementation("io.axoniq.framework:axoniq-testcontainer")
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
@@ -54,9 +61,9 @@ dependencies {
     jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
 
     // Axon
-    implementation(platform("org.axonframework:axon-framework-bom:5.1.1"))
+    implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.1.1"))
     implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
-    implementation("io.axoniq.framework:axon-server-connector:5.1.1") // AxonFramework5.1からはAxonServerConnectorが別モジュールになったため、明示的に追加する必要がある。
+    implementation("io.axoniq.framework:axon-server-connector") // AxonFramework5.1からはAxonServerConnectorが別モジュールになったため、明示的に追加する必要がある。
 
     // gRPC
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")

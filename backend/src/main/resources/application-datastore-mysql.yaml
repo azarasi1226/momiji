@@ -1,3 +1,4 @@
+# ローカル / テスト / 本番環境での利用を想定
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

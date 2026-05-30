@@ -1,4 +1,5 @@
+# ローカル環境だけの利用を想定
 spring:
   mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1025}
+    host: localhost
+    port: 1025

@@ -1,6 +1,7 @@
+# ローカル環境だけの利用を想定
 momiji:
   keycloak:
-    base-url: ${KEYCLOAK_BASE_URL:http://localhost:8085}
-    realm: ${KEYCLOAK_REALM:momiji}
-    admin-username: ${KEYCLOAK_ADMIN_USERNAME:admin}
-    admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+    base-url: http://localhost:8085
+    realm: momiji
+    admin-username: admin
+    admin-password: admin

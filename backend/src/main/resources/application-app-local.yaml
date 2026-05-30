@@ -1,20 +1,7 @@
+# ローカル開発用の環境変数を properties ファイルから import
 spring:
-  datasource:
-    # ローカル開発用 DB接続情報（docker-compose の MySQL）
-    url: jdbc:mysql://localhost:3336/momiji?createDatabaseIfNotExist=true
-    username: root
-    password: passw0rd
-
-momiji:
-  oidc:
-    # ローカル開発用 issuer URI（docker-compose の Keycloak realm）
-    issuer-uri: http://localhost:8085/realms/momiji
-  email-change:
-    # ローカル開発用ダミー鍵（HS256のため32byte以上）。本番では絶対使わない
-    secret: this-is-a-dev-secret-change-in-production-32chars!
-  mail:
-    # ローカル開発用 From アドレス（MailHog はどんなアドレスでも受け取れる）
-    from: noreply@local.momiji.example.com
+  config:
+    import: classpath:local.env.properties
 
 logging:
   level:

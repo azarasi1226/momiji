@@ -1,13 +1,5 @@
-# 統合テスト用設定
-# DataSource / Axon Server の接続先は、TestContainersが起動した
-# コンテナの値を MomijiIntegrationTestBase の @DynamicPropertySource が動的に設定する
-#
-# IDP / Mail / JwtDecoder / OidcUserInfoFetcher は @MockkBean で置き換えるため、
-# Keycloak / MailHog のコンテナは立てない。 関連設定 (issuer-uri, keycloak.*, mail.*) も不要。
-# ただし app-common.yaml で env 必須にしてあるプロパティは値を埋めないと起動できないので、
-# ダミー値を上書きしておく。
-
-# 統合テストは並列で実行されるため、ポートはエフェメラル割当
+# エフェメラルポートを使用するため、サーバーのポートは 0 に設定
+# 自動的にポートが割り当てられ、統合テストを並列に実行できるようになる
 server:
   port: 0
 
@@ -21,7 +13,7 @@ momiji:
     # JwtDecoder は @MockkBean で置換するので実通信しないが、 app-common.yaml の env 必須を満たす
     issuer-uri: http://mock-issuer.invalid
   email-change:
-    # 統合テスト用ダミー鍵（EmailChangeTokenService の init で 32byte 以上の検証あり）
+    # 統合テスト用ダミー鍵
     secret: integration-test-secret-must-be-32-bytes-long
   mail:
     # MailSender は @MockkBean で置換するので使われない。 app-common.yaml の env 必須を満たすためのダミー

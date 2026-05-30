@@ -1,5 +1,5 @@
 spring:
-  # docker compose の起動はTaskfile側で制御するため、Spring Bootの自動起動はoff
+  # docker compose の起動は Taskfile 側で制御するため、Spring Bootの自動起動はoffに
   docker-compose-enabled: false
   profiles:
     active: local
@@ -7,26 +7,26 @@ spring:
       integration-test:
         - app-common
         # IDP / Mail / JwtDecoder / OidcUserInfoFetcher は @MockkBean で置き換えるため、
-        # 本物の bean を作る idp-* / mail-* profile は外す。 これにより Keycloak / MailHog
-        # の TestContainer を起動する必要もなくなる。
+        # 本物の bean を作る idp-* / mail-* profile は外す。 これにより Keycloak / MailHogの TestContainer を起動する必要もなくなる。
         - app-integration-test
       local:
         - app-common
+        - app-local
+        - observability-otlp
         - datastore-mysql
         - idp-keycloak
         - mail-smtp
-        # app-local は最後に置く。
-        # 環境変数をローカル開発用の具体値で上書きさせたいため。
-        - app-local
       test:
         - app-common
         - app-test
+        - observability-otlp
         - datastore-mysql
         - idp-cognito
-        - mail-smtp
+        #- mail-smtp (mail-sendgrid みたいなのを作るべし)
       prod:
         - app-common
         - app-prod
+        - observability-otlp
         - datastore-mysql
         - idp-cognito
-        - mail-smtp
+        #- mail-smtp (mail-sendgrid みたいなのを作るべし)
