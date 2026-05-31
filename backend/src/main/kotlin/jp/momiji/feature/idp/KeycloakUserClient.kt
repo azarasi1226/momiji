@@ -2,6 +2,7 @@ package jp.momiji.feature.idp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jp.momiji.domain.idp.IdentityProvider
+import jp.momiji.domain.idp.IdentityProviderResolver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
@@ -20,6 +21,11 @@ class KeycloakUserClient(
     @Value("\${momiji.keycloak.admin-password}") private val adminPassword: String,
 ) : IdpUserClient {
     private val restClient = RestClient.create()
+
+    private val identityProviderResolver =
+        object : IdentityProviderResolver() {
+            override val googleProviderName = "google"
+        }
 
     override fun updateEmail(
         oidcSubject: String,
@@ -62,20 +68,17 @@ class KeycloakUserClient(
         logger.info { "Keycloakユーザーを削除しました: oidcSubject=$oidcSubject" }
     }
 
-    override fun getIdentityProvider(accessToken: String): IdentityProvider {
-        val claims =
+    override fun resolveIdentityProvider(accessToken: String): IdentityProvider {
+        // Keycloak 内蔵認証では `identity_provider` claim は JWT に含まれないため null になる
+        // → fail-closed の例外ではなく LOCAL 扱い。
+        val claim =
             com.nimbusds.jwt.SignedJWT
                 .parse(accessToken)
                 .jwtClaimsSet
-        val idp = claims.getStringClaim("identity_provider") ?: return IdentityProvider.LOCAL
+                .getStringClaim("identity_provider")
+                ?: return IdentityProvider.LOCAL
 
-        // Keycloak 固有の文字列 → IdentityProvider への変換は ここに閉じる。
-        // ドメイン側 (IdentityProvider) にこの変換ロジックを持たせると、 Keycloak の実装詳細 (小文字)
-        // を domain 層が抱え込む形になり凝集度が崩れる。
-        return when (idp) {
-            "google" -> IdentityProvider.GOOGLE
-            else -> IdentityProvider.LOCAL
-        }
+        return identityProviderResolver.resolve(claim)
     }
 
     private fun getAdminToken(): String {

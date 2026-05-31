@@ -61,7 +61,7 @@ class CreateUserGrpcServiceTest {
                 email = "alice@example.com",
                 emailVerified = true,
             )
-        every { idpUserClient.getIdentityProvider("dummy-access-token") } returns IdentityProvider.LOCAL
+        every { idpUserClient.resolveIdentityProvider("dummy-access-token") } returns IdentityProvider.LOCAL
         every { commandGateway.send(any(), CommandResult::class.java) } returns
             CompletableFuture.completedFuture(CommandResult.success())
 
@@ -90,7 +90,7 @@ class CreateUserGrpcServiceTest {
                 email = "notanemail",
                 emailVerified = true,
             )
-        every { idpUserClient.getIdentityProvider("dummy-access-token") } returns IdentityProvider.LOCAL
+        every { idpUserClient.resolveIdentityProvider("dummy-access-token") } returns IdentityProvider.LOCAL
 
         val ex = assertThrows<ValidationException> { callCreateUser() }
         assertEquals(1, ex.errors.size)

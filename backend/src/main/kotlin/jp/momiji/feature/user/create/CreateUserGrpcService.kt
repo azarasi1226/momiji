@@ -22,7 +22,7 @@ class CreateUserGrpcService(
         val auth = GrpcAuthContext.current()
         val accessToken = auth.token.tokenValue
         val userInfo = oidcUserInfoFetcher.handle(accessToken)
-        val idp = idpUserClient.getIdentityProvider(accessToken)
+        val idp = idpUserClient.resolveIdentityProvider(accessToken)
 
         // userInfo.email は IDP 経由 (信頼境界内) だが、 broken IDP に対する防御で形式検証は通す。
         val email =
