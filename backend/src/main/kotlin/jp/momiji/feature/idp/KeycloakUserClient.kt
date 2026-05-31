@@ -69,16 +69,46 @@ class KeycloakUserClient(
     }
 
     override fun resolveIdentityProvider(accessToken: String): IdentityProvider {
-        // Keycloak 内蔵認証では `identity_provider` claim は JWT に含まれないため null になる
-        // → fail-closed の例外ではなく LOCAL 扱い。
-        val claim =
+        // access token は auth proof として最低限の用途のみ使い、 IDP の判定は Keycloak Admin REST API で
+        // user の federated-identity を直接問い合わせる ( Cognito の AdminGetUser + identities attribute と対称の設計 )。
+        // realm.json で custom claim mapper を持たないため、 access token はピュアな OIDC 標準 claim のみ含む。
+        val sub =
             com.nimbusds.jwt.SignedJWT
                 .parse(accessToken)
-                .jwtClaimsSet
-                .getStringClaim("identity_provider")
+                .jwtClaimsSet.subject
+
+        // Keycloak Identity Brokering で外部 IDP に link されてない user ( = Keycloak 内蔵 user ) は
+        // federated-identity が空配列。 social IDP 経由 sign-in した user は配列に該当 IDP alias の要素を持つ。
+        // momiji は IDP linking を使わない運用 ( [ADR 0003](../../../../../../docs/adr/0003-idp-linking.md) ) なので、
+        // 配列は最大 1 要素。 firstOrNull() で OK。
+        val federatedIdentity =
+            fetchFederatedIdentities(sub).firstOrNull()
                 ?: return IdentityProvider.LOCAL
 
-        return identityProviderResolver.resolve(claim)
+        return identityProviderResolver.resolve(federatedIdentity.identityProvider)
+    }
+
+    /** Keycloak `FederatedIdentityRepresentation` の必要フィールドだけ抽出した DTO。 */
+    private data class KeycloakFederatedIdentity(
+        val identityProvider: String,
+    )
+
+    /** Keycloak Admin REST API から user に link された federated identity の一覧を取得。 */
+    private fun fetchFederatedIdentities(userId: String): List<KeycloakFederatedIdentity> {
+        val token = getAdminToken()
+        val response =
+            try {
+                restClient
+                    .get()
+                    .uri("$baseUrl/admin/realms/$realm/users/$userId/federated-identity")
+                    .header("Authorization", "Bearer $token")
+                    .retrieve()
+                    .body(Array<KeycloakFederatedIdentity>::class.java)
+            } catch (e: HttpClientErrorException.NotFound) {
+                logger.error { "Keycloakユーザーが見つかりません: oidcSubject=$userId" }
+                return emptyList()
+            }
+        return response?.toList() ?: emptyList()
     }
 
     private fun getAdminToken(): String {
