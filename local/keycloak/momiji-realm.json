@@ -4,13 +4,18 @@
   "sslRequired": "none",
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": true,
-  "roles": {
-    "realm": [
-      {
-        "name": "user",
-        "composite": false
-      }
-    ]
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "verifyEmail": true,
+  "smtpServer": {
+    "host": "mailpit",
+    "port": "1025",
+    "from": "noreply@momiji.local",
+    "fromDisplayName": "momiji (local)",
+    "ssl": "false",
+    "starttls": "false",
+    "auth": "false"
   },
   "clients": [
     {
@@ -45,19 +50,6 @@
             "id.token.claim": "true",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
-          }
-        },
-        {
-          "name": "identity-provider",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usersessionmodel-note-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.session.note": "identity_provider",
-            "claim.name": "identity_provider",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "jsonType.label": "String"
           }
         }
       ]
@@ -95,40 +87,7 @@
             "access.token.claim": "true",
             "introspection.token.claim": "true"
           }
-        },
-        {
-          "name": "identity-provider",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usersessionmodel-note-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.session.note": "identity_provider",
-            "claim.name": "identity_provider",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "jsonType.label": "String"
-          }
         }
-      ]
-    }
-  ],
-  "users": [
-    {
-      "username": "testuser",
-      "enabled": true,
-      "email": "testuser@example.com",
-      "emailVerified": true,
-      "firstName": "Test",
-      "lastName": "User",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "password",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "user"
       ]
     }
   ]
