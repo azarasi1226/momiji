@@ -1,7 +1,7 @@
 package jp.momiji.feature
 
 import jp.momiji.domain.BusinessError
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 
 /**
  * Command の実行結果。 Axon の Command 戻り値型として CommandHandler 〜 gRPC 層を貫通する。
@@ -26,5 +26,5 @@ class CommandResult(
  * use case 層から domain 例外への一方向の依存。
  */
 fun CommandResult.throwIfError() {
-    if (!this.success) throw UseCaseException(this.error!!)
+    if (!this.success) throw BusinessException(this.error!!)
 }

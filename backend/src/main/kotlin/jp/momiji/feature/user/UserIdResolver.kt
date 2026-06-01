@@ -3,7 +3,7 @@ package jp.momiji.feature.user
 import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.domain.BusinessError
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import org.jooq.DSLContext
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Component
@@ -19,7 +19,7 @@ class UserIdResolver(
      */
     fun resolve(authentication: JwtAuthenticationToken): String =
         findUserId(authentication)
-            ?: throw UseCaseException(BusinessError("ユーザーが登録されていません"))
+            ?: throw BusinessException(BusinessError("ユーザーが登録されていません"))
 
     private fun findUserId(authentication: JwtAuthenticationToken): String? {
         val issuer = authentication.token.issuer.toString()
@@ -30,7 +30,7 @@ class UserIdResolver(
         // そのため、 対応していないIDPを使用している場合は、AccessTokenにSubjectクレームを含めるようIDP側の設定を変更することを要求する。
         if (subject == null) {
             logger.error { "アクセストークンにSubjectクレームが含まれていません。 IDP側の設定でAccessTokenにsubクレームを含むように設定してください。" }
-            throw UseCaseException(BusinessError("アクセストークンにSubjectクレームが含まれていません。管理者へ連絡してください。"))
+            throw BusinessException(BusinessError("アクセストークンにSubjectクレームが含まれていません。管理者へ連絡してください。"))
         }
 
         return dsl

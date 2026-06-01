@@ -170,7 +170,7 @@ override suspend fun createUser(request: CreateUserRequest): CreateUserResponse 
 
 ### 例外ハンドリング
 
-[GrpcConfig](src/main/kotlin/jp/momiji/config/grpc/GrpcConfig.kt) の `grpcExceptionHandler` で `UseCaseException` → `Status.INVALID_ARGUMENT` に変換している。
+[GrpcConfig](src/main/kotlin/jp/momiji/config/grpc/GrpcConfig.kt) の `grpcExceptionHandler` で `BusinessException` → `Status.INVALID_ARGUMENT` に変換している。
 
 ---
 

@@ -3,7 +3,7 @@ package jp.momiji.config.grpc
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.grpc.ServerInterceptor
 import io.grpc.Status
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import jp.momiji.domain.ValidationException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -63,7 +63,7 @@ class GrpcConfig {
      * ハンドラ内で投げた業務例外を、 gRPC Status + 構造化 details にマッピングするハンドラ。
      *
      * - [ValidationException] → `INVALID_ARGUMENT` + ValidationError (field 別エラーリスト)
-     * - [UseCaseException]    → `INVALID_ARGUMENT` + UseCaseError (message 1つ)
+     * - [BusinessException]    → `INVALID_ARGUMENT` + UseCaseError (message 1つ)
      * - その他                → `UNKNOWN` + UnknownError (固定メッセージ + correlationId、 詳細はサーバーログ)
      *
      * 詳細は ADR 0002 と [ErrorDetailMapping] 参照。
@@ -78,7 +78,7 @@ class GrpcConfig {
                         ex.message ?: "validation error",
                         ex.toErrorDetail(),
                     )
-                is UseCaseException ->
+                is BusinessException ->
                     buildStatusException(
                         Status.INVALID_ARGUMENT,
                         ex.error.message,

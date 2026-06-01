@@ -50,20 +50,20 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-mysql")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("org.axonframework:axon-test")
-    testImplementation("io.axoniq.framework:axoniq-testcontainer")
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
-    testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
     implementation("org.jooq:jooq:3.20.11")
     jooqCodegen("com.mysql:mysql-connector-j")
     jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
+    testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 
     // Axon
     implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.1.1"))
     implementation("org.axonframework.extensions.spring:axon-spring-boot-starter")
     implementation("io.axoniq.framework:axon-server-connector") // AxonFramework5.1からはAxonServerConnectorが別モジュールになったため、明示的に追加する必要がある。
+    testImplementation("org.axonframework:axon-test")
+    testImplementation("io.axoniq.framework:axoniq-testcontainer")
 
     // gRPC
     implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")

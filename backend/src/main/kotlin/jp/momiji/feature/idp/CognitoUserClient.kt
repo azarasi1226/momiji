@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jp.momiji.domain.BusinessError
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.idp.IdentityProviderResolver
 import org.springframework.beans.factory.annotation.Value
@@ -109,7 +109,7 @@ class CognitoUserClient(
             parseIdentities(identitiesAttr).firstOrNull()
                 ?: return IdentityProvider.LOCAL
 
-        // 未対応 providerType ( SAML や FACEBOOK 等 ) は resolver 内で fail-closed の UseCaseException が投げられる。
+        // 未対応 providerType ( SAML や FACEBOOK 等 ) は resolver 内で fail-closed の BusinessException が投げられる。
         return identityProviderResolver.resolve(identity.providerType)
     }
 
@@ -139,6 +139,6 @@ class CognitoUserClient(
             objectMapper.readValue<List<CognitoIdentity>>(identitiesAttribute)
         } catch (e: Exception) {
             logger.error(e) { "Cognito の identities attribute の parse に失敗: identities=$identitiesAttribute" }
-            throw UseCaseException(BusinessError("ユーザーのIDP情報の取得に失敗しました"))
+            throw BusinessException(BusinessError("ユーザーのIDP情報の取得に失敗しました"))
         }
 }

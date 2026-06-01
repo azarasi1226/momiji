@@ -3,7 +3,7 @@ package jp.momiji.domain.user
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import jp.momiji.domain.DomainError
+import jp.momiji.domain.ValidationError
 
 data class EmailChangeToken internal constructor(
     val value: String,
@@ -15,7 +15,7 @@ data class EmailChangeToken internal constructor(
         // JWT 風: header.payload.signature の 3 セグメント (各セグメントにドット含まない)
         private val PATTERN = Regex("""^[^.]+\.[^.]+\.[^.]+$""")
 
-        fun create(input: String): Result<EmailChangeToken, DomainError> {
+        fun create(input: String): Result<EmailChangeToken, ValidationError> {
             if (input.isBlank()) return Err(Blank)
             if (input.length > MAX_LENGTH) return Err(TooLong)
             if (!PATTERN.matches(input)) return Err(InvalidFormat)
@@ -23,9 +23,9 @@ data class EmailChangeToken internal constructor(
         }
     }
 
-    object Blank : DomainError("token", "トークンは必須です")
+    object Blank : ValidationError("token", "トークンは必須です")
 
-    object TooLong : DomainError("token", "トークンが長すぎます ($MAX_LENGTH 文字以内)")
+    object TooLong : ValidationError("token", "トークンが長すぎます ($MAX_LENGTH 文字以内)")
 
-    object InvalidFormat : DomainError("token", "トークンの形式が正しくありません")
+    object InvalidFormat : ValidationError("token", "トークンの形式が正しくありません")
 }

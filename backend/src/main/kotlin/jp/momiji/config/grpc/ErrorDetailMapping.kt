@@ -4,7 +4,7 @@ import com.google.protobuf.Any
 import io.grpc.Status
 import io.grpc.StatusException
 import io.grpc.protobuf.StatusProto
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import jp.momiji.domain.ValidationException
 import jp.momiji.grpc.momiji.common.v1.ErrorDetail
 import jp.momiji.grpc.momiji.common.v1.FieldError
@@ -40,7 +40,7 @@ internal fun ValidationException.toErrorDetail(): ErrorDetail =
                 ).build(),
         ).build()
 
-internal fun UseCaseException.toErrorDetail(): ErrorDetail =
+internal fun BusinessException.toErrorDetail(): ErrorDetail =
     ErrorDetail
         .newBuilder()
         .setUseCaseError(

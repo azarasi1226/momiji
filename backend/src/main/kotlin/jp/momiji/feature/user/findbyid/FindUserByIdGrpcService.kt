@@ -3,7 +3,7 @@ package jp.momiji.feature.user.findbyid
 import com.google.protobuf.timestamp
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.BusinessError
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import jp.momiji.feature.user.UserIdResolver
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdRequest
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdResponse
@@ -24,7 +24,7 @@ class FindUserByIdGrpcService(
 
         val user =
             findUserByIdQueryService.findById(userId)
-                ?: throw UseCaseException(BusinessError("ユーザーが見つかりません"))
+                ?: throw BusinessException(BusinessError("ユーザーが見つかりません"))
 
         return findUserByIdResponse {
             id = user.id

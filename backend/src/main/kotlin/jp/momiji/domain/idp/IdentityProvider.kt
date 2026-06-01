@@ -17,7 +17,7 @@ package jp.momiji.domain.idp
  * 「enum 側だけ追加 / 実装側 mapping 漏れ」 の片肺状態を 2 段階で防ぐ構造。
  *
  * whitelist 違反 ( 未対応 IDP からのログイン ) は [IdentityProviderResolver.resolve] が `null` を返し、
- * 各 Client が fail-closed で [jp.momiji.domain.UseCaseException] を投げて拒否する。
+ * 各 Client が fail-closed で [jp.momiji.domain.BusinessException] を投げて拒否する。
  */
 enum class IdentityProvider {
     LOCAL,

@@ -4,7 +4,7 @@ import io.grpc.Context
 import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
-import jp.momiji.domain.UseCaseException
+import jp.momiji.domain.BusinessException
 import jp.momiji.feature.user.UserIdResolver
 import jp.momiji.grpc.momiji.user.findbyid.v1.findUserByIdRequest
 import kotlinx.coroutines.runBlocking
@@ -59,11 +59,11 @@ class FindUserByIdGrpcServiceTest {
     }
 
     @Test
-    fun `異常系_ユーザーが見つからなければ UseCaseException`() {
+    fun `異常系_ユーザーが見つからなければ BusinessException`() {
         every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
         every { findUserByIdQueryService.findById("test-user-id") } returns null
 
-        val ex = assertThrows<UseCaseException> { callFindUserById() }
+        val ex = assertThrows<BusinessException> { callFindUserById() }
         assertEquals("ユーザーが見つかりません", ex.error.message)
     }
 }
