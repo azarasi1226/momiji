@@ -1,18 +1,28 @@
-# ADR 0001: 値オブジェクトと Result 型による検証集約
+# ADR 0001: 値オブジェクトと Result 型の組み合わせによるバリデーションチェックの集約
 
-- **ステータス**: 採用 (全 Command 適用済: UpdateUser / RequestEmailChange / CreateUser / ConfirmEmailChange)
+- **ステータス**: 採用
 - **作成日**: 2026-05-29
-- **関連 PR**: (今回の値オブジェクト導入)
 
 ## コンテキスト
 
-これまで `UpdateUserCommand` や `RequestEmailChangeCommand` などは String パラメータの集合で、 各 CommandHandler / GrpcService の中で個別に「null/empty チェック」 や「正規表現マッチ」 を書いていた。 この構成だと:
+コレまでは値ブジェクとの検証に例外を採用しており、Commandを組み立てる際に一つでも不正なフィールドがあると即座に例外が投げられていた。
 
-- 検証ロジックが散らばる (CommandHandler に書いたり、 GrpcService に書いたり)
-- 「不正な Name は存在しない」 を型で保証できない (`val name: String` を信用するしかない)
-- フィールド別エラーをクライアントに「全部まとめて返す」 仕組みが無い
+```kotlin
+val command = UpdateUserCommand(
+    id = userId,
+    name = Name(request.name),                      // ← ここで throw するととAPIの利用者は Name の検証エラーしか気づけない
+    phoneNumber = PhoneNumber(request.phoneNumber), // ← 次のフィールドのエラーに気づけない
+    postalCode = PostalCode(request.postalCode),
+    address1 = Address1(request.address1),
+    address2 = Address2(request.address2),
+)
+```
 
-DDD の値オブジェクト + Result 型 + zip 集約パターンで上記を解決する。
+この方式だと、 name と phoneNumber の両方が不正でも **最初に評価された name の例外しかクライアントに返せない**。 ユーザーは「name を直して再送 → 今度は phoneNumber で弾かれる」 という往復を強いられる。 また `IllegalArgumentException` を gRPC レイヤで握り潰してメッセージを組み立て直す必要があり、 フィールド名 (どの項目が NG か) が message 文字列からしか復元できない。
+
+コレを解決するために、Result型を導入し、 **すべてのフィールドの検証結果を集約してクライアントに返す** 方式に切り替える。 これにより、 クライアントは「name と phoneNumber の両方が不正」 という状態を一度のリクエストで知ることができ、 UX が大幅に向上する。
+
+
 
 ## 決定
 
@@ -33,9 +43,6 @@ domain/                         ← ドメイン概念 (vertical slice に依存
     ├── Address2.kt
     ├── EmailChangeToken.kt      ← JWT 風 3 セグメント形式の確認用トークン
     └── (User コンテキストの値オブジェクト)
-
-domain/idp/                     ← IDP コンテキストの値オブジェクト
-└── IdentityProvider.kt          ← OIDC リンク先 IDP enum (LOCAL / GOOGLE)。 文字列からの変換は各 IDP 実装側
 ```
 
 `feature/` (use case 層) は `domain/` に一方向依存。 逆方向の依存は無い。
