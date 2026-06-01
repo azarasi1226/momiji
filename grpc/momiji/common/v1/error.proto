@@ -37,7 +37,7 @@ message FieldError {
   string message = 2;
 }
 
-// 想定外 (UseCaseException / ValidationException 以外) の例外。
+// 想定外 (BusinessException / ValidationException 以外) の例外。
 //
 // クライアントには内部実装情報 (例: SQL カラム名、 内部ホスト名、 ファイルパス) を漏らさないため
 // [message] は固定メッセージ ("サーバーエラーが発生しました" 等) にとどめ、
