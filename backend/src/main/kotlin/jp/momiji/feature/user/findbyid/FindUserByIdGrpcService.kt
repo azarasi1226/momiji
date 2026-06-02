@@ -19,8 +19,8 @@ class FindUserByIdGrpcService(
     private val findUserByIdQueryService: FindUserByIdQueryService,
 ) : FindUserByIdServiceGrpcKt.FindUserByIdServiceCoroutineImplBase() {
     override suspend fun findUserById(request: FindUserByIdRequest): FindUserByIdResponse {
-        val auth = GrpcAuthContext.current()
-        val userId = userIdResolver.resolve(auth)
+        val accessToken = GrpcAuthContext.current().token
+        val userId = userIdResolver.resolve(accessToken)
 
         val user =
             findUserByIdQueryService.findById(userId)

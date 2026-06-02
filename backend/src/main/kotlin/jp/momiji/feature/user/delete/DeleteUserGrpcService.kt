@@ -15,8 +15,8 @@ class DeleteUserGrpcService(
     private val userIdResolver: UserIdResolver,
 ) : DeleteUserServiceGrpcKt.DeleteUserServiceCoroutineImplBase() {
     override suspend fun deleteUser(request: DeleteUserRequest): DeleteUserResponse {
-        val auth = GrpcAuthContext.current()
-        val userId = userIdResolver.resolve(auth)
+        val accessToken = GrpcAuthContext.current().token
+        val userId = userIdResolver.resolve(accessToken)
 
         commandGateway
             .deleteUser(

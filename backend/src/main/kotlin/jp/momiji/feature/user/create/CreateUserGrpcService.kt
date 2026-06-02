@@ -1,10 +1,7 @@
 package jp.momiji.feature.user.create
 
-import com.github.michaelbull.result.getOrElse
 import jp.momiji.config.grpc.GrpcAuthContext
-import jp.momiji.domain.ValidationException
-import jp.momiji.domain.user.Email
-import jp.momiji.feature.idp.IdpUserClient
+import jp.momiji.feature.idp.IdpUserInfoFetcher
 import jp.momiji.feature.throwIfError
 import jp.momiji.grpc.momiji.user.create.v1.CreateUserRequest
 import jp.momiji.grpc.momiji.user.create.v1.CreateUserResponse
@@ -14,29 +11,26 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateUserGrpcService(
-    private val oidcUserInfoFetcher: OidcUserInfoFetcher,
-    private val idpUserClient: IdpUserClient,
+    private val idpUserInfoFetcher: IdpUserInfoFetcher,
     private val commandGateway: CommandGateway,
 ) : CreateUserServiceGrpcKt.CreateUserServiceCoroutineImplBase() {
     override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
-        val auth = GrpcAuthContext.current()
-        val accessToken = auth.token.tokenValue
-        val userInfo = oidcUserInfoFetcher.handle(accessToken)
-        val idp = idpUserClient.resolveIdentityProvider(accessToken)
-
-        // userInfo.email は IDP 経由 (信頼境界内) だが、 broken IDP に対する防御で形式検証は通す。
-        val email =
-            Email.create(userInfo.email).getOrElse {
-                throw ValidationException(listOf(it))
-            }
+        // access token は Spring Security で検証済み。 その subject / issuer を使って
+        // IDP の admin API から「完成品」 の OidcUserInfo ( identityProvider / email 値オブジェクト込み ) を解決する。
+        val token = GrpcAuthContext.current().token
+        val userInfo =
+            idpUserInfoFetcher.handle(
+                subject = requireNotNull(token.subject) { "access token に sub claim がありません" },
+                issuer = requireNotNull(token.issuer) { "access token に iss claim がありません" }.toString(),
+            )
 
         commandGateway
             .createUser(
                 CreateUserCommand(
                     oidcSubject = userInfo.subject,
                     oidcIssuer = userInfo.issuer,
-                    oidcIdentityProvider = idp,
-                    email = email,
+                    oidcIdentityProvider = userInfo.identityProvider,
+                    email = userInfo.email,
                     emailVerified = userInfo.emailVerified,
                 ),
             ).throwIfError()

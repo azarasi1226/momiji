@@ -24,8 +24,8 @@ class UpdateUserGrpcService(
     private val userIdResolver: UserIdResolver,
 ) : UpdateUserServiceGrpcKt.UpdateUserServiceCoroutineImplBase() {
     override suspend fun updateUser(request: UpdateUserRequest): UpdateUserResponse {
-        val auth = GrpcAuthContext.current()
-        val userId = userIdResolver.resolve(auth)
+        val accessToken = GrpcAuthContext.current().token
+        val userId = userIdResolver.resolve(accessToken)
 
         val commandResult =
             zipOrAccumulate(
