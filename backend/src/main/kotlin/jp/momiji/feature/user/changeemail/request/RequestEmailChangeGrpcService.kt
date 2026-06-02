@@ -21,7 +21,6 @@ class RequestEmailChangeGrpcService(
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
 
-        // 単一フィールドなので zipOrAccumulate 不要、 getOrElse で 1 エラー → ValidationException に変換。
         val newEmail =
             Email.create(request.newEmail).getOrElse {
                 throw ValidationException(listOf(it))

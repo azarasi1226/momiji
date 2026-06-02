@@ -15,13 +15,11 @@ class CreateUserGrpcService(
     private val commandGateway: CommandGateway,
 ) : CreateUserServiceGrpcKt.CreateUserServiceCoroutineImplBase() {
     override suspend fun createUser(request: CreateUserRequest): CreateUserResponse {
-        // access token は Spring Security で検証済み。 その subject / issuer を使って
-        // IDP の admin API から「完成品」 の OidcUserInfo ( identityProvider / email 値オブジェクト込み ) を解決する。
-        val token = GrpcAuthContext.current().token
+        val accessToken = GrpcAuthContext.current().token
         val userInfo =
             idpUserInfoFetcher.handle(
-                subject = requireNotNull(token.subject) { "access token に sub claim がありません" },
-                issuer = requireNotNull(token.issuer) { "access token に iss claim がありません" }.toString(),
+                subject = requireNotNull(accessToken.subject) { "access token に sub claim がありません" },
+                issuer = requireNotNull(accessToken.issuer) { "access token に iss claim がありません" }.toString(),
             )
 
         commandGateway

@@ -21,7 +21,6 @@ class ConfirmEmailChangeGrpcService(
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
 
-        // 形式チェックだけ値オブジェクトで担う。 署名 + 期限の検証は CommandHandler 側。
         val token =
             EmailChangeToken.create(request.token).getOrElse {
                 throw ValidationException(listOf(it))
