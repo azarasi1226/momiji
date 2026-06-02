@@ -18,8 +18,8 @@ class ConfirmEmailChangeGrpcService(
     private val userIdResolver: UserIdResolver,
 ) : ConfirmEmailChangeServiceGrpcKt.ConfirmEmailChangeServiceCoroutineImplBase() {
     override suspend fun confirmEmailChange(request: ConfirmEmailChangeRequest): ConfirmEmailChangeResponse {
-        val auth = GrpcAuthContext.current()
-        val userId = userIdResolver.resolve(auth)
+        val accessToken = GrpcAuthContext.current().token
+        val userId = userIdResolver.resolve(accessToken)
 
         // 形式チェックだけ値オブジェクトで担う。 署名 + 期限の検証は CommandHandler 側。
         val token =

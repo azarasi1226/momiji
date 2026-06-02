@@ -18,8 +18,8 @@ class RequestEmailChangeGrpcService(
     private val userIdResolver: UserIdResolver,
 ) : RequestEmailChangeServiceGrpcKt.RequestEmailChangeServiceCoroutineImplBase() {
     override suspend fun requestEmailChange(request: RequestEmailChangeRequest): RequestEmailChangeResponse {
-        val auth = GrpcAuthContext.current()
-        val userId = userIdResolver.resolve(auth)
+        val accessToken = GrpcAuthContext.current().token
+        val userId = userIdResolver.resolve(accessToken)
 
         // 単一フィールドなので zipOrAccumulate 不要、 getOrElse で 1 エラー → ValidationException に変換。
         val newEmail =
