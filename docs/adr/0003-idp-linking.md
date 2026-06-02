@@ -102,6 +102,20 @@ Cognito の `AdminGetUser` から取得する `identities` user attribute は JS
 
 同様に Keycloak も First Login Flow に `Automatically Link Brokered Account` 等の authenticator を入れていないため、 `identity_provider` claim も常に単一の IDP alias を返す ( [KeycloakUserClient](../../backend/src/main/kotlin/jp/momiji/feature/idp/KeycloakUserClient.kt) )。
 
+### IdP app client に有効化が必要な OAuth scope
+
+frontend ( Auth.js ) は OIDC 認可リクエストで `openid` `email` `profile` の 3 scope を要求する。 IdP の app client ( Cognito ) / realm ( Keycloak ) がこのいずれかを許可していないと、 認可エンドポイントが `invalid_scope` を返し、 **ログイン画面に到達する前に弾かれる** ( frontend では `OAuthCallbackError` として現れる )。
+
+| scope | 用途 |
+|---|---|
+| `openid` | OIDC 認証の必須 scope |
+| `email` | `email` / `email_verified` claim。 [CreateUserCommandHandler](../../backend/src/main/kotlin/jp/momiji/feature/user/create/CreateUserCommandHandler.kt) の email-based linking と email_verified ガードで使う |
+| `profile` | `name` claim。 frontend の [page.tsx](../../frontend/app/page.tsx) で `session.user.name` ( ログイン中の表示名 ) に使う |
+
+**なぜ `profile` が必要か**: frontend がログイン中ユーザーの表示名に OIDC の `name` claim を使っており、 `name` は `profile` scope でのみ付与されるため。 表示名が不要なら frontend 側で要求 scope から `profile` を外せば IdP 側の `profile` 有効化も不要になる ( その場合 `session.user.name` は空になる )。
+
+**Cognito 固有の注意**: Cognito の app client は新規作成時に `profile` が有効化されていないことがある。 一方 Keycloak は realm デフォルトで `openid email profile` が揃っているため、 Cognito へ切り替えて初めて `invalid_scope` で表面化しやすい。 Cognito app client の「OpenID Connect のスコープ」に `openid` / `email` / `profile` の 3 つが揃っているか必ず確認すること。
+
 ## 妥協点
 
 ### 1. なぜ IDP 側の auto linking 機能を使わないか
