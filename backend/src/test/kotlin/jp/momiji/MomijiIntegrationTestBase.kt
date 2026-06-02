@@ -5,8 +5,8 @@ import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTER
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.USERS
 import jp.momiji.feature.idp.IdpUserClient
+import jp.momiji.feature.idp.IdpUserInfoFetcher
 import jp.momiji.feature.mail.MailSender
-import jp.momiji.feature.user.create.OidcUserInfoFetcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -36,7 +36,7 @@ import org.testcontainers.lifecycle.Startable
  * - Axon Server TestContainer（DCB EventStore、 CommandHandler / EventHandler の本物の流れ）
  *
  * 外部 IO の bean は **mock 化** することでコンテナと profile を削減している:
- * - [MailSender] / [IdpUserClient] / [OidcUserInfoFetcher] / [JwtDecoder]
+ * - [MailSender] / [IdpUserClient] / [IdpUserInfoFetcher] / [JwtDecoder]
  * - これらは「呼ばれたこと」を verify する目的のテストにしか使わない
  * - 実際の SMTP 配送 / Keycloak admin API / JWT 検証 / OIDC discovery は production smoke test で確認する責務
  *
@@ -82,12 +82,12 @@ abstract class MomijiIntegrationTestBase {
     lateinit var jwtDecoder: JwtDecoder
 
     /**
-     * 統合テストでは CreateUserCommandHandler を直接叩くので OidcUserInfoFetcher は呼ばれないが、
-     * Spring component の init ブロックで OIDC discovery を叩こうとして Keycloak がいないと死ぬ。
-     * mock で bean factory を skip する。
+     * 統合テストでは CreateUserCommandHandler を直接叩くので IdpUserInfoFetcher は呼ばれないが、
+     * CreateUserGrpcService ( @Service ) が常に生成され IdpUserInfoFetcher を注入要求する。 統合テストでは
+     * idp-* profile を有効化しないため実装 bean ( Cognito/Keycloak ) が存在しないので、 mock で供給する。
      */
     @MockkBean(relaxed = true)
-    lateinit var oidcUserInfoFetcher: OidcUserInfoFetcher
+    lateinit var idpUserInfoFetcher: IdpUserInfoFetcher
 
     lateinit var fixture: AxonTestFixture
 
