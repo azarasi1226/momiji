@@ -1,0 +1,22 @@
+
+## Google　Auth Platform
+1. Google Cloud Consoleでプロジェクトを作成する
+2. [APIとサービス] > [認証情報] > [認証情報を作成] > [OAuthクライアントID]を選択する
+３.　クライアントIDとクライアントシークレットを取得する
+4. 【承認済みのリダイレクト URI】に, https://ap-northeast-{userPoolId}.auth.ap-northeast-1.amazoncognito.com/oauth2/idpresponse
+
+
+
+## ソーシャルプロバイダーの設定
+1. [ソーシャルプロバイダーと外部プロバイダー]画面を開く
+2. [アイデンティティプロバイダーを追加]を押す
+3. [Google]を選択する
+4. クライアントIDとクライアントシークレットを入力する
+5. [属性マッピング]にて、emailとemail_verifiedをマッピングする必要がある
+
+
+## アプリケーションクライアントの設定
+1. [アプリケーションクライアント]画面を開く
+2. [アプリケーションクライアントを作成]を押す
+3. クライアント名, リターンURL(~/api/auth/callback/oidc)を入力する 
+4. [OpenID Connect のスコープ]にて、[profile]を含める （アカウント名取得するのに使っている）
