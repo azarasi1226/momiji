@@ -10,7 +10,7 @@ import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js
 import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js"
 import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js"
 import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js"
-import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js"
+import { parseConnectError } from "@/lib/grpc-error"
 import { Code, ConnectError } from "@connectrpc/connect"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 
@@ -24,49 +24,6 @@ export type UserProfile = {
   address2: string
   createdAt: string
   updatedAt: string
-}
-
-/**
- * 構造化エラーを backend から取り出す共通パーサ。
- *
- * backend は ErrorDetail を gRPC Status.details に乗せて返す:
- * - businessError: ビジネスルール違反 (例: ユーザー未存在)
- * - validationError: 値オブジェクト validation の集約エラー
- *
- * 返り値:
- * - businessError: 表示用文字列
- * - fieldErrors: field 名 → message のマップ (form の field 別ハイライト用)
- * - fallback: details が無い場合の生メッセージ
- */
-function parseConnectError(e: unknown): {
-  businessError?: string
-  fieldErrors?: Record<string, string>
-  unknownError?: { message: string; correlationId: string }
-  fallback?: string
-} | null {
-  if (!(e instanceof ConnectError)) return null
-  const details = e.findDetails(ErrorDetailSchema)
-  if (details.length === 0) return { fallback: e.message }
-  const detail = details[0]
-  if (detail.error.case === "businessError") {
-    return { businessError: detail.error.value.message }
-  }
-  if (detail.error.case === "validationError") {
-    const fieldErrors: Record<string, string> = {}
-    for (const fe of detail.error.value.errors) {
-      fieldErrors[fe.fieldName] = fe.message
-    }
-    return { fieldErrors }
-  }
-  if (detail.error.case === "unknownError") {
-    return {
-      unknownError: {
-        message: detail.error.value.message,
-        correlationId: detail.error.value.correlationId,
-      },
-    }
-  }
-  return { fallback: e.message }
 }
 
 /**

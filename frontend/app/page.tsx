@@ -1,5 +1,7 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { auth, signIn, signOut } from "@/auth"
+import { buildLogoutUrl } from "@/lib/idp"
 
 export default async function Home() {
   const session = await auth()
@@ -30,7 +32,21 @@ export default async function Home() {
               <form
                 action={async () => {
                   "use server"
-                  await signOut()
+                  // 1. アプリ側 session を消す。signOut({ redirectTo: logoutUrl }) で IdP の logout へ
+                  //    直接飛ばせないのは、Auth.js の既定 redirect callback が baseUrl とオリジンの
+                  //    違う URL を baseUrl に丸めてしまうため (open-redirect 対策。@auth/core の
+                  //    createCallbackUrl → callbacks.redirect)。IdP の logout は別オリジンなので丸められる。
+                  //    よって redirect:false で破棄だけ行い、外部オリジンへ飛ばせる next/navigation の
+                  //    redirect() を 2 で使う。
+                  const current = await auth()
+                  await signOut({ redirect: false })
+                  // 2. ブラウザを IdP の logout エンドポイントへ飛ばし、 IdP 側のログインセッションも破棄する。
+                  //    これをやらないと Cognito/Keycloak の session cookie が残り、 再ログインが素通りしてしまう。
+                  const logoutUrl = await buildLogoutUrl({
+                    idToken: current?.idToken,
+                    postLogoutRedirectUri: process.env.AUTH_URL ?? "http://localhost:3000",
+                  })
+                  redirect(logoutUrl)
                 }}
               >
                 <button
@@ -60,7 +76,7 @@ export default async function Home() {
                 if (sessionExpired) {
                   await signOut({ redirect: false })
                 }
-                await signIn("keycloak")
+                await signIn("oidc")
               }}
             >
               <button

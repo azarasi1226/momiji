@@ -8,9 +8,14 @@ const messages: Record<string, string> = {
 export default async function AuthErrorPage({
   searchParams,
 }: {
-  searchParams: Promise<{ reason?: string }>
+  searchParams: Promise<{
+    reason?: string
+    code?: string
+    message?: string
+    correlationId?: string
+  }>
 }) {
-  const { reason } = await searchParams
+  const { reason, code, message: detailMessage, correlationId } = await searchParams
   const message = messages[reason ?? ""] ?? "ログイン中にエラーが発生しました。"
 
   return (
@@ -22,6 +27,38 @@ export default async function AuthErrorPage({
         <p className="text-zinc-600 dark:text-zinc-400 text-center">
           {message}
         </p>
+
+        {(detailMessage || code || correlationId) && (
+          <div className="w-full rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <p className="mb-2 font-semibold text-zinc-700 dark:text-zinc-300">エラー詳細</p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-zinc-600 dark:text-zinc-400">
+              {code && (
+                <>
+                  <dt className="font-mono text-zinc-500">code</dt>
+                  <dd className="font-mono break-all">{code}</dd>
+                </>
+              )}
+              {detailMessage && (
+                <>
+                  <dt className="font-mono text-zinc-500">message</dt>
+                  <dd className="break-all">{detailMessage}</dd>
+                </>
+              )}
+              {correlationId && (
+                <>
+                  <dt className="font-mono text-zinc-500">correlationId</dt>
+                  <dd className="font-mono break-all">{correlationId}</dd>
+                </>
+              )}
+            </dl>
+            {correlationId && (
+              <p className="mt-3 text-xs text-zinc-500">
+                サポートに問い合わせる際はこの correlationId をお伝えください。
+              </p>
+            )}
+          </div>
+        )}
+
         <Link
           href="/"
           className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"

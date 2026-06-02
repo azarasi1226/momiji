@@ -1,10 +1,12 @@
 import NextAuth from "next-auth"
-import Keycloak from "next-auth/providers/keycloak"
 import { createGrpcClient } from "@/lib/grpc"
 import { CreateUserService } from "@/grpc/gen/momiji/user/create/v1/create_pb.js"
+import { activeProvider, refreshAccessToken } from "@/lib/idp"
+import { formatConnectError } from "@/lib/grpc-error"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Keycloak],
+  // provider は AUTH_PROVIDER で keycloak / cognito を切り替える (lib/idp.ts)。
+  providers: [activeProvider],
   callbacks: {
     async signIn({ account }) {
       if (!account?.access_token) {
@@ -17,7 +19,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return true
       } catch (e) {
         console.error("CreateUser gRPC call error:", e)
-        return "/auth/error?reason=backend"
+        // gRPC エラーの中身 (code / メッセージ / correlationId) をエラーページへ渡して可視化する。
+        const { code, message, correlationId } = formatConnectError(e)
+        const params = new URLSearchParams({ reason: "backend" })
+        if (code) params.set("code", code)
+        if (message) params.set("message", message)
+        if (correlationId) params.set("correlationId", correlationId)
+        return `/auth/error?${params.toString()}`
       }
     },
     async jwt({ token, account }) {
@@ -33,34 +41,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token
       }
 
-      // 期限切れならリフレッシュ
+      // 期限切れならリフレッシュ (token endpoint は provider に応じて discovery で解決される)
+      if (!token.refreshToken) {
+        return { ...token, error: "RefreshTokenError" }
+      }
       try {
-        const issuer = process.env.AUTH_KEYCLOAK_ISSUER!
-        const res = await fetch(`${issuer}/protocol/openid-connect/token`, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            client_id: process.env.AUTH_KEYCLOAK_ID!,
-            client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
-            grant_type: "refresh_token",
-            refresh_token: token.refreshToken as string,
-          }),
-        })
-
-        const data = await res.json()
-
-        if (!res.ok) {
+        const result = await refreshAccessToken(token.refreshToken as string)
+        if (!result.ok) {
           // status code も一緒に出すことで invalid_grant (refresh token 期限切れ) と
           // 設定不整合 (invalid_client 等) を切り分けやすくする。
-          console.error(`Token refresh failed (status ${res.status}):`, data)
+          console.error(`Token refresh failed (status ${result.status}):`, result.data)
           return { ...token, error: "RefreshTokenError" }
         }
 
         return {
           ...token,
-          accessToken: data.access_token,
-          refreshToken: data.refresh_token ?? token.refreshToken,
-          expiresAt: Math.floor(Date.now() / 1000) + data.expires_in,
+          accessToken: result.data.access_token,
+          refreshToken: result.data.refresh_token ?? token.refreshToken,
+          expiresAt: Math.floor(Date.now() / 1000) + result.data.expires_in,
         }
       } catch (e) {
         console.error("Token refresh error:", e)
@@ -72,18 +70,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.idToken = token.idToken as string
       session.error = token.error
       return session
-    },
-  },
-  events: {
-    async signOut(message) {
-      const token = "token" in message ? message.token : undefined
-      if (token?.idToken) {
-        const issuer = process.env.AUTH_KEYCLOAK_ISSUER!
-        const logoutUrl = new URL(`${issuer}/protocol/openid-connect/logout`)
-        logoutUrl.searchParams.set("id_token_hint", token.idToken as string)
-        logoutUrl.searchParams.set("post_logout_redirect_uri", process.env.NEXTAUTH_URL ?? "http://localhost:3000")
-        await fetch(logoutUrl.toString())
-      }
     },
   },
 })
