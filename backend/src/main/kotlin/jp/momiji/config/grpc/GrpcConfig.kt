@@ -63,7 +63,7 @@ class GrpcConfig {
      * ハンドラ内で投げた業務例外を、 gRPC Status + 構造化 details にマッピングするハンドラ。
      *
      * - [ValidationException] → `INVALID_ARGUMENT` + ValidationError (field 別エラーリスト)
-     * - [BusinessException]    → `INVALID_ARGUMENT` + UseCaseError (message 1つ)
+     * - [BusinessException]    → `INVALID_ARGUMENT` + BusinessError (message 1つ)
      * - その他                → `UNKNOWN` + UnknownError (固定メッセージ + correlationId、 詳細はサーバーログ)
      *
      * 詳細は ADR 0002 と [ErrorDetailMapping] 参照。
@@ -75,13 +75,13 @@ class GrpcConfig {
                 is ValidationException ->
                     buildStatusException(
                         Status.INVALID_ARGUMENT,
-                        ex.message ?: "validation error",
+                        "ValidationError",
                         ex.toErrorDetail(),
                     )
                 is BusinessException ->
                     buildStatusException(
                         Status.INVALID_ARGUMENT,
-                        ex.error.message,
+                        "BusinessError",
                         ex.toErrorDetail(),
                     )
                 else -> {
@@ -89,7 +89,7 @@ class GrpcConfig {
                     logger.error(ex) { "予期せぬエラー correlationId=$correlationId" }
                     buildStatusException(
                         Status.UNKNOWN,
-                        "サーバーエラーが発生しました",
+                        "UnknownError",
                         unknownErrorDetail(correlationId),
                     )
                 }

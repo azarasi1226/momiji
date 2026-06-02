@@ -6,10 +6,10 @@ import io.grpc.StatusException
 import io.grpc.protobuf.StatusProto
 import jp.momiji.domain.BusinessException
 import jp.momiji.domain.ValidationException
+import jp.momiji.grpc.momiji.common.v1.BusinessError
 import jp.momiji.grpc.momiji.common.v1.ErrorDetail
 import jp.momiji.grpc.momiji.common.v1.FieldError
 import jp.momiji.grpc.momiji.common.v1.UnknownError
-import jp.momiji.grpc.momiji.common.v1.UseCaseError
 import jp.momiji.grpc.momiji.common.v1.ValidationError
 import com.google.rpc.Status as RpcStatus
 
@@ -43,8 +43,8 @@ internal fun ValidationException.toErrorDetail(): ErrorDetail =
 internal fun BusinessException.toErrorDetail(): ErrorDetail =
     ErrorDetail
         .newBuilder()
-        .setUseCaseError(
-            UseCaseError
+        .setBusinessError(
+            BusinessError
                 .newBuilder()
                 .setMessage(error.message)
                 .build(),
@@ -66,7 +66,7 @@ internal fun unknownErrorDetail(correlationId: String): ErrorDetail =
         .setUnknownError(
             UnknownError
                 .newBuilder()
-                .setMessage("サーバーエラーが発生しました")
+                .setMessage("予期せぬエラーが発生しました。　サポートにお問い合わせの際、以下のエラーIDをお伝えください。")
                 .setCorrelationId(correlationId)
                 .build(),
         ).build()
