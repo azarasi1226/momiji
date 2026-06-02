@@ -2,38 +2,24 @@ syntax = "proto3";
 
 package momiji.common.v1;
 
-// gRPC `google.rpc.Status.details` に乗せるエラー詳細メッセージ。
-//
-// 各エラー型を oneof で表現することで、 クライアントは `.error.case` で型を識別して
-// 適切な UI 表示に分岐できる (例: 単一メッセージ vs field 別ハイライト)。
-//
-// 新しいエラー型を追加する場合は ここに oneof として 1 行追加 + 専用 message を定義する。
 message ErrorDetail {
   oneof error {
-    UseCaseError use_case_error = 1;
-    ValidationError validation_error = 2;
+    ValidationError validation_error = 1;
+    BusinessError business_error = 2;
     UnknownError unknown_error = 3;
   }
 }
 
-// ビジネスルール違反 (例: ユーザー未存在、 メールアドレス重複)。
-// クライアントは [message] をそのまま表示すれば良い人間可読メッセージ。
-message UseCaseError {
-  string message = 1;
-}
-
-// 値オブジェクト validation の集約エラー。
-// 複数 field のエラーをまとめて返すため、 クライアントは form の field ごとに
-// エラーメッセージをハイライト表示できる。
 message ValidationError {
   repeated FieldError errors = 1;
 }
 
-// validation エラーの 1 件。
+message BusinessError {
+  string message = 1;
+}
+
 message FieldError {
-  // リクエストの field 名と一致 (例: "name", "phoneNumber", "address1")。
   string field_name = 1;
-  // クライアント向け人間可読メッセージ。
   string message = 2;
 }
 
@@ -44,8 +30,6 @@ message FieldError {
 // 詳細は backend のログにのみ出す。 ユーザーがサポートに問い合わせる際は
 // [correlation_id] を伝えてもらい、 backend のログと突き合わせて原因特定する設計。
 message UnknownError {
-  // クライアント表示用の固定メッセージ。
   string message = 1;
-  // backend ログとの突合用 UUID。 ユーザーがサポートに伝える。
   string correlation_id = 2;
 }

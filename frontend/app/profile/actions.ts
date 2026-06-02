@@ -30,16 +30,16 @@ export type UserProfile = {
  * 構造化エラーを backend から取り出す共通パーサ。
  *
  * backend は ErrorDetail を gRPC Status.details に乗せて返す:
- * - useCaseError: ビジネスルール違反 (例: ユーザー未存在)
+ * - businessError: ビジネスルール違反 (例: ユーザー未存在)
  * - validationError: 値オブジェクト validation の集約エラー
  *
  * 返り値:
- * - useCaseError: 表示用文字列
+ * - businessError: 表示用文字列
  * - fieldErrors: field 名 → message のマップ (form の field 別ハイライト用)
  * - fallback: details が無い場合の生メッセージ
  */
 function parseConnectError(e: unknown): {
-  useCaseError?: string
+  businessError?: string
   fieldErrors?: Record<string, string>
   unknownError?: { message: string; correlationId: string }
   fallback?: string
@@ -48,8 +48,8 @@ function parseConnectError(e: unknown): {
   const details = e.findDetails(ErrorDetailSchema)
   if (details.length === 0) return { fallback: e.message }
   const detail = details[0]
-  if (detail.error.case === "useCaseError") {
-    return { useCaseError: detail.error.value.message }
+  if (detail.error.case === "businessError") {
+    return { businessError: detail.error.value.message }
   }
   if (detail.error.case === "validationError") {
     const fieldErrors: Record<string, string> = {}
@@ -128,7 +128,7 @@ export async function updateProfile(
     redirectIfUnauthenticated(e)
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
-    if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.businessError) return { error: parsed.businessError }
     if (parsed?.unknownError) {
       return {
         error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
@@ -155,7 +155,7 @@ export async function deleteAccount(): Promise<DeleteAccountState> {
   } catch (e) {
     redirectIfUnauthenticated(e)
     const parsed = parseConnectError(e)
-    if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.businessError) return { error: parsed.businessError }
     if (parsed?.unknownError) {
       return {
         error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
@@ -190,7 +190,7 @@ export async function requestEmailChange(
     redirectIfUnauthenticated(e)
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
-    if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.businessError) return { error: parsed.businessError }
     if (parsed?.unknownError) {
       return {
         error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
@@ -218,7 +218,7 @@ export async function confirmEmailChange(
     redirectIfUnauthenticated(e)
     const parsed = parseConnectError(e)
     if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors }
-    if (parsed?.useCaseError) return { error: parsed.useCaseError }
+    if (parsed?.businessError) return { error: parsed.businessError }
     if (parsed?.unknownError) {
       return {
         error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
