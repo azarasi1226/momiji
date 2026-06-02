@@ -44,7 +44,12 @@ class OidcUserInfoFetcher(
             issuer = issuerUri,
             subject = response["sub"] as String,
             email = response["email"] as String,
-            emailVerified = response["email_verified"] as? Boolean ?: false,
+            // Cognito は email_verified を文字列 "true"/"false" で返す ( AWS 公式 doc 記載の仕様 ) が、
+            // Keycloak は email_verified　をboolean で返す。 どちらでも拾えるよう toString() を挟んで判定する。
+
+            // TODO: もはやOidcUserInfoFetcherも Interfaceにして KeycloakUserInfoFetcher と CognitoUserInfoFetcher に分けるべきかもしれない
+            // そうすればresolveIdentityProviderも不要になるし、コードもシンプルになりそう
+            emailVerified = response["email_verified"]?.toString()?.toBooleanStrictOrNull() ?: false,
         )
     }
 }
