@@ -27,9 +27,6 @@ class UpdateUserGrpcService(
         val auth = GrpcAuthContext.current()
         val userId = userIdResolver.resolve(auth)
 
-        // 各値オブジェクトを検証し、 全エラーを蓄積して 1 つの Command に組み立てる。
-        // 失敗時は ValidationException を投げて grpcExceptionHandler 経由で INVALID_ARGUMENT に変換。
-        // zipOrAccumulate は kotlin-result 標準。 lazy lambda で受け取る形式。
         val commandResult =
             zipOrAccumulate(
                 { Name.create(request.name) },
