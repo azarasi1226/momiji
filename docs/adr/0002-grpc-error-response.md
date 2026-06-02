@@ -1,4 +1,4 @@
-# ADR 0002: gRPC エラーレスポンスの構造化と安全な出し方
+# ADR 0002: エラーの種類とGRPCの構造化エラー変換
 
 - **ステータス**: 採用
 - **作成日**: 2026-05-29
@@ -8,7 +8,7 @@
 
 これまで gRPC のエラーは `Status.INVALID_ARGUMENT.withDescription(ex.message)` で文字列を返すだけだった:
 
-- backend で `ValidationException(errors: List<DomainError>)` を投げる
+- backend で `ValidationException(errors: List<ValidationError>)` を投げる
 - gRPC が message を `"[name] 名前は必須です / [phoneNumber] 電話番号は..."` のような join 文字列にして返す
 - frontend は string を表示するだけで、 「どの field のエラーか」 を識別できない
 
@@ -33,7 +33,7 @@ backend の `GrpcConfig.grpcExceptionHandler` で例外型を見て該当 `Error
 
 | 例外型 | gRPC Status | ErrorDetail oneof | フロント UI |
 |---|---|---|---|
-| `UseCaseException` | `INVALID_ARGUMENT` | `useCaseError` | form 下部に赤字メッセージ |
+| `BusinessException` | `INVALID_ARGUMENT` | `useCaseError` | form 下部に赤字メッセージ |
 | `ValidationException` | `INVALID_ARGUMENT` | `validationError` | field 別 border 赤 + 個別メッセージ |
 | その他 (想定外) | `UNKNOWN` | `unknownError` | 「サーバーエラーが発生しました (問い合わせ番号: ...)」 |
 

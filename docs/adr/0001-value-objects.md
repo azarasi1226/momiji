@@ -1,4 +1,4 @@
-# ADR 0001: 値オブジェクトと Result 型の組み合わせによるバリデーションチェックの集約
+# ADR 0001: 値オブジェクトと Result 型の組み合わせによるバリデーションチェック
 
 - **ステータス**: 採用
 - **作成日**: 2026-05-29
@@ -18,87 +18,67 @@ val command = UpdateUserCommand(
 )
 ```
 
-この方式だと、 name と phoneNumber の両方が不正でも **最初に評価された name の例外しかクライアントに返せない**。 ユーザーは「name を直して再送 → 今度は phoneNumber で弾かれる」 という往復を強いられる。 また `IllegalArgumentException` を gRPC レイヤで握り潰してメッセージを組み立て直す必要があり、 フィールド名 (どの項目が NG か) が message 文字列からしか復元できない。
-
-コレを解決するために、Result型を導入し、 **すべてのフィールドの検証結果を集約してクライアントに返す** 方式に切り替える。 これにより、 クライアントは「name と phoneNumber の両方が不正」 という状態を一度のリクエストで知ることができ、 UX が大幅に向上する。
-
-
+この方式だと、 name と phoneNumber の両方が不正でも **最初に評価された name の例外しかクライアントに返せない**。  
+ ユーザーは「name を直して再送 → 今度は phoneNumber で弾かれる」 という往復を強いられる。   
 
 ## 決定
+値オブジェクトの検証にResult型を利用し、複数の値オブジェクトを検証する必要がある箇所には zip　を活用しResult結果をためて List形式で返却することに。
 
-### 配置
 
-```
-domain/                         ← ドメイン概念 (vertical slice に依存しない)
-├── DomainError.kt              ← abstract: field + message を持つ
-├── BusinessError.kt            ← ビジネスルール違反 (例: ユーザー未存在)
-├── UseCaseException.kt         ← BusinessError ラップ例外
-├── ValidationException.kt      ← List<DomainError> ラップ例外
-└── user/                       ← User コンテキストの値オブジェクト
-    ├── Name.kt
-    ├── Email.kt
-    ├── PhoneNumber.kt
-    ├── PostalCode.kt
-    ├── Address1.kt
-    ├── Address2.kt
-    ├── EmailChangeToken.kt      ← JWT 風 3 セグメント形式の確認用トークン
-    └── (User コンテキストの値オブジェクト)
-```
+## コード構造
 
-`feature/` (use case 層) は `domain/` に一方向依存。 逆方向の依存は無い。
 
 ### 値オブジェクトのテンプレート
-
 ```kotlin
 data class Name internal constructor(val value: String) {
     companion object {
         const val MAX_LENGTH = 100
-
-        fun create(input: String): Result<Name, DomainError> {
+        
+        # ファクトリメソッドで Result型を返却する
+        fun create(input: String): Result<Name, ValidationError> {
             if (input.isBlank()) return Err(Blank)
             if (input.length > MAX_LENGTH) return Err(TooLong)
             return Ok(Name(input))
         }
 
-        object Blank : DomainError("name", "名前は必須です")
-        object TooLong : DomainError("name", "名前は $MAX_LENGTH 文字以内で入力してください")
+        # エラーは object 型として列挙する
+        object Blank : ValidationError("name", "名前は必須です")
+        object TooLong : ValidationError("name", "名前は $MAX_LENGTH 文字以内で入力してください")
     }
 }
 ```
 
-ポイント:
-
-- `internal constructor` + `create()` で「外部から validation を bypass して構築」 を禁止
-- エラーは値オブジェクト内の `companion object` に nested で定義 → 凝集度を最大化
-- メッセージ内に `$MAX_LENGTH` を埋め込んで定数との同期を保つ
-- ライブラリ: [kotlin-result](https://github.com/michaelbull/kotlin-result) の `Result<V, E>` を採用
-
-### 検証集約
-
-gRPC 層 (Command 組み立て地点) で `zipOrAccumulate` を使い、 **全エラーを蓄積** してクライアントに返す:
+### Grpc層
 
 ```kotlin
-val commandResult = zipOrAccumulate(
-    { Name.create(request.name) },
-    { PhoneNumber.create(request.phoneNumber) },
-    { PostalCode.create(request.postalCode) },
-    { Address1.create(request.address1) },
-    { Address2.create(request.address2) },
-) { name, phoneNumber, postalCode, address1, address2 ->
-    UpdateUserCommand(id = userId, name, phoneNumber, postalCode, address1, address2)
-}
+        val commandResult =
+            # zipOrAccumulate関数は発生したエラーを蓄積してList形式で返却する
+            zipOrAccumulate(
+                { Name.create(request.name) },
+                { PhoneNumber.create(request.phoneNumber) },
+                { PostalCode.create(request.postalCode) },
+                { Address1.create(request.address1) },
+                { Address2.create(request.address2) },
+            ) { name, phoneNumber, postalCode, address1, address2 ->
+                UpdateUserCommand(
+                    id = userId,
+                    name = name,
+                    phoneNumber = phoneNumber,
+                    postalCode = postalCode,
+                    address1 = address1,
+                    address2 = address2,
+                )
+            }
 
-commandResult
-    .onFailure { errors -> throw ValidationException(errors) }
-    .onSuccess { command -> commandGateway.updateUser(command).throwIfError() }
+        commandResult
+            # 失敗だったらそのまま例外にラップし、 gRPC のインターセプターにキャッチしてもらう
+            .onFailure { errors -> throw ValidationException(errors) }
+            # 成功ならそのまま処理続行
+            .onSuccess { command -> commandGateway.updateUser(command).throwIfError() }
 ```
 
-単一フィールドの場合は `getOrElse { throw ValidationException(listOf(it)) }` でシンプルに。
-
-`ValidationException` は `GrpcConfig.grpcExceptionHandler` で `Status.INVALID_ARGUMENT` にマッピングされる。
 
 ## 妥協点 (ここを質問されたら全部この ADR を見せる)
-
 ### 1. なぜ `private constructor` ではなく `internal` か
 
 Axon が Command を AxonServer に送る際に **Jackson で byte[] serde** する。 Jackson の reflection は JVM 可視性を要求するため `private constructor` だと `Cannot construct instance` で deserialize 失敗。
@@ -119,9 +99,9 @@ val sneaky = n.copy(value = "")  // ← validation を bypass
 
 これを防ぐため compiler flag で「copy() の可視性を primary constructor に揃える」。 将来 Kotlin の default 挙動になる予定の先取り。
 
-### 3. なぜ `DomainError` は `sealed` ではなく `abstract` か
+### 3. なぜ `ValidationError` は `sealed` ではなく `abstract` か
 
-Kotlin の `sealed` 制約は「sub-class は **同 package** 内」。 `DomainError` を `domain/` 直下に置き、 sub-class を `domain.user.Name` 等の中に nested で置く構造ではこの制約を満たせない。
+Kotlin の `sealed` 制約は「sub-class は **同 package** 内」。 `ValidationError` を `domain/` 直下に置き、 sub-class を `domain.user.Name` 等の中に nested で置く構造ではこの制約を満たせない。
 
 `when` の網羅性 check を意図的に捨てる代わりに、 **凝集度** (Name のルールは Name.kt 1 ファイルで完結) を優先した。 利用側 (`ValidationException`) は `field` と `message` を join するだけで `is` 分岐していないので、 実用上の影響なし。
 
@@ -135,8 +115,8 @@ CommandHandler 内で `command.name.value` で平文を取り出して event に
 
 「住所」 を `Address(line1, line2)` の 1 つの値オブジェクトにまとめると DDD としては綺麗だが、 以下の技術制約がある:
 
-- `Address.create(line1, line2)` が **複数フィールドの集約 validation** を内包する場合、 戻り値は `Result<Address, List<DomainError>>`
-- 他の値オブジェクトは `Result<T, DomainError>` (単一エラー)
+- `Address.create(line1, line2)` が **複数フィールドの集約 validation** を内包する場合、 戻り値は `Result<Address, List<ValidationError>>`
+- 他の値オブジェクトは `Result<T, ValidationError>` (単一エラー)
 - `zipOrAccumulate` は **E 型を統一** する必要があるため、 上記の混在は型レベルで合成不可
 
 回避策として gRPC 層で `buildList` による自前集約に切り替える方法もあるが、 `zipOrAccumulate` の優雅さを失う trade-off があり、 当面は `Address1` / `Address2` の分割を維持する。

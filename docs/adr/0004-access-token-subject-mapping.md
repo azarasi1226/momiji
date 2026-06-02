@@ -1,4 +1,4 @@
-# ADR 0004: Access Token に `sub` claim を Protocol Mapper で明示する
+# ADR 0004: Access Token に `sub` claim　が入っていないとシステムが崩壊する！　ユーザーIDを特定する方法！
 
 - **ステータス**: 採用 ( Keycloak realm.json の両 client に `oidc-sub-mapper` を設定済 )
 - **作成日**: 2026-05-31
