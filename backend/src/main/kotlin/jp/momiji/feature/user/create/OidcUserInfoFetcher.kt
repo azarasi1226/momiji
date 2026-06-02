@@ -46,7 +46,6 @@ class OidcUserInfoFetcher(
             email = response["email"] as String,
             // Cognito は email_verified を文字列 "true"/"false" で返す ( AWS 公式 doc 記載の仕様 ) が、
             // Keycloak は email_verified　をboolean で返す。 どちらでも拾えるよう toString() を挟んで判定する。
-
             // TODO: もはやOidcUserInfoFetcherも Interfaceにして KeycloakUserInfoFetcher と CognitoUserInfoFetcher に分けるべきかもしれない
             // そうすればresolveIdentityProviderも不要になるし、コードもシンプルになりそう
             // それかemail_verified対応をもう辞めるか。　　IPDのホワイトリストだけで十分な気もするのである。

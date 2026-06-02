@@ -1,5 +1,6 @@
 package jp.momiji.feature.idp
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -39,7 +40,11 @@ class CognitoUserClient(
      * `providerType` は Cognito 固定値 ( `Google` / `Facebook` / `SAML` / `OIDC` 等 ) なので
      * whitelist 判定に使う。 `providerName` はユーザーが Cognito 上で自由に付けた IDP 名で
      * 変更可能なため、 安定した識別子としては `providerType` を採用する。
+     *
+     * 実際の identities 要素には dateCreated / userId / providerName / issuer / primary 等も含まれるが、
+     * ここでは providerType しか使わないため、 未知フィールドは無視する ( 無いと FAIL_ON_UNKNOWN_PROPERTIES で落ちる )。
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private data class CognitoIdentity(
         val providerType: String,
     )
