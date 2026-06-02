@@ -49,6 +49,7 @@ class OidcUserInfoFetcher(
 
             // TODO: もはやOidcUserInfoFetcherも Interfaceにして KeycloakUserInfoFetcher と CognitoUserInfoFetcher に分けるべきかもしれない
             // そうすればresolveIdentityProviderも不要になるし、コードもシンプルになりそう
+            // それかemail_verified対応をもう辞めるか。　　IPDのホワイトリストだけで十分な気もするのである。
             emailVerified = response["email_verified"]?.toString()?.toBooleanStrictOrNull() ?: false,
         )
     }
