@@ -5,6 +5,7 @@ import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.user.Email
 import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import org.junit.jupiter.api.Test
 
 class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -70,6 +71,26 @@ class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
                 ),
             ).then()
             .resultMessagePayload(RequestEmailChangeCommandResult.emailAlreadyInUse())
+            .noEvents()
+    }
+
+    @Test
+    fun `異常系_削除済みユーザーならuserNotFound`() {
+        val userId = "01HXYZREQMAIL0000000000005"
+
+        fixture
+            .given()
+            .events(
+                UserCreatedEvent(id = userId, email = "alice@example.com"),
+                UserDeletedEvent(id = userId, oidcSubjects = emptyList()),
+            ).`when`()
+            .command(
+                RequestEmailChangeCommand(
+                    userId = userId,
+                    newEmail = Email.create("newemail@example.com").get()!!,
+                ),
+            ).then()
+            .resultMessagePayload(RequestEmailChangeCommandResult.userNotFound())
             .noEvents()
     }
 }

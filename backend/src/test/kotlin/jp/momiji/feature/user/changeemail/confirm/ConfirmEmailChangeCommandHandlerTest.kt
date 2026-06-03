@@ -5,6 +5,7 @@ import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.user.EmailChangeToken
 import jp.momiji.event.user.EmailChangeConfirmedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
 import org.junit.jupiter.api.Test
@@ -128,6 +129,27 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
                 ),
             ).then()
             .resultMessagePayload(ConfirmEmailChangeCommandResult.emailAlreadyInUse())
+            .noEvents()
+    }
+
+    @Test
+    fun `異常系_削除済みユーザーならuserNotFound`() {
+        val userId = "01HXYZCONFMAIL0000000000008"
+        val token = EmailChangeToken.create(tokenService.sign(EmailChangePayload(userId = userId, newEmail = "new@example.com"))).get()!!
+
+        fixture
+            .given()
+            .events(
+                UserCreatedEvent(id = userId, email = "alice@example.com"),
+                UserDeletedEvent(id = userId, oidcSubjects = emptyList()),
+            ).`when`()
+            .command(
+                ConfirmEmailChangeCommand(
+                    userId = userId,
+                    token = token,
+                ),
+            ).then()
+            .resultMessagePayload(ConfirmEmailChangeCommandResult.userNotFound())
             .noEvents()
     }
 }
