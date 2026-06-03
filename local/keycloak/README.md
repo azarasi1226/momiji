@@ -46,11 +46,19 @@ realm とは client をまとめる認証空間のことであり、 cognito の
 
 ## 設定変更後の反映
 
-`momiji-realm.json` を編集した場合、 既存の Keycloak volume が残ってると **再 import されない** ( volume 内の DB が優先される )。 設定変更を反映したい時は:
+`momiji-realm.json` を編集した場合、 既存の Keycloak volume が残ってると **再 import されない** ( volume 内の DB が優先される )。
+
+### 方法1: Keycloak のボリュームだけ作り直す
+
+`down -v` は **MySQL / Axon Server などローカル全ボリュームを消す**ので使わない。Keycloak だけ作り直す:
 
 ```bash
-docker compose -f local/docker-compose.yaml down -v
-docker compose -f local/docker-compose.yaml up -d
+# keycloak コンテナを停止・削除
+docker compose -f local/docker-compose.yaml rm -sf keycloak
+# keycloak のボリュームだけ削除 ( 名前は `docker volume ls | grep keycloak` で確認 )
+docker volume rm momiji_momiji-keycloak-data
+# 再作成 → realm.json が再 import される
+docker compose -f local/docker-compose.yaml up -d keycloak
 ```
 
-※ただし、 Keycloak 内部に作成したユーザーも一緒に吹き飛ぶため留意すべし。
+※この方法でも **realm.json に無いものは消える**: 管理コンソールで手動設定した **Google IdP ( client secret 含む )** や Keycloak 内に作成したユーザー。再設定が必要。
