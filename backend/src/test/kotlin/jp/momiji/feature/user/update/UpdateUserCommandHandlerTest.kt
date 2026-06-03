@@ -8,6 +8,7 @@ import jp.momiji.domain.user.Name
 import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.event.user.UserUpdatedEvent
 import org.junit.jupiter.api.Test
 
@@ -63,6 +64,30 @@ class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {
                     postalCode = PostalCode.create("100-0001").get()!!,
                     address1 = Address1.create("東京都中央区").get()!!,
                     address2 = Address2.create("銀座1-1").get()!!,
+                ),
+            ).then()
+            .resultMessagePayload(UpdateUserCommandResult.userNotFound())
+            .noEvents()
+    }
+
+    @Test
+    fun `異常系_削除済みユーザーを更新するとuserNotFound`() {
+        val userId = "01HXYZTESTUSER0000000000003"
+
+        fixture
+            .given()
+            .events(
+                UserCreatedEvent(id = userId, email = "alice@example.com"),
+                UserDeletedEvent(id = userId, oidcSubjects = emptyList()),
+            ).`when`()
+            .command(
+                UpdateUserCommand(
+                    id = userId,
+                    name = Name.create("Alice").get()!!,
+                    phoneNumber = PhoneNumber.create("090-0000-0000").get()!!,
+                    postalCode = PostalCode.create("100-0000").get()!!,
+                    address1 = Address1.create("東京都千代田区").get()!!,
+                    address2 = Address2.create("千代田1-1").get()!!,
                 ),
             ).then()
             .resultMessagePayload(UpdateUserCommandResult.userNotFound())

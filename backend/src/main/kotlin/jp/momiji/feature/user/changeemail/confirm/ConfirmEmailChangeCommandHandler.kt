@@ -4,6 +4,7 @@ import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.user.EmailChangeConfirmedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.CommandResult
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
@@ -26,7 +27,7 @@ class ConfirmEmailChangeCommandHandler(
         @InjectEntity state: State,
         eventAppender: EventAppender,
     ): CommandResult {
-        if (!state.created) {
+        if (!state.created || state.deleted) {
             return ConfirmEmailChangeCommandResult.userNotFound()
         }
 
@@ -64,12 +65,14 @@ class ConfirmEmailChangeCommandHandler(
     @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
     class State(
         var created: Boolean,
+        var deleted: Boolean,
         // 旧メール通知の宛先として、EmailChangeConfirmedEvent.previousEmail に渡すために保持
         var currentEmail: String,
     ) {
         @EntityCreator
         constructor() : this(
             created = false,
+            deleted = false,
             currentEmail = "",
         )
 
@@ -77,6 +80,11 @@ class ConfirmEmailChangeCommandHandler(
         fun evolve(event: UserCreatedEvent) {
             created = true
             currentEmail = event.email
+        }
+
+        @EventSourcingHandler
+        fun evolve(event: UserDeletedEvent) {
+            deleted = true
         }
 
         @EventSourcingHandler

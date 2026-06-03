@@ -4,6 +4,7 @@ import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
@@ -24,7 +25,7 @@ class RequestEmailChangeCommandHandler(
         @InjectEntity state: State,
         eventAppender: EventAppender,
     ): CommandResult {
-        if (!state.created) {
+        if (!state.created || state.deleted) {
             return RequestEmailChangeCommandResult.userNotFound()
         }
 
@@ -51,15 +52,22 @@ class RequestEmailChangeCommandHandler(
     @EventSourced(tagKey = MomijiEventTag.USER_ID, idType = String::class)
     class State(
         var created: Boolean,
+        var deleted: Boolean,
     ) {
         @EntityCreator
         constructor() : this(
             created = false,
+            deleted = false,
         )
 
         @EventSourcingHandler
         fun evolve(event: UserCreatedEvent) {
             created = true
+        }
+
+        @EventSourcingHandler
+        fun evolve(event: UserDeletedEvent) {
+            deleted = true
         }
     }
 }
