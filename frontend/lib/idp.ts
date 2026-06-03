@@ -2,7 +2,8 @@ import Keycloak from "next-auth/providers/keycloak"
 import Cognito from "next-auth/providers/cognito"
 
 // AUTH_PROVIDER で local(Keycloak) / prod(Cognito) を環境ごとに切り替える (ADR 0003 の 2 IDP 運用)。
-// 各 provider の client_id / secret / issuer は Auth.js 規約の AUTH_<PROVIDER>_* env から読む。
+// 各 provider の client_id / secret / issuer は <PROVIDER>_CLIENT_ID / _CLIENT_SECRET / <PROVIDER>_ISSUER env から読む。
+// (id を "oidc" 固定にしている都合で Auth.js の env 自動推論は使えず、明示的に process.env を読む)
 type ProviderKey = "keycloak" | "cognito"
 
 // provider に固定 id "oidc" を与えることで、 IDP を切り替えても callback URL を
@@ -16,30 +17,30 @@ const REGISTRY = {
     provider: Keycloak({
       id: SHARED_ID,
       name: "Keycloak",
-      clientId: process.env.AUTH_KEYCLOAK_ID,
-      clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
-      issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      issuer: process.env.KEYCLOAK_ISSUER,
     }),
-    clientId: process.env.AUTH_KEYCLOAK_ID,
-    clientSecret: process.env.AUTH_KEYCLOAK_SECRET,
-    issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+    clientId: process.env.KEYCLOAK_CLIENT_ID,
+    clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+    issuer: process.env.KEYCLOAK_ISSUER,
   },
   cognito: {
     provider: Cognito({
       id: SHARED_ID,
       name: "Cognito",
-      clientId: process.env.AUTH_COGNITO_ID,
-      clientSecret: process.env.AUTH_COGNITO_SECRET,
-      issuer: process.env.AUTH_COGNITO_ISSUER,
+      clientId: process.env.COGNITO_CLIENT_ID,
+      clientSecret: process.env.COGNITO_CLIENT_SECRET,
+      issuer: process.env.COGNITO_ISSUER,
       // Cognito はソーシャル IdP ブローカリング時に id_token へ nonce を必ず入れてくる。
       // Auth.js のデフォルト checks は ["pkce"] で nonce を送らないため、 検証側が
       // expectNoNonce となり「unexpected nonce」で落ちる。 nonce を有効化して Auth.js からも
       // nonce を送り、 Cognito にエコーさせることで一致させる。
       checks: ["pkce", "nonce"],
     }),
-    clientId: process.env.AUTH_COGNITO_ID,
-    clientSecret: process.env.AUTH_COGNITO_SECRET,
-    issuer: process.env.AUTH_COGNITO_ISSUER,
+    clientId: process.env.COGNITO_CLIENT_ID,
+    clientSecret: process.env.COGNITO_CLIENT_SECRET,
+    issuer: process.env.COGNITO_ISSUER,
   },
 } as const
 
@@ -54,7 +55,7 @@ function resolveActive() {
     )
   }
   if (!a.issuer) {
-    throw new Error(`${PROVIDER} の issuer env (AUTH_${PROVIDER!.toUpperCase()}_ISSUER) が未設定です`)
+    throw new Error(`${PROVIDER} の issuer env (${PROVIDER!.toUpperCase()}_ISSUER) が未設定です`)
   }
   return a
 }

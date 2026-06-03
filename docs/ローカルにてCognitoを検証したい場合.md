@@ -48,12 +48,12 @@ class CognitoConfig {
 // ここを設定
 AUTH_PROVIDER=cognito
 
-AUTH_KEYCLOAK_ID=momiji-frontend
-AUTH_KEYCLOAK_SECRET=momiji-frontend-secret
-AUTH_KEYCLOAK_ISSUER=http://localhost:8085/realms/momiji
+KEYCLOAK_CLIENT_ID=momiji
+KEYCLOAK_CLIENT_SECRET=momiji-frontend-secret
+KEYCLOAK_ISSUER=http://localhost:8085/realms/momiji
 
 // ここを設定
-AUTH_COGNITO_ID=3l3fnp2mgu9lovfnvfe0e7iqqt
-AUTH_COGNITO_SECRET=6h9fkchtb8lir56u10m8evo1tidnpjqcnjkfksboqsdop9gotot
-AUTH_COGNITO_ISSUER=https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_dDATqYQIU
+COGNITO_CLIENT_ID=3l3fnp2mgu9lovfnvfe0e7iqqt
+COGNITO_CLIENT_SECRET=6h9fkchtb8lir56u10m8evo1tidnpjqcnjkfksboqsdop9gotot
+COGNITO_ISSUER=https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_dDATqYQIU
 ```

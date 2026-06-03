@@ -29,12 +29,12 @@ cp .env.example .env.local
 | `AUTH_SECRET` | ✅ | Auth.js のセッション暗号化キー。`npx auth secret` で生成 |
 | `AUTH_URL` | ローカル ❌ / 本番 ✅ | ログアウト後の戻り先 (post_logout_redirect_uri / logout_uri) の基準 URL。ローカルはリクエストから推論されるため未設定可 (default `http://localhost:3000`)。本番では IdP の「許可されたサインアウト URL」と完全一致させて明示 |
 | `AUTH_PROVIDER` | ✅ | 使用する IdP。`keycloak`(ローカル) か `cognito`(本番)。未設定/不正は起動時にエラーで落ちる ([lib/idp.ts](lib/idp.ts)) |
-| `AUTH_KEYCLOAK_ID` / `_SECRET` / `_ISSUER` | `AUTH_PROVIDER=keycloak` 時 ✅ | Keycloak client の id / secret と realm の OIDC issuer URL |
-| `AUTH_COGNITO_ID` / `_SECRET` / `_ISSUER` | `AUTH_PROVIDER=cognito` 時 ✅ | Cognito app client の id / secret と issuer (`https://cognito-idp.<region>.amazonaws.com/<userPoolId>`) |
+| `KEYCLOAK_CLIENT_ID` / `KEYCLOAK_CLIENT_SECRET` / `KEYCLOAK_ISSUER` | `AUTH_PROVIDER=keycloak` 時 ✅ | Keycloak client の id / secret と realm の OIDC issuer URL |
+| `COGNITO_CLIENT_ID` / `COGNITO_CLIENT_SECRET` / `COGNITO_ISSUER` | `AUTH_PROVIDER=cognito` 時 ✅ | Cognito app client の id / secret と issuer (`https://cognito-idp.<region>.amazonaws.com/<userPoolId>`) |
 | `GRPC_URL` | ✅ | backend gRPC エンドポイント |
 
 `AUTH_PROVIDER` で local(Keycloak) / prod(Cognito) を環境ごとに切り替える ([ADR 0003](../docs/adr/0003-idp-linking.md) の 2 IDP 運用)。
-有効化した provider 側の `AUTH_<PROVIDER>_*` だけ設定すればよい。
+有効化した provider 側の `<PROVIDER>_CLIENT_ID` / `_CLIENT_SECRET` / `<PROVIDER>_ISSUER` だけ設定すればよい。
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

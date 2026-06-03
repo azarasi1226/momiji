@@ -19,7 +19,7 @@
   },
   "clients": [
     {
-      "clientId": "momiji-frontend",
+      "clientId": "momiji",
       "enabled": true,
       "publicClient": false,
       "secret": "momiji-frontend-secret",
@@ -27,46 +27,11 @@
       "directAccessGrantsEnabled": false,
       "redirectUris": [
         "http://localhost:3000/api/auth/callback/oidc",
-        "http://localhost:3000"
-      ],
-      "webOrigins": [
-        "http://localhost:3000"
-      ],
-      "defaultClientScopes": [
-        "openid",
-        "email",
-        "profile"
-      ],
-      "attributes": {
-        "pkce.code.challenge.method": "S256"
-      },
-      "protocolMappers": [
-        {
-          "name": "subject",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-sub-mapper",
-          "consentRequired": false,
-          "config": {
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "introspection.token.claim": "true"
-          }
-        }
-      ]
-    },
-    {
-      "clientId": "momiji-api",
-      "enabled": true,
-      "publicClient": true,
-      "directAccessGrantsEnabled": true,
-      "standardFlowEnabled": true,
-      "redirectUris": [
-        "http://localhost:9090/*",
+        "http://localhost:3000",
         "https://oauth.pstmn.io/v1/callback"
       ],
       "webOrigins": [
-        "http://localhost:9090",
-        "https://oauth.pstmn.io"
+        "http://localhost:3000"
       ],
       "defaultClientScopes": [
         "openid",
