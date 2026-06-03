@@ -1,5 +1,6 @@
-package jp.momiji.feature.mail
+package jp.momiji.infrastructure.mail
 
+import jp.momiji.feature.mail.MailSender
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.mail.SimpleMailMessage

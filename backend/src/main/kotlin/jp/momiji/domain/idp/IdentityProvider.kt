@@ -9,7 +9,7 @@ package jp.momiji.domain.idp
  * IDP を追加する場合の更新箇所:
  * 1. この enum に列挙追加 (例: `GITHUB`)
  * 2. [IdentityProviderResolver] の `when` に新 enum 用の分岐追加 + 対応する abstract property 追加
- * 3. [jp.momiji.feature.idp.KeycloakUserClient] / [jp.momiji.feature.idp.CognitoUserClient]
+ * 3. [jp.momiji.infrastructure.idp.KeycloakUserClient] / [jp.momiji.infrastructure.idp.CognitoUserClient]
  *    の anonymous object で新 abstract property を override
  *
  * 1 を追加すると 2 の `when` が non-exhaustive になり **domain 層でコンパイルエラー** で気付ける。

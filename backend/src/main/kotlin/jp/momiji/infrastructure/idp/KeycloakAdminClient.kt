@@ -1,4 +1,4 @@
-package jp.momiji.feature.idp
+package jp.momiji.infrastructure.idp
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile

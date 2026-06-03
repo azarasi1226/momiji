@@ -1,9 +1,12 @@
-package jp.momiji.feature.idp
+package jp.momiji.infrastructure.idp
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.idp.IdentityProviderResolver
+import jp.momiji.feature.idp.IdpUserInfoFetcher
+import jp.momiji.feature.idp.OidcUserInfo
+import jp.momiji.feature.idp.resolveEmail
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
