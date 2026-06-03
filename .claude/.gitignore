@@ -1,0 +1,2 @@
+# 個人設定はコミットしない (共有設定の settings.json は追跡する)
+settings.local.json
