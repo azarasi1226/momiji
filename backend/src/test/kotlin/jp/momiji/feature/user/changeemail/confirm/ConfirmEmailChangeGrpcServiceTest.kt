@@ -14,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
@@ -24,7 +25,8 @@ class ConfirmEmailChangeGrpcServiceTest {
     private val userIdResolver = mockk<UserIdResolver>()
     private val service = ConfirmEmailChangeGrpcService(commandGateway, userIdResolver)
 
-    private val mockJwt = mockk<JwtAuthenticationToken>()
+    private val mockAccessToken = mockk<Jwt>()
+    private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
 
     private fun callConfirmEmailChange(token: String) =
         Context
@@ -40,7 +42,7 @@ class ConfirmEmailChangeGrpcServiceTest {
 
     @Test
     fun `正常系_JWT 風 3 セグメントなら期待した Command が CommandGateway に渡る`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
         every { commandGateway.send(any(), CommandResult::class.java) } returns
             CompletableFuture.completedFuture(CommandResult.success())
 
@@ -59,7 +61,7 @@ class ConfirmEmailChangeGrpcServiceTest {
 
     @Test
     fun `異常系_token 形式不正で ValidationException 投げ CommandGateway は呼ばれない`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
 
         val ex =
             assertThrows<ValidationException> {

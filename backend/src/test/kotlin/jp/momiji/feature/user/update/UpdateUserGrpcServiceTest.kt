@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
@@ -38,7 +39,8 @@ class UpdateUserGrpcServiceTest {
     private val userIdResolver = mockk<UserIdResolver>()
     private val service = UpdateUserGrpcService(commandGateway, userIdResolver)
 
-    private val mockJwt = mockk<JwtAuthenticationToken>()
+    private val mockAccessToken = mockk<Jwt>()
+    private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
 
     private fun callUpdateUser(
         name: String,
@@ -65,7 +67,7 @@ class UpdateUserGrpcServiceTest {
 
     @Test
     fun `正常系_全フィールド妥当なら期待した Command が CommandGateway に渡る`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
         every { commandGateway.send(any(), CommandResult::class.java) } returns
             CompletableFuture.completedFuture(CommandResult.success())
 
@@ -88,7 +90,7 @@ class UpdateUserGrpcServiceTest {
 
     @Test
     fun `異常系_validation 失敗で ValidationException 投げ CommandGateway は呼ばれない`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
 
         val ex =
             assertThrows<ValidationException> {

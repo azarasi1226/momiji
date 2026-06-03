@@ -10,6 +10,7 @@ import jp.momiji.grpc.momiji.user.findbyid.v1.findUserByIdRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -19,7 +20,8 @@ class FindUserByIdGrpcServiceTest {
     private val findUserByIdQueryService = mockk<FindUserByIdQueryService>()
     private val service = FindUserByIdGrpcService(userIdResolver, findUserByIdQueryService)
 
-    private val mockJwt = mockk<JwtAuthenticationToken>()
+    private val mockAccessToken = mockk<Jwt>()
+    private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
 
     private fun callFindUserById() =
         Context
@@ -33,7 +35,7 @@ class FindUserByIdGrpcServiceTest {
 
     @Test
     fun `正常系_ユーザーが存在すれば各フィールドを response に詰めて返す`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
         every { findUserByIdQueryService.findById("test-user-id") } returns
             UserView(
                 id = "test-user-id",
@@ -60,7 +62,7 @@ class FindUserByIdGrpcServiceTest {
 
     @Test
     fun `異常系_ユーザーが見つからなければ BusinessException`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
         every { findUserByIdQueryService.findById("test-user-id") } returns null
 
         val ex = assertThrows<BusinessException> { callFindUserById() }

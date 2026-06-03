@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
  *
  * 検証済みトークンの subject / issuer を IdpUserInfoFetcher に渡すと identityProvider / email ( 値オブジェクト )
  * まで解決済みの OidcUserInfo が返るので、 このサービスは「完成品」 を Command に組み替えて流すだけ。
- * email の形式検証などは fetcher 側 ( [jp.momiji.feature.idp.CognitoUserInfoFetcher] のテスト参照 )。
+ * email の形式検証などは fetcher 側 ( [jp.momiji.infrastructure.idp.CognitoUserInfoFetcher] のテスト参照 )。
  */
 class CreateUserGrpcServiceTest {
     private val idpUserInfoFetcher = mockk<IdpUserInfoFetcher>()

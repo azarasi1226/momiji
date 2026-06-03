@@ -11,6 +11,7 @@ import jp.momiji.grpc.momiji.user.delete.v1.deleteUserRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.concurrent.CompletableFuture
 
@@ -19,11 +20,12 @@ class DeleteUserGrpcServiceTest {
     private val userIdResolver = mockk<UserIdResolver>()
     private val service = DeleteUserGrpcService(commandGateway, userIdResolver)
 
-    private val mockJwt = mockk<JwtAuthenticationToken>()
+    private val mockAccessToken = mockk<Jwt>()
+    private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
 
     @Test
     fun `正常系_期待した Command が CommandGateway に渡る`() {
-        every { userIdResolver.resolve(mockJwt) } returns "test-user-id"
+        every { userIdResolver.resolve(mockAccessToken) } returns "test-user-id"
         every { commandGateway.send(any(), CommandResult::class.java) } returns
             CompletableFuture.completedFuture(CommandResult.success())
 
