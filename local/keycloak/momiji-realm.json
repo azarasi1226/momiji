@@ -26,8 +26,7 @@
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
       "redirectUris": [
-        "http://localhost:3000/api/auth/callback/keycloak",
-        "http://localhost:3000"
+        "http://localhost:3000/api/auth/callback/oidc"
       ],
       "webOrigins": [
         "http://localhost:3000"
