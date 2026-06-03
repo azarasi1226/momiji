@@ -18,7 +18,6 @@ class EmailToIdpSyncer(
 ) {
     @EventHandler
     fun on(event: EmailChangeConfirmedEvent) {
-
         val oidcSubjects =
             dsl
                 .select(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT)
