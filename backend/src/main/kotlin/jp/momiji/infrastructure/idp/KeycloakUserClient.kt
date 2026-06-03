@@ -37,7 +37,7 @@ class KeycloakUserClient(
                 .toBodilessEntity()
         } catch (e: HttpClientErrorException.NotFound) {
             // ユーザーすでに削除されているということは２回叩かれた可能性が高いので冪等性を保つために例外は握りつぶし、ログだけ出す
-            logger.error { "Keycloakユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            logger.warn { "Keycloakユーザーが見つかりません: oidcSubject=$oidcSubject" }
             return
         }
 
@@ -56,7 +56,7 @@ class KeycloakUserClient(
                 .toBodilessEntity()
         } catch (e: HttpClientErrorException.NotFound) {
             // ユーザーすでに削除されているということは２回叩かれた可能性が高いので冪等性を保つために例外は握りつぶし、ログだけ出す
-            logger.error { "Keycloakユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            logger.warn { "Keycloakユーザーが見つかりません: oidcSubject=$oidcSubject" }
             return
         }
 

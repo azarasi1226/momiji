@@ -46,7 +46,7 @@ class CognitoUserClient(
             )
         } catch (e: UserNotFoundException) {
             // ユーザーすでに削除されているということは２回叩かれた可能性が高いので冪等性を保つために例外は握りつぶし、ログだけ出す
-            logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            logger.warn { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
             return
         }
 
@@ -64,7 +64,7 @@ class CognitoUserClient(
             )
         } catch (e: UserNotFoundException) {
             // ユーザーすでに削除されているということは２回叩かれた可能性が高いので冪等性を保つために例外は握りつぶし、ログだけ出す
-            logger.error { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
+            logger.warn { "Cognitoユーザーが見つかりません: oidcSubject=$oidcSubject" }
             return
         }
 
