@@ -22,7 +22,7 @@
       "clientId": "momiji",
       "enabled": true,
       "publicClient": false,
-      "secret": "momiji-frontend-secret",
+      "secret": "momiji-client-secret",
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
       "redirectUris": [

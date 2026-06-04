@@ -28,7 +28,7 @@ realm とは client をまとめる認証空間のことであり、 cognito の
 | 設定 | 値 | 意味 |
 |---|---|---|
 | `publicClient` | `false` | secret を保持できる confidential client。 BFF はサーバーサイドなので secret を保持する |
-| `secret` | `momiji-frontend-secret` | BFF 側の `KEYCLOAK_CLIENT_SECRET` 環境変数と一致させる |
+| `secret` | `momiji-client-secret` | BFF 側の `KEYCLOAK_CLIENT_SECRET` 環境変数と一致させる |
 | `standardFlowEnabled` | `true` | Authorization Code Flow を有効化する。コレは最も一般的で安全なログイン方式である。 |
 | `directAccessGrantsEnabled` | `false` | Password Grant ( username/password 直送り ) は無効。 BFF からは使わないので OFF |
 | `redirectUris` | `<３つのredirectUrls>` | BFF内の `ログインリダイレクト用`, `ログアウトリダイレクト用`, `Postman検証用`で３つ登録されている |

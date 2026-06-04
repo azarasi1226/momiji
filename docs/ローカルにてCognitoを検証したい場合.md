@@ -49,7 +49,7 @@ class CognitoConfig {
 AUTH_PROVIDER=cognito
 
 KEYCLOAK_CLIENT_ID=momiji
-KEYCLOAK_CLIENT_SECRET=momiji-frontend-secret
+KEYCLOAK_CLIENT_SECRET=momiji-client-secret
 KEYCLOAK_ISSUER=http://localhost:8085/realms/momiji
 
 // ここを設定
