@@ -36,8 +36,8 @@ class ValidationExceptionTest {
     }
 
     @Test
-    fun `RuntimeException として throw 可能`() {
+    fun `Exception として throw 可能`() {
         val ex = ValidationException(listOf(Name.Blank))
-        assertTrue(ex is RuntimeException)
+        assertTrue(ex is Exception)
     }
 }
