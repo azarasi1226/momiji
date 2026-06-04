@@ -10,6 +10,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jooq.jooq-codegen-gradle") version "3.21.4"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
 group = "momiji"
@@ -176,4 +177,40 @@ idea {
 // .editorconfigでlint対象のフォルダ絞っているのだが、Gradle 9.x の strict implicit-dependency 検出が有効になっていると、jooqCodegen → runKtlintCheckOverMainSourceSet の依存関係が明示されていないためにエラーになる。
 tasks.matching { it.name.startsWith("runKtlint") }.configureEach {
     dependsOn("jooqCodegen")
+}
+
+// =====================================================
+// =======================kover=========================
+// =====================================================
+// レポート生成: ./gradlew koverHtmlReport  → build/reports/kover/html/index.html
+//             ./gradlew koverXmlReport   → build/reports/kover/report.xml（CI/Sonar 連携用）
+kover {
+    reports {
+        filters {
+            excludes {
+                packages(
+                    // jOOQ自動生成
+                    "iss.jooq.generated",
+                    // GRPC自動生成
+                    "jp.momiji.grpc",
+                    // Bean 配線（設定なので測っても意味が薄い）
+                    "jp.momiji.config",
+                    // ポート / アダプタ（インターフェースと、外部依存の実装しかないので図る意味が薄い)
+                    "jp.momiji.port",
+                    "jp.momiji.adapter",
+                )
+                classes(
+                    // エントリーポイント
+                    "jp.momiji.DemoApplication*",
+                    // Axon Event Processor 定義クラス（イベントハンドラーは測りたいが、Processor定義クラスは設定の塊なので測っても意味が薄い）
+                    "jp.momiji.feature.EventProcessorDefinitions*",
+                    // UserIdResolver は単純なマッピングロジックしか持たないため、測っても意味が薄い。
+                    // （末尾に * を付けると top-level 関数の UserIdResolverKt ファサードも一緒に除外できる）
+                    "jp.momiji.feature.user.UserIdResolver",
+                )
+                // コンフィグなんて図る必要ナッシング！
+                annotatedBy("org.springframework.context.annotation.Configuration")
+            }
+        }
+    }
 }

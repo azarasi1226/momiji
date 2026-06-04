@@ -1,8 +1,17 @@
 package jp.momiji.feature.user.changeemail
 
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.JWSHeader
+import com.nimbusds.jose.crypto.MACSigner
+import com.nimbusds.jose.crypto.RSASSASigner
+import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.SignedJWT
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.security.KeyPairGenerator
 import java.time.Duration
+import java.time.Instant
+import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -11,15 +20,17 @@ import kotlin.test.assertNull
  *
  * Spring 不要・外部 IO 無しの純粋ロジック (JWT sign / verify) なので、 コンストラクタ直接呼びで完結。
  *
- * verify() の 5 経路 (前回 [EmailChangeTokenService.verify] を分解した経路に対応):
+ * verify() の全経路:
  * - 1. JWT 形式不正 (ParseException)
- * - 2. 署名検証で false (改ざん / 別 secret)
- * - 3. 期限切れ
- * - 4. 正常 (sign で生成したものを verify で復元)
- * - 5. secret 長さ違反 (init の require)
+ * - 2. 署名検証で JOSEException (アルゴリズム不一致などの暗号エラー)
+ * - 3. 署名検証で false (改ざん / 別 secret)
+ * - 4. 期限切れ
+ * - 5. claim 欠落 (userId / newEmail が無い)
+ * - 6. 正常 (sign で生成したものを verify で復元)
+ * - 7. secret 長さ違反 (init の require)
  *
- * claim 欠落 (verify の 6 経路目) は sign() が必ず claim を入れる構造なので、 sign 経路では再現不能。
- * 外部から手作りした JWT を流し込めば cover できるが、 攻撃ケースの想定として優先度低なので省略。
+ * 2 と 5 は sign() が常に HS256・両 claim 入りで発行するため sign 経路では再現できず、
+ * Nimbus で手作りした JWT を流し込んで cover する。
  */
 class EmailChangeTokenServiceTest {
     private val validSecret = "test-secret-must-be-at-least-32-bytes-long"
@@ -87,5 +98,65 @@ class EmailChangeTokenServiceTest {
         assertThrows<IllegalArgumentException> {
             EmailChangeTokenService("short-secret", expiry)
         }
+    }
+
+    @Test
+    fun `署名アルゴリズムが HS256 でない token は verify で null (JOSEException, warn)`() {
+        // RSA(RS256) で署名した JWT を HS256 用の MACVerifier で検証すると
+        // 「Unsupported JWS algorithm」で JOSEException が飛ぶ。署名 false とは別経路。
+        val rsaKeyPair =
+            KeyPairGenerator
+                .getInstance("RSA")
+                .apply { initialize(2048) }
+                .generateKeyPair()
+        val claims =
+            JWTClaimsSet
+                .Builder()
+                .claim("userId", "user-1")
+                .claim("newEmail", "new@example.com")
+                .expirationTime(Date.from(Instant.now().plus(expiry)))
+                .build()
+        val rs256Token =
+            SignedJWT(JWSHeader(JWSAlgorithm.RS256), claims)
+                .apply { sign(RSASSASigner(rsaKeyPair.private)) }
+                .serialize()
+
+        assertNull(service.verify(rs256Token))
+    }
+
+    @Test
+    fun `userId claim が欠落した token は verify で null (warn)`() {
+        assertNull(service.verify(signWithValidSecret(userId = null, newEmail = "new@example.com")))
+    }
+
+    @Test
+    fun `newEmail claim が欠落した token は verify で null (warn)`() {
+        assertNull(service.verify(signWithValidSecret(userId = "user-1", newEmail = null)))
+    }
+
+    /**
+     * 正しい secret・期限内で署名しつつ、 claim を任意に欠落させた JWT を手作りする。
+     * sign() は常に両 claim を入れるため、 claim 欠落経路はこの手作り token でしか再現できない。
+     */
+    private fun signWithValidSecret(
+        userId: String?,
+        newEmail: String?,
+    ): String {
+        val claims =
+            JWTClaimsSet
+                .Builder()
+                .apply {
+                    if (userId != null) {
+                        claim("userId", userId)
+                    }
+                    if (newEmail != null) {
+                        claim("newEmail", newEmail)
+                    }
+                }.expirationTime(Date.from(Instant.now().plus(expiry)))
+                .build()
+
+        return SignedJWT(JWSHeader(JWSAlgorithm.HS256), claims)
+            .apply { sign(MACSigner(validSecret.toByteArray())) }
+            .serialize()
     }
 }
