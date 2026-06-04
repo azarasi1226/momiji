@@ -75,7 +75,7 @@ abstract class MomijiIntegrationTestBase {
 
     /**
      * 統合テストでは gRPC 入口経由のテストはしないので JwtDecoder は呼ばれないが、
-     * Spring context 起動時に [jp.momiji.config.SecurityConfig] が
+     * Spring context 起動時に [jp.momiji.config.grpc.GrpcConfig] が
      * `NimbusJwtDecoder.withIssuerLocation(issuerUri).build()` で OIDC discovery を叩こうとして
      * Keycloak がいないと死ぬ。 mock で bean factory を skip する。
      */
