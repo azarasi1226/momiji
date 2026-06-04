@@ -5,29 +5,36 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
-    <!-- OTLP で Loki に送る appender 定義 -->
+    <!--
+      NOTE: <springProfile> は <root>/<appender>/<logger> の「中」にネストできない
+      (Spring Boot が SpringProfileIfNestedWithinSecondPhaseElement... の warn を出す)。
+      なので「profile ごとに <root> ごと分ける」形にしている。
+    -->
+
+    <!-- observability-otlp 有効時 (local/test/prod): CONSOLE + OTEL(→OTLP→Loki) -->
     <springProfile name="observability-otlp">
+        <!-- OTLP で Loki に送る appender 定義 -->
         <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
             <!-- logger 名・スレッド名・例外情報などの付加属性も送る -->
             <captureExperimentalAttributes>true</captureExperimentalAttributes>
-            <!-- kotlin-logging 等の key-value ペアを属性化 -->
-　　　　　　　<!--
-            logger.atError {
-                message = "ユーザーがヤバいことをした！"
-                payload = mapOf("user.id" to userId)
-            }
-            みたいな感じにログに 任意の属性を埋め込むことができ、コレが後で検索に活用できる。
-            -->
+            <!-- kotlin-logging 等の key-value ペアを属性化。
+                 logger.atError {
+                     message = "ユーザーがヤバいことをした！"
+                     payload = mapOf("user.id" to userId)
+                 }
+                 のようにログへ任意の属性を埋め込め、後で検索に活用できる。 -->
             <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
         </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="OTEL"/>
+        </root>
     </springProfile>
 
-    <root level="INFO">
-        <!-- コンソールに出力する定義 -->
-        <appender-ref ref="CONSOLE"/>
-        <!-- OTLP で Loki に送信する定義 -->
-        <springProfile name="observability-otlp">
-            <appender-ref ref="OTEL"/>
-        </springProfile>
-    </root>
+    <!-- observability-otlp 無効時 (integration-test 等): CONSOLE のみ -->
+    <springProfile name="!observability-otlp">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
 </configuration>
