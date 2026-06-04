@@ -29,9 +29,13 @@ jobs:
         working-directory: ./grpc
         run: buf lint
 
-  # backend: ktlint + build + test（Testcontainers）
+  # backend: ktlint + build + test（Testcontainers）+ カバレッジを PR にコメント
   backend:
     runs-on: ubuntu-latest
+    # カバレッジを PR にコメントするため pull-requests: write が必要（他は read で十分）
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: "checkout"
         uses: actions/checkout@v6
@@ -64,6 +68,22 @@ jobs:
       - name: "ktlint + build + test"
         working-directory: ./backend
         run: ./gradlew build
+
+      # build で実行済みのテスト結果を使って Kover の XML レポートを生成する
+      - name: "カバレッジ XML 生成（Kover）"
+        working-directory: ./backend
+        run: ./gradlew koverXmlReport
+
+      # 生成した XML を読んで PR にカバレッジをコメントする
+      - name: "PR にカバレッジをコメント"
+        uses: mi-kas/kover-report@v1
+        # 投稿失敗（fork PR で token が read-only 等）でビルドを赤にしないよう握りつぶす
+        continue-on-error: true
+        with:
+          path: ./backend/build/reports/kover/report.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: バックエンドのカバレッジ
+          update-comment: true
 
   # frontend: 型チェック + lint
   frontend:
