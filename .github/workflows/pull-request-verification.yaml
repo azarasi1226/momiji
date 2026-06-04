@@ -22,6 +22,8 @@ jobs:
         with:
           # aqua.yaml の pin に合わせる
           version: "1.52.1"
+          # token を渡さないと GitHub Releases からの buf DL が未認証扱いで rate limit に当たる
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "buf lint"
         working-directory: ./grpc
@@ -38,6 +40,8 @@ jobs:
         uses: bufbuild/buf-setup-action@v1
         with:
           version: "1.52.1"
+          # token を渡さないと GitHub Releases からの buf DL が未認証扱いで rate limit に当たる
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # gRPC 生成コード（jp.momiji.grpc.*）が compileKotlin の前提なので先に生成する
       - name: "gRPC コード生成"
@@ -72,6 +76,8 @@ jobs:
         uses: bufbuild/buf-setup-action@v1
         with:
           version: "1.52.1"
+          # token を渡さないと GitHub Releases からの buf DL が未認証扱いで rate limit に当たる
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # frontend は ./frontend/grpc/gen の生成 TS を import するので先に生成する
       - name: "gRPC コード生成"
