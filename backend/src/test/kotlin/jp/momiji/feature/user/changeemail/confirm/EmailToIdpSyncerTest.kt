@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
  * という EventHandler の責務だけに焦点を絞る。
  *
  * 事前条件として `ExternalIdentityLinkedEvent` を流して LOOKUP テーブルに行を作る。
- * （`CreateUserEventHandler` が subscribing 設定で同期に INSERT する）
+ * （`CreateUserLookupProjector` が subscribing 設定で同期に INSERT する）
  */
 class EmailToIdpSyncerTest : MomijiIntegrationTestBase() {
     @Test

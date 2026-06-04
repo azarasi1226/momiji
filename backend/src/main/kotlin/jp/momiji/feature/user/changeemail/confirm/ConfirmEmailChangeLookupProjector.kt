@@ -1,8 +1,8 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
+import jp.momiji.feature.subscribingProcessorFor
 import jp.momiji.event.user.EmailChangeConfirmedEvent
-import org.axonframework.extension.spring.config.EventProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @Component
-class ConfirmEmailChangeEventHandler(
+class ConfirmEmailChangeLookupProjector(
     private val dsl: DSLContext,
 ) {
     @EventHandler
@@ -25,10 +25,6 @@ class ConfirmEmailChangeEventHandler(
     @Configuration
     class Config {
         @Bean
-        fun confirmEmailChangeEventHandlerDefinition() =
-            EventProcessorDefinition
-                .subscribing(ConfirmEmailChangeEventHandler::class.simpleName!!)
-                .assigningHandlers { it.beanType() == ConfirmEmailChangeEventHandler::class.java }
-                .notCustomized()
+        fun confirmEmailChangeLookupProjectorDefinition() = subscribingProcessorFor<ConfirmEmailChangeLookupProjector>()
     }
 }

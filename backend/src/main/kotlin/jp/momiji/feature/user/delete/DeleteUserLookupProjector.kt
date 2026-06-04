@@ -2,8 +2,8 @@ package jp.momiji.feature.user.delete
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
+import jp.momiji.feature.subscribingProcessorFor
 import jp.momiji.event.user.UserDeletedEvent
-import org.axonframework.extension.spring.config.EventProcessorDefinition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @Component
-class DeleteUserEventHandler(
+class DeleteUserLookupProjector(
     private val dsl: DSLContext,
 ) {
     @EventHandler
@@ -34,9 +34,6 @@ class DeleteUserEventHandler(
     @Configuration
     class Config {
         @Bean
-        fun deleteUserEventHandlerDefinition() =
-            EventProcessorDefinition
-                .subscribing(DeleteUserEventHandler::class.simpleName!!)
-                .assigningHandlers { it.beanType() == DeleteUserEventHandler::class.java }
+        fun deleteUserLookupProjectorDefinition() = subscribingProcessorFor<DeleteUserLookupProjector>()
     }
 }
