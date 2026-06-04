@@ -1,0 +1,104 @@
+name: Pull Request Verification
+defaults:
+  run:
+    # 明示的に shell を指定すると "pipefail" が暗黙的に設定され安全性が向上する
+    shell: bash
+on:
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # 新しい変更を検知した際、すでに実行中のジョブはキャンセルする（最新のコードベースだけ検証したいため）
+  cancel-in-progress: true
+jobs:
+  # proto の lint
+  proto-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v6
+
+      - name: "setup buf"
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          # aqua.yaml の pin に合わせる
+          version: "1.52.1"
+
+      - name: "buf lint"
+        working-directory: ./grpc
+        run: buf lint
+
+  # backend: ktlint + build + test（Testcontainers）
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v6
+
+      - name: "setup buf"
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: "1.52.1"
+
+      # gRPC 生成コード（jp.momiji.grpc.*）が compileKotlin の前提なので先に生成する
+      - name: "gRPC コード生成"
+        working-directory: ./grpc
+        run: buf generate
+
+      - name: "setup java"
+        uses: actions/setup-java@v5
+        with:
+          distribution: "corretto"
+          java-version: "25"
+
+      - name: "setup gradle"
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: "gradlew に実行権限を付与"
+        run: chmod +x ./backend/gradlew
+
+      # build = check(ktlint + test) + assemble。 Testcontainers は ubuntu-latest の Docker を使う
+      - name: "ktlint + build + test"
+        working-directory: ./backend
+        run: ./gradlew build
+
+  # frontend: 型チェック + lint
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v6
+
+      - name: "setup buf"
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: "1.52.1"
+
+      # frontend は ./frontend/grpc/gen の生成 TS を import するので先に生成する
+      - name: "gRPC コード生成"
+        working-directory: ./grpc
+        run: buf generate
+
+      - name: "setup pnpm"
+        uses: pnpm/action-setup@v4
+        with:
+          # aqua.yaml の pin に合わせる
+          version: "10"
+
+      - name: "setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: ./frontend/pnpm-lock.yaml
+
+      - name: "依存インストール"
+        working-directory: ./frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: "型チェック (tsc)"
+        working-directory: ./frontend
+        run: pnpm exec tsc --noEmit
+
+      - name: "lint"
+        working-directory: ./frontend
+        run: pnpm lint

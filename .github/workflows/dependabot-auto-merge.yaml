@@ -1,0 +1,40 @@
+name: Dependabot Auto Merge
+defaults:
+  run:
+    # 明示的に shell を指定すると "pipefail" が暗黙的に設定され安全性が向上する
+    shell: bash
+on:
+  pull_request:
+jobs:
+  auto-merge:
+    # Dependabot のプルリクエストのみを対象とする
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    # Dependabot が起動したワークフローの GITHUB_TOKEN は既定で read-only。
+    # ここで明示的に write を付与しないと approve / merge ができない。
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - id: dependabot-meta
+        name: "fetch dependabot metadata"
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # パッチバージョンの更新時のみ自動マージする
+      - if: ${{ steps.dependabot-meta.outputs.update-type == 'version-update:semver-patch' }}
+        name: "auto merge"
+        # PR の URL / token は ${{ }} を直接 run に埋め込まず env 経由で渡す（スクリプトインジェクション対策）
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # branch protection で「review 必須」の場合に承認する。
+          # ※ これは Settings → Actions → General の
+          #    "Allow GitHub Actions to create and approve pull requests" が ON でないと失敗する。
+          #    review 必須にしていないなら、この行は不要（消してよい）。
+          gh pr review "$PR_URL" --approve
+          # --auto は他の required check（PR Verification 等）が成功した時のみマージする。
+          # ※ Settings → General の "Allow auto-merge" が ON である必要がある。
+          gh pr merge "$PR_URL" --squash --auto

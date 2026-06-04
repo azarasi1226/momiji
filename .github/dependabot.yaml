@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # backend (Gradle)
+  - package-ecosystem: "gradle"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+
+  # frontend (pnpm は npm ecosystem として扱われる)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions 自体のバージョン
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # local/docker-compose.yaml のイメージタグ（docker ecosystem は compose ファイルも対象）
+  - package-ecosystem: "docker"
+    directory: "/local"
+    schedule:
+      interval: "weekly"
