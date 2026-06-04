@@ -1,7 +1,7 @@
 package jp.momiji.feature.user.update
 
-import com.github.michaelbull.result.onFailure
-import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.onErr
+import com.github.michaelbull.result.onOk
 import com.github.michaelbull.result.zipOrAccumulate
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
@@ -46,8 +46,8 @@ class UpdateUserGrpcService(
             }
 
         commandResult
-            .onFailure { errors -> throw ValidationException(errors) }
-            .onSuccess { command -> commandGateway.updateUser(command).throwIfError() }
+            .onErr { errors -> throw ValidationException(errors) }
+            .onOk { command -> commandGateway.updateUser(command).throwIfError() }
 
         return UpdateUserResponse.getDefaultInstance()
     }
