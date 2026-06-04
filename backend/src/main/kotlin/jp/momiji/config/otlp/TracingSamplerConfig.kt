@@ -1,4 +1,4 @@
-package jp.momiji.config
+package jp.momiji.config.otlp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.opentelemetry.api.common.Attributes
@@ -10,6 +10,7 @@ import io.opentelemetry.sdk.trace.samplers.SamplingDecision
 import io.opentelemetry.sdk.trace.samplers.SamplingResult
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 private val logger = KotlinLogging.logger {}
 
@@ -32,9 +33,14 @@ private val logger = KotlinLogging.logger {}
 // `@ConditionalOnMissingBean` で gate されているので、 ここで `Sampler` 型の bean を出すと
 // autoconfig のデフォルトサンプラ (probability based) を完全に置き換える形になる。
 @Configuration
+@Profile("observability-otlp")
 class TracingSamplerConfig {
     @Bean
     fun otelSampler(): Sampler {
+        logger.atInfo {
+            message = "マジすか学園"
+            payload = mapOf("userId" to "マジすか学園", "" to "")
+        }
         logger.info { "[TracingSamplerConfig] DropJdbcRootSampler を sampler として登録した" }
         return Sampler.parentBased(DropJdbcRootSampler())
     }

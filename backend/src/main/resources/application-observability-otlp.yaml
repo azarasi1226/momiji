@@ -11,6 +11,10 @@ management:
       export:
         otlp:
           endpoint: ${OTLP_TRACES_ENDPOINT}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_LOGS_ENDPOINT}
   tracing:
     sampling:
       # トレーシングの頻度を制御。１.0 なら 100% サンプリング、0.1 なら 10% のサンプリング。

@@ -1,4 +1,4 @@
-package jp.momiji.config
+package jp.momiji.config.otlp
 
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component
  */
 @Aspect
 @Component
+@Profile("observability-otlp")
 class UseCaseLogicTracingAspect(
     private val observationRegistry: ObservationRegistry,
 ) {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!-- 詳しいことわわからんが、この２つが無いとログが出ないポイ -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- OTLP で Loki に送る appender 定義 -->
+    <springProfile name="observability-otlp">
+        <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+            <!-- logger 名・スレッド名・例外情報などの付加属性も送る -->
+            <captureExperimentalAttributes>true</captureExperimentalAttributes>
+            <!-- kotlin-logging 等の key-value ペアを属性化 -->
+　　　　　　　<!--
+            logger.atError {
+                message = "ユーザーがヤバいことをした！"
+                payload = mapOf("user.id" to userId)
+            }
+            みたいな感じにログに 任意の属性を埋め込むことができ、コレが後で検索に活用できる。
+            -->
+            <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
+        </appender>
+    </springProfile>
+
+    <root level="INFO">
+        <!-- コンソールに出力する定義 -->
+        <appender-ref ref="CONSOLE"/>
+        <!-- OTLP で Loki に送信する定義 -->
+        <springProfile name="observability-otlp">
+            <appender-ref ref="OTEL"/>
+        </springProfile>
+    </root>
+</configuration>
