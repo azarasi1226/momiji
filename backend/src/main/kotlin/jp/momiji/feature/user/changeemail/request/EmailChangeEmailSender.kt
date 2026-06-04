@@ -1,11 +1,15 @@
 package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.event.user.EmailChangeRequestedEvent
+import jp.momiji.feature.InitialPosition
 import jp.momiji.feature.mail.MailSender
+import jp.momiji.feature.pooledStreamingProcessorFor
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @Component
@@ -34,5 +38,12 @@ class EmailChangeEmailSender(
                 このリクエストに心当たりがない場合は、このメールを無視してください。
                 """.trimIndent(),
         )
+    }
+
+    @Configuration
+    class Config {
+        @Bean
+        fun emailChangeEmailSenderProcessor() =
+            pooledStreamingProcessorFor<EmailChangeEmailSender>("email-change-mail-send", InitialPosition.LATEST)
     }
 }

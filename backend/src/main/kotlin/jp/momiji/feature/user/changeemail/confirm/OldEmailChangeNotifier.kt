@@ -1,8 +1,12 @@
 package jp.momiji.feature.user.changeemail.confirm
 
 import jp.momiji.event.user.EmailChangeConfirmedEvent
+import jp.momiji.feature.InitialPosition
 import jp.momiji.feature.mail.MailSender
+import jp.momiji.feature.pooledStreamingProcessorFor
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 /**
@@ -33,5 +37,12 @@ class OldEmailChangeNotifier(
                 すぐにサポートまでご連絡ください。
                 """.trimIndent(),
         )
+    }
+
+    @Configuration
+    class Config {
+        @Bean
+        fun oldEmailChangeNotifierProcessor() =
+            pooledStreamingProcessorFor<OldEmailChangeNotifier>("old-email-change-notify", InitialPosition.LATEST)
     }
 }

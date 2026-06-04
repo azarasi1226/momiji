@@ -4,9 +4,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.event.user.EmailChangeConfirmedEvent
+import jp.momiji.feature.InitialPosition
 import jp.momiji.feature.idp.IdpUserClient
+import jp.momiji.feature.pooledStreamingProcessorFor
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {}
@@ -33,5 +37,11 @@ class EmailToIdpSyncer(
         oidcSubjects.forEach { oidcSubject ->
             idpUserClient.updateEmail(oidcSubject, event.email)
         }
+    }
+
+    @Configuration
+    class Config {
+        @Bean
+        fun emailToIdpSyncerProcessor() = pooledStreamingProcessorFor<EmailToIdpSyncer>("email-to-idp-sync", InitialPosition.LATEST)
     }
 }
