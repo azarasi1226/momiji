@@ -76,7 +76,7 @@ jobs:
 
       # 生成した XML を読んで PR にカバレッジをコメントする
       - name: "PR にカバレッジをコメント"
-        uses: mi-kas/kover-report@v1
+        uses: mi-kas/kover-report@v2
         # 投稿失敗（fork PR で token が read-only 等）でビルドを赤にしないよう握りつぶす
         continue-on-error: true
         with:
