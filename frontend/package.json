@@ -12,7 +12,7 @@
     "@bufbuild/protobuf": "^2.0.0",
     "@connectrpc/connect": "^2.0.0",
     "@connectrpc/connect-node": "^2.0.0",
-    "next": "16.1.6",
+    "next": "16.2.7",
     "next-auth": "5.0.0-beta.31",
     "react": "19.2.7",
     "react-dom": "19.2.3"
