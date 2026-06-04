@@ -16,10 +16,13 @@ data class Email internal constructor(
         private val PATTERN = Regex("""^[^\s@]+@[^\s@]+\.[^\s@]+$""")
 
         fun create(input: String): Result<Email, ValidationError> {
-            if (input.isBlank()) return Err(Blank)
-            if (input.length > MAX_LENGTH) return Err(TooLong)
-            if (!PATTERN.matches(input)) return Err(Invalid)
-            return Ok(Email(input))
+            // Emailは大文字・小文字区別せずメールを飛ばせる。けどこのシステムでは小文字で統一して保存する。
+            // DBのユニーク制約でしか区別できないため、正規化してからバリデーションする。
+            val normalized = input.trim().lowercase()
+            if (normalized.isBlank()) return Err(Blank)
+            if (normalized.length > MAX_LENGTH) return Err(TooLong)
+            if (!PATTERN.matches(normalized)) return Err(Invalid)
+            return Ok(Email(normalized))
         }
     }
 
