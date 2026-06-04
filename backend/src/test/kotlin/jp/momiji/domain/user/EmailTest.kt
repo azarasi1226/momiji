@@ -52,4 +52,14 @@ class EmailTest {
     fun `サブドメイン付きでも成功`() {
         assertEquals(Ok(Email("alice@mail.example.co.jp")), Email.create("alice@mail.example.co.jp"))
     }
+
+    @Test
+    fun `大文字は小文字に正規化される（大小文字差での重複・IdP リンク漏れ防止）`() {
+        assertEquals(Ok(Email("alice@example.com")), Email.create("Alice@Example.COM"))
+    }
+
+    @Test
+    fun `前後の空白は除去されて成功する`() {
+        assertEquals(Ok(Email("alice@example.com")), Email.create("  alice@example.com  "))
+    }
 }
