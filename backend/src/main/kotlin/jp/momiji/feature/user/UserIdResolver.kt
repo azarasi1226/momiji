@@ -1,6 +1,5 @@
 package jp.momiji.feature.user
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
@@ -8,8 +7,6 @@ import org.jooq.DSLContext
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Component
 import kotlin.requireNotNull
-
-private val logger = KotlinLogging.logger {}
 
 @Component
 class UserIdResolver(
