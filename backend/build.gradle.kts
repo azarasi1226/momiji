@@ -74,7 +74,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
 
     // Other
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14") // ロギング
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.4") // ロギング
     implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
     implementation("software.amazon.awssdk:cognitoidentityprovider:2.42.8") // Cognitoクライアント
     implementation("software.amazon.awssdk:sso:2.42.8") // AWS_PROFILE が SSO プロファイルの場合に credentials を解決するために必要
