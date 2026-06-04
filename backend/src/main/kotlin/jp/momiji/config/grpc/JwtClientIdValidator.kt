@@ -32,7 +32,7 @@ class JwtClientIdValidator(
             OAuth2TokenValidatorResult.failure(
                 OAuth2Error(
                     "invalid_token",
-                    "The token was not issued for the expected client '$expectedClientId'",
+                    "トークン内の clientId が想定された値と異なります。 '$expectedClientId'",
                     null,
                 ),
             )
