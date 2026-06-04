@@ -42,15 +42,11 @@ class CognitoConfig {
 
 ## FrontEnd
 
-### 1. .env.local改修
+### 1. .env.localを追加する (コレ追加するとオーバーライドされる)
 
 ```
 // ここを設定
 AUTH_PROVIDER=cognito
-
-KEYCLOAK_CLIENT_ID=momiji
-KEYCLOAK_CLIENT_SECRET=momiji-client-secret
-KEYCLOAK_ISSUER=http://localhost:8085/realms/momiji
 
 // ここを設定
 COGNITO_CLIENT_ID=3l3fnp2mgu9lovfnvfe0e7iqqt

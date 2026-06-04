@@ -18,11 +18,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 環境変数
 
-`.env.example` を `.env.local` にコピーして値を埋める:
+ローカル開発は **`.env.development`（commit 済み）** が `next dev` に自動ロードされるため、コピーや事前設定なしでそのまま起動できる（backend の `local.env.properties` と同じ思想）。
 
-```bash
-cp .env.example .env.local
-```
+秘密値の上書き（本番 Cognito を local で試す等）は **`.env.local`（gitignore）** に書く。`.env.local` は `.env.development` を上書きし、git には載らない（Cognito の実シークレットを誤って commit しないため）。
 
 | 変数 | 必須 | 説明 |
 |---|---|---|

@@ -65,7 +65,7 @@ config/        … Bean 配線（gRPC, jOOQ, Cognito 等）
 
 ## frontend（Auth.js / IdP）
 
-- `AUTH_PROVIDER` で keycloak / cognito を切替（`lib/idp.ts`）。`.env.example` 参照
+- `AUTH_PROVIDER` で keycloak / cognito を切替（`lib/idp.ts`）。ローカル既定は commit 済み `.env.development`（コピー不要で起動）、秘密の上書きは gitignore の `.env.local`
 - provider id は **`oidc` 固定** → callback URL は常に `/api/auth/callback/oidc`（IdP 側の redirect URI もこれを登録）
 - **ログアウトは 2 段階**: `signOut({ redirect:false })`（アプリ session 破棄）→ `next/navigation` の `redirect()` で IdP の logout へ。Auth.js の `redirectTo` は**外部オリジンへ飛べない**（baseUrl に丸める）ため
 - env: `AUTH_SECRET` / `AUTH_URL` は Auth.js v5 規約。provider 設定は `<PROVIDER>_CLIENT_ID` / `_CLIENT_SECRET` / `<PROVIDER>_ISSUER`（id を `oidc` 固定にしているため Auth.js の自動推論は使わず `lib/idp.ts` で明示読み）
