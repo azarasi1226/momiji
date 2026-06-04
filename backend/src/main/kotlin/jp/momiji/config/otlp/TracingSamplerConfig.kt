@@ -37,11 +37,6 @@ private val logger = KotlinLogging.logger {}
 class TracingSamplerConfig {
     @Bean
     fun otelSampler(): Sampler {
-        logger.atInfo {
-            message = "マジすか学園"
-            payload = mapOf("userId" to "マジすか学園", "" to "")
-        }
-        logger.info { "[TracingSamplerConfig] DropJdbcRootSampler を sampler として登録した" }
         return Sampler.parentBased(DropJdbcRootSampler())
     }
 }
