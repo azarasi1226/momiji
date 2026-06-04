@@ -1,0 +1,36 @@
+auth_enabled: false
+
+server:
+  # HTTP API ポート（クエリ + OTLP /otlp/v1/logs）。docker-compose で 3100 を公開。[既定の明示: 3100]
+  http_listen_port: 3100
+
+# single-binary 構成の共通設定。storage / ring / replication をまとめて既定化する。
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki # データ・ルールの基準ディレクトリ（compose の momiji-loki-data ボリュームにマウント）
+  storage:
+    filesystem: # [必須] オブジェクトストレージを使わずローカルファイルに保存
+      chunks_directory: /loki/chunks # ログ本体（チャンク）の保存先
+      rules_directory: /loki/rules # アラート/記録ルールの保存先（今は未使用）
+  replication_factor: 1 # 単一ノードなのでレプリカ 1
+  ring:
+    kvstore:
+      store: inmemory # ring 情報をプロセス内に保持（外部 KV〔Consul 等〕不要）
+
+# どのスキーマ・ストアでログを索引/保存するか。[必須] これが無いと Loki は起動しない。
+schema_config:
+  configs:
+    - from: 2020-10-24 # この設定が有効になる開始日（過去日でよい）
+      store: tsdb # 索引ストア。Loki 3.x の推奨
+      object_store: filesystem # 実体ストア。common.storage.filesystem を使う
+      schema: v13 # 最新スキーマ。structured metadata はこの v13 以降で利用可
+      index:
+        prefix: index_ # 索引ファイル名の接頭辞
+        period: 24h # 索引を 24h 単位で分割
+
+limits_config:
+  # OTLP のリソース/ログ属性（trace_id を含む）を structured metadata として保持する。
+  # これが無いと trace_id がログに乗らず、Grafana の logs→traces ジャンプが効かない。[v13 では既定 true だが明示]
+  allow_structured_metadata: true
+  # Grafana の「ログ量ヒストグラム」(volume API) を有効化。可視化の便利機能で必須ではない。[任意]
+  volume_enabled: true

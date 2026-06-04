@@ -77,6 +77,15 @@ services:
       - "3200:3200"   # Tempo HTTP API (Grafana datasource はここを叩く)
       - "4318:4318"   # OTLP HTTP receiver
 
+  loki:
+    image: grafana/loki:3.3.2
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - momiji-loki-data:/loki
+    ports:
+      - "3100:3100"   # HTTP API + OTLP receiver (/otlp/v1/logs)
+
   grafana:
     image: grafana/grafana:latest
     environment:
@@ -93,6 +102,7 @@ services:
     depends_on:
       - prometheus
       - tempo
+      - loki
 
 volumes:
   momiji-mysql-data:
@@ -103,3 +113,4 @@ volumes:
   momiji-prometheus-data:
   momiji-grafana-data:
   momiji-tempo-data:
+  momiji-loki-data:

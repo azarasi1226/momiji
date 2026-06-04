@@ -1,0 +1,25 @@
+apiVersion: 1 # Grafana provisioning API のバージョン
+
+datasources:
+  - name: Loki # Grafana UI 上の表示名
+    uid: loki # dashboard 等から参照する固定 ID
+    type: loki # データソース種別
+    url: http://loki:3100 # docker network 内の Loki HTTP API (OTLP も同ポート /otlp/v1/logs)
+    jsonData:
+      # derivedFields: ログ行から値を取り出して「クリック可能なリンク」に変える Loki データソース機能。
+      # ここではログの trace_id (OTLP→structured metadata) を拾って Tempo のトレースへワンクリックで飛ぶ
+      derivedFields:
+          # 派生フィールドの表示名。ログ詳細でこの名前のリンク/ボタンになる。
+        - name: TraceID
+          # 値の取り方。label = ラベル/構造化メタデータのキーから直接読む (regex でメッセージ本文を掘らない)。
+          # 既定は regex で、その場合 matcherRegex は本文に対する正規表現 + キャプチャグループ () になる。
+          matcherType: label
+          # matcherType: label のときは正規表現ではなく「読むキー名」。trace_id は本文でなく
+          # structured metadata で来るので label 方式が確実 (→ trace_id を直接参照)。
+          matcherRegex: trace_id
+          # リンク先。__value.raw は抽出した値 (= trace_id 本体)。datasourceUid があるので
+          # 外部 URL でなく Tempo への内部リンクになり、この値が Tempo へのクエリ (trace ID) として渡る。
+          # $$ は provisioning の env 展開を避けるためのエスケープ ($${__value.raw} → ${__value.raw})。
+          url: "$${__value.raw}"
+          # 内部リンクのジャンプ先データソース。これがあると外部 URL でなくデータソース間ジャンプになる。
+          datasourceUid: tempo
