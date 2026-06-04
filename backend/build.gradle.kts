@@ -17,7 +17,7 @@ group = "momiji"
 version = "0.0.1-SNAPSHOT"
 description = "Identity Service Demo"
 
-val jooqVersion = "3.21.4"
+val jooqVersion = "3.21.5"
 
 java {
     toolchain {
