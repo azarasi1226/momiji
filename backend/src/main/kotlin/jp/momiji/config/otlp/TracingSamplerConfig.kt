@@ -36,9 +36,7 @@ private val logger = KotlinLogging.logger {}
 @Profile("observability-otlp")
 class TracingSamplerConfig {
     @Bean
-    fun otelSampler(): Sampler {
-        return Sampler.parentBased(DropJdbcRootSampler())
-    }
+    fun otelSampler(): Sampler = Sampler.parentBased(DropJdbcRootSampler())
 }
 
 // `Sampler.parentBased(rootSampler)` の root sampler 部分。 つまり 「 親 span がいない時 ( = root span )

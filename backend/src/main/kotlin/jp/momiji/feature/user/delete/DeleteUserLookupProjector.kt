@@ -2,8 +2,8 @@ package jp.momiji.feature.user.delete
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
-import jp.momiji.feature.subscribingProcessorFor
 import jp.momiji.event.user.UserDeletedEvent
+import jp.momiji.feature.subscribingProcessorFor
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
