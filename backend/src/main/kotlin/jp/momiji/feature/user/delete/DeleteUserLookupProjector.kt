@@ -34,6 +34,6 @@ class DeleteUserLookupProjector(
     @Configuration
     class Config {
         @Bean
-        fun deleteUserLookupProjectorDefinition() = subscribingProcessorFor<DeleteUserLookupProjector>()
+        fun deleteUserLookupProjectorProcessor() = subscribingProcessorFor<DeleteUserLookupProjector>()
     }
 }

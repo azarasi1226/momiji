@@ -25,6 +25,6 @@ class ConfirmEmailChangeLookupProjector(
     @Configuration
     class Config {
         @Bean
-        fun confirmEmailChangeLookupProjectorDefinition() = subscribingProcessorFor<ConfirmEmailChangeLookupProjector>()
+        fun confirmEmailChangeLookupProjectorProcessor() = subscribingProcessorFor<ConfirmEmailChangeLookupProjector>()
     }
 }

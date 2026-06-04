@@ -38,6 +38,6 @@ class CreateUserLookupProjector(
     @Configuration
     class Config {
         @Bean
-        fun createUserLookupProjectorDefinition() = subscribingProcessorFor<CreateUserLookupProjector>()
+        fun createUserLookupProjectorProcessor() = subscribingProcessorFor<CreateUserLookupProjector>()
     }
 }

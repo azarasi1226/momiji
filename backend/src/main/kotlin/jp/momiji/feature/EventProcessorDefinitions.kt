@@ -8,7 +8,7 @@ import org.axonframework.messaging.eventhandling.processing.streaming.pooled.Poo
  * [EventProcessorDefinition] を生成するヘルパ。
  *
  * 各 lookup projector の `@Configuration class Config` から
- * `@Bean fun xxxDefinition() = subscribingProcessorFor<XxxLookupProjector>()` の形で使う。
+ * `@Bean fun xxxProcessor() = subscribingProcessorFor<XxxLookupProjector>()` の形で使う。
  *
  * - processor 名は [T] の simpleName 由来 → クラスをリネームすると processor 名も型安全に追従する
  *   (文字列で yaml に書くと黙って陳腐化する問題を避ける。 ADR 0007 と同じ動機)。
