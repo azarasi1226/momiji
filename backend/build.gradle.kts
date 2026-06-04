@@ -8,13 +8,15 @@ plugins {
 
     id("org.springframework.boot") version "4.0.6"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jooq.jooq-codegen-gradle") version "3.20.11"
+    id("org.jooq.jooq-codegen-gradle") version "3.21.4"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
 }
 
 group = "momiji"
 version = "0.0.1-SNAPSHOT"
 description = "Identity Service Demo"
+
+val jooqVersion = "3.21.4"
 
 java {
     toolchain {
@@ -56,9 +58,9 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
-    implementation("org.jooq:jooq:3.20.11")
+    implementation("org.jooq:jooq:$jooqVersion")
     jooqCodegen("com.mysql:mysql-connector-j")
-    jooqCodegen("org.jooq:jooq-meta-extensions:3.20.11") // DDLDatabase用
+    jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 
     // Axon
