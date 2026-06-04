@@ -1,4 +1,4 @@
-package jp.momiji.feature.idp
+package jp.momiji.port.idp
 
 import com.github.michaelbull.result.getOrElse
 import jp.momiji.domain.idp.IdentityProvider

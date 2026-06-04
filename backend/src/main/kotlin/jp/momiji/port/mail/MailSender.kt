@@ -1,4 +1,4 @@
-package jp.momiji.feature.mail
+package jp.momiji.port.mail
 
 interface MailSender {
     fun send(

@@ -4,9 +4,9 @@ import com.ninjasquad.springmockk.MockkBean
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.USERS
-import jp.momiji.feature.idp.IdpUserClient
-import jp.momiji.feature.idp.IdpUserInfoFetcher
-import jp.momiji.feature.mail.MailSender
+import jp.momiji.port.idp.IdpUserClient
+import jp.momiji.port.idp.IdpUserInfoFetcher
+import jp.momiji.port.mail.MailSender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

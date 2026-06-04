@@ -5,8 +5,8 @@ import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.event.user.EmailChangeConfirmedEvent
 import jp.momiji.feature.InitialPosition
-import jp.momiji.feature.idp.IdpUserClient
 import jp.momiji.feature.pooledStreamingProcessorFor
+import jp.momiji.port.idp.IdpUserClient
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean

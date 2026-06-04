@@ -9,9 +9,9 @@ import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
 import jp.momiji.feature.CommandResult
-import jp.momiji.feature.idp.IdpUserInfoFetcher
-import jp.momiji.feature.idp.OidcUserInfo
 import jp.momiji.grpc.momiji.user.create.v1.createUserRequest
+import jp.momiji.port.idp.IdpUserInfoFetcher
+import jp.momiji.port.idp.OidcUserInfo
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
  *
  * 検証済みトークンの subject / issuer を IdpUserInfoFetcher に渡すと identityProvider / email ( 値オブジェクト )
  * まで解決済みの OidcUserInfo が返るので、 このサービスは「完成品」 を Command に組み替えて流すだけ。
- * email の形式検証などは fetcher 側 ( [jp.momiji.infrastructure.idp.CognitoUserInfoFetcher] のテスト参照 )。
+ * email の形式検証などは fetcher 側 ( [jp.momiji.adapter.idp.CognitoUserInfoFetcher] のテスト参照 )。
  */
 class CreateUserGrpcServiceTest {
     private val idpUserInfoFetcher = mockk<IdpUserInfoFetcher>()

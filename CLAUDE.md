@@ -44,13 +44,14 @@ Keycloak `8085` / MySQL `3336` / Mailpit `8025` / Grafana `3001` / Prometheus `1
 ```
 domain/        … 値オブジェクト（Result でバリデーション集約）、エラー型、idp ドメイン
 event/         … 永続化イベント（@Event 付与）
-feature/       … ユースケース縦切り（create/update/delete/changeemail/findbyid）+ port(interface)
-infrastructure/… 外部アダプタ（idp: Cognito/Keycloak、mail: Smtp）★port/adapter 分離
+feature/       … ユースケース縦切り（create/update/delete/changeemail/findbyid）
+port/          … 外向きポート(interface)（idp: IdpUserClient/IdpUserInfoFetcher、mail: MailSender）
+adapter/       … 外部アダプタ（idp: Cognito/Keycloak、mail: Smtp）★port/adapter 分離
 projection/    … read model / lookup テーブル更新（@EventHandler）
 config/        … Bean 配線（gRPC, jOOQ, Cognito 等）
 ```
 
-- **port は feature 側 / adapter は infrastructure 側**（依存を内向きに保つ）。DB(jOOQ) は port 化しない（差し替えない・実DBでテスト）
+- **port は port/ レイヤー / adapter は adapter/ レイヤー**（依存を内向きに保つ）。idp/mail は単一 feature でなく横断的な外向き契約なので、domain/idp・adapter/idp と同じ横断レイヤーに揃えて port/ に置く（feature/ は use-case 縦切り専用に保つ）。DB(jOOQ) は port 化しない（差し替えない・実DBでテスト）
 
 ## 重要な規約・設計判断
 

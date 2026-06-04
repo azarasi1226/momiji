@@ -1,7 +1,7 @@
-package jp.momiji.infrastructure.idp
+package jp.momiji.adapter.idp
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jp.momiji.feature.idp.IdpUserClient
+import jp.momiji.port.idp.IdpUserClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType

@@ -2,10 +2,10 @@ package jp.momiji.feature.user.changeemail.request
 
 import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.feature.InitialPosition
-import jp.momiji.feature.mail.MailSender
 import jp.momiji.feature.pooledStreamingProcessorFor
 import jp.momiji.feature.user.changeemail.EmailChangePayload
 import jp.momiji.feature.user.changeemail.EmailChangeTokenService
+import jp.momiji.port.mail.MailSender
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

@@ -1,4 +1,4 @@
-package jp.momiji.feature.idp
+package jp.momiji.port.idp
 
 interface IdpUserClient {
     fun updateEmail(
