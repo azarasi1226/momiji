@@ -85,7 +85,7 @@ jobs:
         run: buf generate
 
       - name: "setup pnpm"
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           # aqua.yaml の pin に合わせる
           version: "10"
