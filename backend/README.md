@@ -99,9 +99,9 @@ aqua install   # task / buf / atlas / pnpm をインストール
 ### 初回セットアップ（リポジトリルートで実行）
 
 ```bash
-task local-up              # docker-compose のサービス全部起動 (MySQL / Axon Server / Keycloak / Mailpit / Prometheus / Tempo / Grafana)
+task docker-up              # docker-compose のサービス全部起動 (MySQL / Axon Server / Keycloak / Mailpit / Prometheus / Tempo / Grafana)
 task buf-generate          # proto → Kotlin / TypeScript 生成
-task atlas-migrate-apply   # マイグレーション適用（local-up に依存しているので未起動でも自動で立ち上がる）
+task atlas-migrate-apply   # マイグレーション適用（docker-up に依存しているので未起動でも自動で立ち上がる）
 
 cd backend
 ./gradlew build

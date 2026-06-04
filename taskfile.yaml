@@ -7,18 +7,33 @@ tasks:
     cmds:
       - task --list-all
 
-  local-up:
-    desc: ローカル環境のセットアップ(主にコンテナ起動)
+  setup:
+    desc: 初回セットアップ（コンテナ起動 → DBマイグレーション → protoコード生成）。clone 後まずこれ
+    deps:
+      # atlas-migrate-apply は deps:[docker-up] を内包するので、 ここで docker-up は別途並べない（二重起動回避）。
+      # buf-generate はコンテナ非依存なので並列実行でよい。
+      - atlas-migrate-apply
+      - buf-generate
+
+  reset:
+    desc: ローカルを破棄して作り直す（volume 削除 → setup）
+    # 破棄してから作り直すので deps(並列) でなく cmds(逐次) で順序を保証する。
+    cmds:
+      - task: docker-clean
+      - task: setup
+
+  docker-up:
+    desc: コンテナ起動
     cmds:
       - docker compose -f ./local/docker-compose.yaml up -d --wait
 
-  local-down:
-    desc: ローカル環境の停止(主にコンテナ停止)
+  docker-down:
+    desc: コンテナ停止（ボリューム/データは残す）
     cmds:
       - docker compose -f ./local/docker-compose.yaml down
 
-  local-volume-down:
-    desc: ローカル環境の初期化
+  docker-clean:
+    desc: ボリューム（永続データ）を削除してまっさらに（DB/イベントストア等が消える）
     cmds:
       - docker compose -f ./local/docker-compose.yaml down -v
 
@@ -32,7 +47,7 @@ tasks:
     desc: データベースのマイグレーションを適用
     dir: ./backend/database
     deps:
-      - local-up
+      - docker-up
     cmds:
       - atlas migrate apply --url "mysql://root:passw0rd@localhost:3336/momiji" --dir "file://migrations" --allow-dirty
 
