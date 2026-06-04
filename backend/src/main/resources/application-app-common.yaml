@@ -11,6 +11,9 @@ spring:
 momiji:
   oidc:
     issuer-uri: ${JWT_ISSUER_URI}
+    # このトークンが「どのクライアント宛か」の検証用。 frontend(BFF) の client id と一致させる。
+    # Keycloak は access token の azp、 Cognito は client_id を見る（JwtClientIdValidator）。
+    client-id: ${OIDC_CLIENT_ID}
   email-change:
     secret: ${EMAIL_CHANGE_SECRET}
     expiry: PT1H

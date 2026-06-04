@@ -6,6 +6,7 @@ import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.USERS
 import jp.momiji.port.idp.IdpUserClient
 import jp.momiji.port.idp.IdpUserInfoFetcher
+import jp.momiji.port.idp.TokenClientIdExtractor
 import jp.momiji.port.mail.MailSender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -88,6 +89,14 @@ abstract class MomijiIntegrationTestBase {
      */
     @MockkBean(relaxed = true)
     lateinit var idpUserInfoFetcher: IdpUserInfoFetcher
+
+    /**
+     * JwtClientIdValidator (@Component) が active な IdP の TokenClientIdExtractor を注入要求するが、
+     * 統合テストでは idp-* profile を有効化しないため実装 bean ( Keycloak/Cognito ) が存在しない。
+     * idpUserInfoFetcher と同じく mock で供給する（認証は Context で bypass するので実際には呼ばれない）。
+     */
+    @MockkBean(relaxed = true)
+    lateinit var tokenClientIdExtractor: TokenClientIdExtractor
 
     lateinit var fixture: AxonTestFixture
 
