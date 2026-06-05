@@ -26,3 +26,12 @@ CREATE TABLE lookup_external_identities (
     user_id varchar(255) NOT NULL,
     PRIMARY KEY (oidc_issuer, oidc_subject)
 );
+
+CREATE TABLE brands (
+  id varchar(255) NOT NULL,
+  name varchar(255) NOT NULL,
+  description text NOT NULL,
+  created_at datetime(6) NOT NULL,
+  updated_at datetime(6) NOT NULL,
+  PRIMARY KEY (id)
+);
