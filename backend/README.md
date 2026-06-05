@@ -212,3 +212,6 @@ ktlint・IntelliJ が共通参照する設定。生成コードを `[**/generate
 ## TODO
 - **Axon Command / Event の Span**：Axon Framework 5.2.0 で `axon-tracing-opentelemetry` の autoconfig が復活予定 ( [issue #3594](https://github.com/AxonIQ/AxonFramework/issues/3594) )。 5.2 にバージョン上げて再度試す
 - **Event スキーマバージョニング戦略**：Event Sourcing 前提なので将来必須
+- Commaand, Eventのインターセプター
+- Saga, ProcessManager周りの仕組みを考える
+- 認可の仕組みをどうするか

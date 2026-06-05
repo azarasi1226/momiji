@@ -17,8 +17,6 @@ group = "momiji"
 version = "0.0.1-SNAPSHOT"
 description = "Identity Service Demo"
 
-val jooqVersion = "3.21.5"
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -37,7 +35,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
 
-    // O11y
+    // o11y
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     // logback のログを OTel SDK に橋渡しする appender。これが無いとログが OTLP export されず Loki に届かない。
     // バージョンは OTel コア (Spring Boot 4.0.6 管理の 1.55.0) に合わせる: instrumentation 2.21.0-alpha → core 1.55.0。
@@ -49,7 +47,7 @@ dependencies {
     // parsing には aspectjweaver が別途必要。
     implementation("org.aspectj:aspectjweaver")
 
-    // テスト
+    // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -59,6 +57,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
+    val jooqVersion = "3.21.5"
     implementation("org.jooq:jooq:$jooqVersion")
     jooqCodegen("com.mysql:mysql-connector-j")
     jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用
