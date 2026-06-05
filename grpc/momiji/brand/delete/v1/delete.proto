@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.brand.delete.v1;
+
+service DeleteBrandService {
+  rpc DeleteBrand(DeleteBrandRequest) returns (DeleteBrandResponse);
+}
+
+message DeleteBrandRequest {
+  string id = 1;
+}
+
+message DeleteBrandResponse {}
