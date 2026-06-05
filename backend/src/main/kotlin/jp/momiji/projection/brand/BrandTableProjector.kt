@@ -5,12 +5,9 @@ import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.event.brand.BrandDeletedEvent
 import jp.momiji.event.brand.BrandUpdatedEvent
 import jp.momiji.feature.InitialPosition
-import jp.momiji.feature.pooledStreamingProcessorFor
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
 import org.jooq.DSLContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime

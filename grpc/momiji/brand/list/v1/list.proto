@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package momiji.brand.list.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service ListBrandsService {
+  rpc ListBrands(ListBrandsRequest) returns (ListBrandsResponse);
+}
+
+message ListBrandsRequest {}
+
+message ListBrandsResponse {
+  repeated Brand brands = 1;
+}
+
+message Brand {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
