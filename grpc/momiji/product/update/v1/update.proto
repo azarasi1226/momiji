@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package momiji.product.update.v1;
+
+service UpdateProductService {
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  // 任意。 未指定なら画像なし（クリア）。
+  optional string image_url = 4;
+  int32 price = 5;
+}
+
+message UpdateProductResponse {}

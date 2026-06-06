@@ -3,6 +3,7 @@ syntax = "proto3";
 package momiji.brand.findbyid.v1;
 
 import "google/protobuf/timestamp.proto";
+import "momiji/brand/v1/status.proto";
 
 service FindBrandByIdService {
   rpc FindBrandById(FindBrandByIdRequest) returns (FindBrandByIdResponse);
@@ -18,4 +19,5 @@ message FindBrandByIdResponse {
   string description = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
+  momiji.brand.v1.BrandStatus status = 6;
 }

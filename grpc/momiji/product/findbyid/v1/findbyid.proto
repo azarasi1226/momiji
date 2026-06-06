@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package momiji.product.findbyid.v1;
+
+import "google/protobuf/timestamp.proto";
+import "momiji/product/v1/status.proto";
+
+service FindProductByIdService {
+  rpc FindProductById(FindProductByIdRequest) returns (FindProductByIdResponse);
+}
+
+message FindProductByIdRequest {
+  string id = 1;
+}
+
+message FindProductByIdResponse {
+  string id = 1;
+  string brand_id = 2;
+  string name = 3;
+  string description = 4;
+  optional string image_url = 5;
+  int32 price = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  momiji.product.v1.ProductStatus status = 9;
+}

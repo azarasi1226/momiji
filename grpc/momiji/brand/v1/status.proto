@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package momiji.brand.v1;
+
+enum BrandStatus {
+  BRAND_STATUS_UNSPECIFIED = 0;
+  BRAND_STATUS_ACTIVE = 1;
+  BRAND_STATUS_ARCHIVED = 2;
+}

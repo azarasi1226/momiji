@@ -3,6 +3,7 @@ syntax = "proto3";
 package momiji.brand.list.v1;
 
 import "google/protobuf/timestamp.proto";
+import "momiji/brand/v1/status.proto";
 
 service ListBrandsService {
   rpc ListBrands(ListBrandsRequest) returns (ListBrandsResponse);
@@ -20,4 +21,5 @@ message Brand {
   string description = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
+  momiji.brand.v1.BrandStatus status = 6;
 }
