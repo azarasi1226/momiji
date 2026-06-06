@@ -36,6 +36,7 @@ export default async function BrandListPage() {
               <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
                 <th className="py-2 pr-4 font-medium">ブランド名</th>
                 <th className="py-2 pr-4 font-medium">説明</th>
+                <th className="py-2 pr-4 font-medium">状態</th>
                 <th className="py-2 pr-4 font-medium">更新日時</th>
                 <th className="py-2 font-medium" />
               </tr>
@@ -49,6 +50,17 @@ export default async function BrandListPage() {
                   <td className="py-3 pr-4">{brand.name}</td>
                   <td className="max-w-xs truncate py-3 pr-4 text-zinc-500 dark:text-zinc-400">
                     {brand.description || "—"}
+                  </td>
+                  <td className="py-3 pr-4">
+                    <span
+                      className={
+                        brand.status === "ARCHIVED"
+                          ? "rounded-full bg-zinc-200 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
+                          : "rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700 dark:bg-green-950 dark:text-green-400"
+                      }
+                    >
+                      {brand.status}
+                    </span>
                   </td>
                   <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">
                     {brand.updatedAt

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { fetchBrand } from "../actions"
 import { BrandEditForm } from "./brand-edit-form"
-import { DeleteBrandButton } from "./delete-brand-button"
+import { ArchiveBrandButton } from "./archive-brand-button"
 
 export default async function BrandDetailPage({
   params,
@@ -33,13 +33,15 @@ export default async function BrandDetailPage({
           </Link>
         </div>
 
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">ID: {brand.id}</p>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          ID: {brand.id} ／ 状態: {brand.status}
+        </p>
 
         <BrandEditForm brand={brand} />
 
         <hr className="w-full border-zinc-200 dark:border-zinc-700" />
 
-        <DeleteBrandButton id={brand.id} />
+        <ArchiveBrandButton id={brand.id} />
       </main>
     </div>
   )

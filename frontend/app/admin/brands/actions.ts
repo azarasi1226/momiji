@@ -12,14 +12,28 @@ import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/v1/list_pb.js"
 import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/v1/findbyid_pb.js"
 import { CreateBrandService } from "@/grpc/gen/momiji/brand/create/v1/create_pb.js"
 import { UpdateBrandService } from "@/grpc/gen/momiji/brand/update/v1/update_pb.js"
-import { DeleteBrandService } from "@/grpc/gen/momiji/brand/delete/v1/delete_pb.js"
+import { ArchiveBrandService } from "@/grpc/gen/momiji/brand/archive/v1/archive_pb.js"
+import { BrandStatus } from "@/grpc/gen/momiji/brand/v1/status_pb.js"
 
 export type Brand = {
   id: string
   name: string
   description: string
+  status: string
   createdAt: string
   updatedAt: string
+}
+
+/** proto enum (BrandStatus) を表示用ラベルに変換する。 */
+function brandStatusLabel(status: BrandStatus): string {
+  switch (status) {
+    case BrandStatus.ACTIVE:
+      return "ACTIVE"
+    case BrandStatus.ARCHIVED:
+      return "ARCHIVED"
+    default:
+      return "UNKNOWN"
+  }
 }
 
 /** Unauthenticated は session 切れなのでログインへ飛ばす（プロフィール画面と同方針）。 */
@@ -38,6 +52,7 @@ export async function listBrands(): Promise<Brand[]> {
       id: b.id,
       name: b.name,
       description: b.description,
+      status: brandStatusLabel(b.status),
       createdAt: b.createdAt ? timestampDate(b.createdAt).toISOString() : "",
       updatedAt: b.updatedAt ? timestampDate(b.updatedAt).toISOString() : "",
     }))
@@ -56,6 +71,7 @@ export async function fetchBrand(id: string): Promise<Brand> {
       id: res.id,
       name: res.name,
       description: res.description,
+      status: brandStatusLabel(res.status),
       createdAt: res.createdAt ? timestampDate(res.createdAt).toISOString() : "",
       updatedAt: res.updatedAt ? timestampDate(res.updatedAt).toISOString() : "",
     }
@@ -127,11 +143,11 @@ export async function updateBrand(
   return { success: true }
 }
 
-export async function deleteBrand(id: string): Promise<void> {
+export async function archiveBrand(id: string): Promise<void> {
   const session = await requireValidSession()
   try {
-    const client = createGrpcClient(DeleteBrandService, session.accessToken)
-    await client.deleteBrand({ id })
+    const client = createGrpcClient(ArchiveBrandService, session.accessToken)
+    await client.archiveBrand({ id })
   } catch (e) {
     redirectIfUnauthenticated(e)
     throw e

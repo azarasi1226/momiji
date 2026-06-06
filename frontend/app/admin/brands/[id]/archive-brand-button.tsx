@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { deleteBrand } from "../actions"
+import { archiveBrand } from "../actions"
 
-export function DeleteBrandButton({ id }: { id: string }) {
+export function ArchiveBrandButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -14,7 +14,7 @@ export function DeleteBrandButton({ id }: { id: string }) {
         onClick={() => setConfirming(true)}
         className="flex h-12 w-fit items-center justify-center rounded-full border border-red-500 px-8 text-sm text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950"
       >
-        このブランドを削除
+        このブランドをアーカイブ
       </button>
     )
   }
@@ -22,16 +22,16 @@ export function DeleteBrandButton({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-red-500 dark:text-red-400">
-        本当に削除しますか？ この操作は取り消せません。
+        アーカイブすると新規商品を紐づけられなくなります。 紐づく商品は残ります。
       </p>
       <div className="flex gap-3">
         <button
           type="button"
           disabled={isPending}
-          onClick={() => startTransition(() => deleteBrand(id))}
+          onClick={() => startTransition(() => archiveBrand(id))}
           className="flex h-12 items-center justify-center rounded-full bg-red-500 px-8 text-sm text-white transition-colors hover:bg-red-600 disabled:opacity-50"
         >
-          {isPending ? "削除中..." : "削除する"}
+          {isPending ? "アーカイブ中..." : "アーカイブする"}
         </button>
         <button
           type="button"
