@@ -24,8 +24,8 @@ export type Brand = {
   updatedAt: string
 }
 
-/** proto enum (BrandStatus) を表示用ラベルに変換する。 */
-function brandStatusLabel(status: BrandStatus): string {
+/** proto enum (BrandStatus) を正準コード文字列に変換する（表示用ラベルは lib/status-labels.ts）。 */
+function brandStatusName(status: BrandStatus): string {
   switch (status) {
     case BrandStatus.ACTIVE:
       return "ACTIVE"
@@ -52,7 +52,7 @@ export async function listBrands(): Promise<Brand[]> {
       id: b.id,
       name: b.name,
       description: b.description,
-      status: brandStatusLabel(b.status),
+      status: brandStatusName(b.status),
       createdAt: b.createdAt ? timestampDate(b.createdAt).toISOString() : "",
       updatedAt: b.updatedAt ? timestampDate(b.updatedAt).toISOString() : "",
     }))
@@ -71,7 +71,7 @@ export async function fetchBrand(id: string): Promise<Brand> {
       id: res.id,
       name: res.name,
       description: res.description,
-      status: brandStatusLabel(res.status),
+      status: brandStatusName(res.status),
       createdAt: res.createdAt ? timestampDate(res.createdAt).toISOString() : "",
       updatedAt: res.updatedAt ? timestampDate(res.updatedAt).toISOString() : "",
     }

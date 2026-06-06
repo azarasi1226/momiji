@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { brandStatusLabel } from "@/lib/status-labels"
 import { fetchBrand } from "../actions"
 import { BrandEditForm } from "./brand-edit-form"
 import { ArchiveBrandButton } from "./archive-brand-button"
@@ -26,7 +27,7 @@ export default async function BrandDetailPage({
         </div>
 
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
-          ID: {brand.id} ／ 状態: {brand.status}
+          ID: {brand.id} ／ 状態: {brandStatusLabel(brand.status)}
         </p>
 
         <BrandEditForm brand={brand} />

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { productStatusLabel } from "@/lib/status-labels"
 import { brandNameMap, listProducts } from "./actions"
 
 export default async function ProductListPage() {
@@ -58,7 +59,7 @@ export default async function ProductListPage() {
                         : "rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700 dark:bg-green-950 dark:text-green-400"
                     }
                   >
-                    {product.status}
+                    {productStatusLabel(product.status)}
                   </span>
                 </td>
                 <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">

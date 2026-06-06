@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { productStatusLabel } from "@/lib/status-labels"
 import { fetchBrand } from "../../brands/actions"
 import { fetchProduct } from "../actions"
 import { ProductEditForm } from "./product-edit-form"
@@ -30,7 +31,7 @@ export default async function ProductDetailPage({
       </div>
 
       <p className="text-xs text-zinc-400 dark:text-zinc-500">
-        ID: {product.id} ／ 状態: {product.status}
+        ID: {product.id} ／ 状態: {productStatusLabel(product.status)}
       </p>
 
       {discontinued && (

@@ -28,8 +28,8 @@ export type Product = {
   updatedAt: string
 }
 
-/** proto enum (ProductStatus) を表示用ラベルに変換する。 */
-function productStatusLabel(status: ProductStatus): string {
+/** proto enum (ProductStatus) を正準コード文字列に変換する（表示用ラベルは lib/status-labels.ts）。 */
+function productStatusName(status: ProductStatus): string {
   switch (status) {
     case ProductStatus.ACTIVE:
       return "ACTIVE"
@@ -59,7 +59,7 @@ export async function listProducts(): Promise<Product[]> {
       description: p.description,
       imageUrl: p.imageUrl ?? "",
       price: p.price,
-      status: productStatusLabel(p.status),
+      status: productStatusName(p.status),
       createdAt: p.createdAt ? timestampDate(p.createdAt).toISOString() : "",
       updatedAt: p.updatedAt ? timestampDate(p.updatedAt).toISOString() : "",
     }))
@@ -81,7 +81,7 @@ export async function fetchProduct(id: string): Promise<Product> {
       description: res.description,
       imageUrl: res.imageUrl ?? "",
       price: res.price,
-      status: productStatusLabel(res.status),
+      status: productStatusName(res.status),
       createdAt: res.createdAt ? timestampDate(res.createdAt).toISOString() : "",
       updatedAt: res.updatedAt ? timestampDate(res.updatedAt).toISOString() : "",
     }
