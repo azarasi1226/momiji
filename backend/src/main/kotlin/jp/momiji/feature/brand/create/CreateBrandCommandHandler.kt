@@ -1,5 +1,6 @@
 package jp.momiji.feature.brand.create
 
+import jp.momiji.domain.brand.BrandStatus
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.feature.CommandResult
@@ -21,7 +22,8 @@ class CreateBrandCommandHandler {
     ): CommandResult {
         // 冪等性: id は BFF が採番して渡す。 同じ id での再送 (リトライ) は
         // 新規イベントを出さず success を返す（ブランドの二重作成を防ぐ）。
-        if (state.created) {
+        // status が non-null = 既に作成済み（ARCHIVED も含む）。
+        if (state.status != null) {
             return CreateBrandCommandResult.success()
         }
 
@@ -37,16 +39,16 @@ class CreateBrandCommandHandler {
 
     @EventSourced(tagKey = MomijiEventTag.BRAND_ID, idType = String::class)
     class State(
-        var created: Boolean,
+        var status: BrandStatus?,
     ) {
         @EntityCreator
         constructor() : this(
-            created = false,
+            status = null,
         )
 
         @EventSourcingHandler
         fun evolve(event: BrandCreatedEvent) {
-            created = true
+            status = BrandStatus.ACTIVE
         }
     }
 }

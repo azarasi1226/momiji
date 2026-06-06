@@ -96,7 +96,7 @@ class CreateProductGrpcServiceTest {
                     )
                 }
             }
-        
+
         assertEquals(3, ex.errors.size)
         verify(exactly = 0) { commandGateway.send(any(), CommandResult::class.java) }
     }

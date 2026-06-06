@@ -1,6 +1,7 @@
 package jp.momiji.feature.brand.list
 
 import com.google.protobuf.timestamp
+import jp.momiji.feature.brand.brandStatusToProto
 import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsRequest
 import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsResponse
 import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsServiceGrpcKt
@@ -24,6 +25,7 @@ class ListBrandsGrpcService(
                         id = view.id
                         name = view.name
                         description = view.description
+                        status = brandStatusToProto(view.status)
                         createdAt = view.createdAt.toProtoTimestamp()
                         updatedAt = view.updatedAt.toProtoTimestamp()
                     }

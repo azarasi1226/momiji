@@ -15,6 +15,7 @@ class ListBrandsQueryService(
                 BRANDS.ID,
                 BRANDS.NAME,
                 BRANDS.DESCRIPTION,
+                BRANDS.STATUS,
                 BRANDS.CREATED_AT,
                 BRANDS.UPDATED_AT,
             ).from(BRANDS)
@@ -24,6 +25,7 @@ class ListBrandsQueryService(
                     id = record[BRANDS.ID]!!,
                     name = record[BRANDS.NAME]!!,
                     description = record[BRANDS.DESCRIPTION]!!,
+                    status = record[BRANDS.STATUS]!!,
                     createdAt = record[BRANDS.CREATED_AT]!!,
                     updatedAt = record[BRANDS.UPDATED_AT]!!,
                 )

@@ -3,6 +3,7 @@ package jp.momiji.feature.brand.findbyid
 import com.google.protobuf.timestamp
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
+import jp.momiji.feature.brand.brandStatusToProto
 import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdRequest
 import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdResponse
 import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdServiceGrpcKt
@@ -24,6 +25,7 @@ class FindBrandByIdGrpcService(
             id = brand.id
             name = brand.name
             description = brand.description
+            status = brandStatusToProto(brand.status)
             createdAt = brand.createdAt.toProtoTimestamp()
             updatedAt = brand.updatedAt.toProtoTimestamp()
         }

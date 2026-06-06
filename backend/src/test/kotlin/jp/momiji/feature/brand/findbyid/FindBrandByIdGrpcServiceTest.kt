@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.domain.BusinessException
 import jp.momiji.grpc.momiji.brand.findbyid.v1.findBrandByIdRequest
+import jp.momiji.grpc.momiji.brand.v1.BrandStatus
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -21,6 +22,7 @@ class FindBrandByIdGrpcServiceTest {
                 id = "test-brand-id",
                 name = "テストブランド",
                 description = "テスト説明",
+                status = "ACTIVE",
                 createdAt = LocalDateTime.parse("2026-01-01T00:00:00"),
                 updatedAt = LocalDateTime.parse("2026-01-02T00:00:00"),
             )
@@ -33,6 +35,7 @@ class FindBrandByIdGrpcServiceTest {
         assertEquals("test-brand-id", response.id)
         assertEquals("テストブランド", response.name)
         assertEquals("テスト説明", response.description)
+        assertEquals(BrandStatus.BRAND_STATUS_ACTIVE, response.status)
     }
 
     @Test

@@ -9,6 +9,7 @@ data class BrandView(
     val id: String,
     val name: String,
     val description: String,
+    val status: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 )
@@ -23,6 +24,7 @@ class FindBrandByIdQueryService(
                 BRANDS.ID,
                 BRANDS.NAME,
                 BRANDS.DESCRIPTION,
+                BRANDS.STATUS,
                 BRANDS.CREATED_AT,
                 BRANDS.UPDATED_AT,
             ).from(BRANDS)
@@ -32,6 +34,7 @@ class FindBrandByIdQueryService(
                     id = record[BRANDS.ID]!!,
                     name = record[BRANDS.NAME]!!,
                     description = record[BRANDS.DESCRIPTION]!!,
+                    status = record[BRANDS.STATUS]!!,
                     createdAt = record[BRANDS.CREATED_AT]!!,
                     updatedAt = record[BRANDS.UPDATED_AT]!!,
                 )
