@@ -1,20 +1,20 @@
-package jp.momiji.feature.brand.delete
+package jp.momiji.feature.brand.archive
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.CommandResult
-import jp.momiji.grpc.momiji.brand.delete.v1.deleteBrandRequest
+import jp.momiji.grpc.momiji.brand.archive.v1.archiveBrandRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.CompletableFuture
 
-class DeleteBrandGrpcServiceTest {
+class ArchiveBrandGrpcServiceTest {
     private val commandGateway = mockk<CommandGateway>()
-    private val service = DeleteBrandGrpcService(commandGateway)
+    private val service = ArchiveBrandGrpcService(commandGateway)
 
     private val validUlid = "01ARZ3NDEKTSV4RRFFQ69G5FAV"
 
@@ -24,12 +24,12 @@ class DeleteBrandGrpcServiceTest {
             CompletableFuture.completedFuture(CommandResult.success())
 
         runBlocking {
-            service.deleteBrand(deleteBrandRequest { id = validUlid })
+            service.archiveBrand(archiveBrandRequest { id = validUlid })
         }
 
         verify(exactly = 1) {
             commandGateway.send(
-                match<DeleteBrandCommand> { it.id == validUlid },
+                match<ArchiveBrandCommand> { it.id == validUlid },
                 CommandResult::class.java,
             )
         }
@@ -39,7 +39,7 @@ class DeleteBrandGrpcServiceTest {
     fun `異常系_idがULID形式でないならValidationExceptionでCommandは流れない`() {
         assertThrows<ValidationException> {
             runBlocking {
-                service.deleteBrand(deleteBrandRequest { id = "not-a-ulid" })
+                service.archiveBrand(archiveBrandRequest { id = "not-a-ulid" })
             }
         }
 
