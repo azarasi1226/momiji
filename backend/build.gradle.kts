@@ -39,7 +39,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     // logback のログを OTel SDK に橋渡しする appender。これが無いとログが OTLP export されず Loki に届かない。
     // バージョンは OTel コア (Spring Boot 4.0.6 管理の 1.55.0) に合わせる: instrumentation 2.21.0-alpha → core 1.55.0。
-    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.28.1-alpha")
+    // ※ 2.28.1-alpha は core 1.62 系前提で LogRecordBuilder.setException を呼ぶため、 1.55.0 と組むと
+    //   例外つきログで NoSuchMethodError になる。 管理 core に合わせて 2.21.0-alpha に固定する。
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.21.0-alpha")
     // JDBC observation を提供するライブラリ。 これを入れると JDBC クエリが自動的に span 化される。
     implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.2.1")
     // UseCaseLogicTracingAspect が `@Aspect` / `@Around` / `ProceedingJoinPoint` を使うため必要。
