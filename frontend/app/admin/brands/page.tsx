@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { formatDateTime } from "@/lib/format"
 import { brandStatusLabel } from "@/lib/status-labels"
 import { listBrands } from "./actions"
 
@@ -56,9 +57,7 @@ export default async function BrandListPage() {
                     </span>
                   </td>
                   <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">
-                    {brand.updatedAt
-                      ? new Date(brand.updatedAt).toLocaleString("ja-JP")
-                      : "—"}
+                    {formatDateTime(brand.updatedAt)}
                   </td>
                   <td className="py-3 text-right">
                     <Link

@@ -15,6 +15,7 @@ import { CreateProductService } from "@/grpc/gen/momiji/product/create/v1/create
 import { UpdateProductService } from "@/grpc/gen/momiji/product/update/v1/update_pb.js"
 import { DiscontinueProductService } from "@/grpc/gen/momiji/product/discontinue/v1/discontinue_pb.js"
 import { ProductStatus } from "@/grpc/gen/momiji/product/v1/status_pb.js"
+import { ProductSortCondition } from "@/grpc/gen/momiji/product/v1/sort_pb.js"
 
 export type Product = {
   id: string
@@ -26,6 +27,41 @@ export type Product = {
   status: string
   createdAt: string
   updatedAt: string
+}
+
+/** 一覧の 1 ページ分（商品 + ページング情報）。 */
+export type ProductsPage = {
+  products: Product[]
+  totalCount: number
+  totalPage: number
+  pageSize: number
+  pageNumber: number
+}
+
+/** 一覧クエリ。 すべて任意（未指定はサーバ既定）。 sort / status は UI 用の文字列キー。 */
+export type ListProductsParams = {
+  likeName?: string
+  status?: string
+  brandId?: string
+  sort?: string
+  pageSize?: number
+  pageNumber?: number
+}
+
+/** UI の sort キー → proto enum。 不正/未指定は UNSPECIFIED（サーバが既定に倒す）。 */
+const SORT_MAP: Record<string, ProductSortCondition> = {
+  name_asc: ProductSortCondition.NAME_ASC,
+  name_desc: ProductSortCondition.NAME_DESC,
+  price_asc: ProductSortCondition.PRICE_ASC,
+  price_desc: ProductSortCondition.PRICE_DESC,
+  created_desc: ProductSortCondition.CREATED_AT_DESC,
+  created_asc: ProductSortCondition.CREATED_AT_ASC,
+}
+
+/** UI の status フィルタキー → proto enum。 空/未指定は UNSPECIFIED（= すべて）。 */
+const STATUS_FILTER_MAP: Record<string, ProductStatus> = {
+  ACTIVE: ProductStatus.ACTIVE,
+  DISCONTINUED: ProductStatus.DISCONTINUED,
 }
 
 /** proto enum (ProductStatus) を正準コード文字列に変換する（表示用ラベルは lib/status-labels.ts）。 */
@@ -47,22 +83,37 @@ function redirectIfUnauthenticated(e: unknown): void {
   }
 }
 
-export async function listProducts(): Promise<Product[]> {
+export async function listProducts(
+  params: ListProductsParams = {},
+): Promise<ProductsPage> {
   const session = await requireValidSession()
   try {
     const client = createGrpcClient(ListProductsService, session.accessToken)
-    const res = await client.listProducts({})
-    return res.products.map((p) => ({
-      id: p.id,
-      brandId: p.brandId,
-      name: p.name,
-      description: p.description,
-      imageUrl: p.imageUrl ?? "",
-      price: p.price,
-      status: productStatusName(p.status),
-      createdAt: p.createdAt ? timestampDate(p.createdAt).toISOString() : "",
-      updatedAt: p.updatedAt ? timestampDate(p.updatedAt).toISOString() : "",
-    }))
+    const res = await client.listProducts({
+      likeName: params.likeName ?? "",
+      status: STATUS_FILTER_MAP[params.status ?? ""] ?? ProductStatus.UNSPECIFIED,
+      brandId: params.brandId ?? "",
+      sort: SORT_MAP[params.sort ?? ""] ?? ProductSortCondition.UNSPECIFIED,
+      pageSize: params.pageSize ?? 0,
+      pageNumber: params.pageNumber ?? 0,
+    })
+    return {
+      products: res.products.map((p) => ({
+        id: p.id,
+        brandId: p.brandId,
+        name: p.name,
+        description: p.description,
+        imageUrl: p.imageUrl ?? "",
+        price: p.price,
+        status: productStatusName(p.status),
+        createdAt: p.createdAt ? timestampDate(p.createdAt).toISOString() : "",
+        updatedAt: p.updatedAt ? timestampDate(p.updatedAt).toISOString() : "",
+      })),
+      totalCount: Number(res.paging?.totalCount ?? 0),
+      totalPage: res.paging?.totalPage ?? 0,
+      pageSize: res.paging?.pageSize ?? 0,
+      pageNumber: res.paging?.pageNumber ?? 0,
+    }
   } catch (e) {
     redirectIfUnauthenticated(e)
     throw e
@@ -91,10 +142,13 @@ export async function fetchProduct(id: string): Promise<Product> {
   }
 }
 
-/** 商品名解決用に brandId → ブランド名 のマップを作る（一覧の表示で生 ULID を出さないため）。 */
-export async function brandNameMap(): Promise<Record<string, string>> {
+/**
+ * 全ブランドの {id, name}（名前順）。 一覧の brandId→名前 解決と、 ブランドフィルタの選択肢に使う。
+ * フィルタは archived 含む全ブランド対象（archived ブランドの商品も絞り込めるように）。
+ */
+export async function listAllBrands(): Promise<{ id: string; name: string }[]> {
   const brands = await listBrands()
-  return Object.fromEntries(brands.map((b) => [b.id, b.name]))
+  return brands.map((b) => ({ id: b.id, name: b.name }))
 }
 
 /** 作成フォームのドロップダウン用。 商品は ACTIVE なブランドにしか紐づけられない。 */
@@ -137,13 +191,13 @@ export async function createProduct(
 
   try {
     const client = createGrpcClient(CreateProductService, session.accessToken)
-    // id は BFF 採番（冪等キー）。 image_url は proto3 optional なので空なら未設定で送る。
+    // id は BFF 採番（冪等キー）。 image_url は空文字なら「画像なし」（サーバ側 VO が空→null に正規化）。
     await client.createProduct({
       id: ulid(),
       brandId,
       name,
       description,
-      imageUrl: imageUrl || undefined,
+      imageUrl,
       price,
     })
   } catch (e) {
@@ -172,7 +226,7 @@ export async function updateProduct(
       id,
       name,
       description,
-      imageUrl: imageUrl || undefined,
+      imageUrl,
       price,
     })
   } catch (e) {
