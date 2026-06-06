@@ -1,6 +1,5 @@
 package jp.momiji.feature.product.findbyid
 
-import com.google.protobuf.timestamp
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.product.productStatusToProto
@@ -8,9 +7,8 @@ import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdRequest
 import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdResponse
 import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdServiceGrpcKt
 import jp.momiji.grpc.momiji.product.findbyid.v1.findProductByIdResponse
+import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @Service
 class FindProductByIdGrpcService(
@@ -26,19 +24,12 @@ class FindProductByIdGrpcService(
             brandId = product.brandId
             name = product.name
             description = product.description
-            // image_url は任意。 null のときは proto の optional を未設定のままにする。
-            product.imageUrl?.let { imageUrl = it }
+            // image_url は任意。 画像なしは空文字で返す。
+            imageUrl = product.imageUrl ?: ""
             price = product.price
             status = productStatusToProto(product.status)
             createdAt = product.createdAt.toProtoTimestamp()
             updatedAt = product.updatedAt.toProtoTimestamp()
         }
     }
-
-    private fun LocalDateTime.toProtoTimestamp() =
-        timestamp {
-            val instant = this@toProtoTimestamp.toInstant(ZoneOffset.UTC)
-            seconds = instant.epochSecond
-            nanos = instant.nano
-        }
 }

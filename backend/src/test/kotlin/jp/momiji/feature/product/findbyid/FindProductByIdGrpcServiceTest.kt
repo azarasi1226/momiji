@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class FindProductByIdGrpcServiceTest {
     private val findProductByIdQueryService = mockk<FindProductByIdQueryService>()
@@ -41,7 +39,6 @@ class FindProductByIdGrpcServiceTest {
         assertEquals("test-brand-id", response.brandId)
         assertEquals("テスト商品", response.name)
         assertEquals("テスト説明", response.description)
-        assertTrue(response.hasImageUrl())
         assertEquals("https://example.com/i.png", response.imageUrl)
         assertEquals(1000, response.price)
         assertEquals(ProductStatus.PRODUCT_STATUS_ACTIVE, response.status)
@@ -67,7 +64,7 @@ class FindProductByIdGrpcServiceTest {
                 service.findProductById(findProductByIdRequest { id = "test-product-id" })
             }
 
-        assertFalse(response.hasImageUrl())
+        assertEquals("", response.imageUrl)
     }
 
     @Test

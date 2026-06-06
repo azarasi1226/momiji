@@ -1,6 +1,5 @@
 package jp.momiji.feature.brand.findbyid
 
-import com.google.protobuf.timestamp
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.brand.brandStatusToProto
@@ -8,9 +7,8 @@ import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdRequest
 import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdResponse
 import jp.momiji.grpc.momiji.brand.findbyid.v1.FindBrandByIdServiceGrpcKt
 import jp.momiji.grpc.momiji.brand.findbyid.v1.findBrandByIdResponse
+import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @Service
 class FindBrandByIdGrpcService(
@@ -30,11 +28,4 @@ class FindBrandByIdGrpcService(
             updatedAt = brand.updatedAt.toProtoTimestamp()
         }
     }
-
-    private fun LocalDateTime.toProtoTimestamp() =
-        timestamp {
-            val instant = this@toProtoTimestamp.toInstant(ZoneOffset.UTC)
-            seconds = instant.epochSecond
-            nanos = instant.nano
-        }
 }
