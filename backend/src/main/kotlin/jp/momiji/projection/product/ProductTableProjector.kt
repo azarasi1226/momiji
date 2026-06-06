@@ -5,14 +5,13 @@ import jp.momiji.domain.product.ProductStatus
 import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.product.ProductDiscontinuedEvent
 import jp.momiji.event.product.ProductUpdatedEvent
-import jp.momiji.feature.InitialPosition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 @Component
 class ProductTableProjector(
@@ -23,7 +22,7 @@ class ProductTableProjector(
         event: ProductCreatedEvent,
         @Timestamp timestamp: Instant,
     ) {
-        val at = LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault())
+        val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
         dsl
             .insertInto(PRODUCTS)
             .set(PRODUCTS.ID, event.id)
@@ -50,7 +49,7 @@ class ProductTableProjector(
             .set(PRODUCTS.DESCRIPTION, event.description)
             .set(PRODUCTS.IMAGE_URL, event.imageUrl)
             .set(PRODUCTS.PRICE, event.price)
-            .set(PRODUCTS.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
+            .set(PRODUCTS.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC))
             .where(PRODUCTS.ID.eq(event.id))
             .execute()
     }
@@ -63,7 +62,7 @@ class ProductTableProjector(
         dsl
             .update(PRODUCTS)
             .set(PRODUCTS.STATUS, ProductStatus.DISCONTINUED.name)
-            .set(PRODUCTS.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
+            .set(PRODUCTS.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC))
             .where(PRODUCTS.ID.eq(event.id))
             .execute()
     }
