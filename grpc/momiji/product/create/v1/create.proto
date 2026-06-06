@@ -11,7 +11,7 @@ message CreateProductRequest {
   string brand_id = 2;
   string name = 3;
   string description = 4;
-  optional string image_url = 5;
+  string image_url = 5;
   int32 price = 6;
 }
 
