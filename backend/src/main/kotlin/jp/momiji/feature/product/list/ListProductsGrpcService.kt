@@ -22,7 +22,7 @@ class ListProductsGrpcService(
             ListProductsQuery(
                 likeName = request.likeName,
                 status = productStatusFilterFromProto(request.status),
-                brandId = request.brandId.ifBlank { null },
+                brandId = request.brandId,
                 sort = request.sort.toProductSort(),
                 paging = PagingCondition.of(request.pageSize, request.pageNumber),
             )

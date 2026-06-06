@@ -105,7 +105,7 @@ class ListProductsGrpcServiceTest {
         assertEquals(1, query.paging.pageNumber) // 1 始まり
         assertEquals(ProductSort.NAME_ASC, query.sort) // UNSPECIFIED → 既定
         assertEquals(null, query.status) // 状態 UNSPECIFIED → フィルタなし
-        assertEquals(null, query.brandId) // brand_id 空 → フィルタなし
+        assertEquals("", query.brandId) // brand_id 空 → フィルタなし（query 側で isBlank 判定）
         verify(exactly = 1) { listProductsQueryService.list(any()) }
     }
 }

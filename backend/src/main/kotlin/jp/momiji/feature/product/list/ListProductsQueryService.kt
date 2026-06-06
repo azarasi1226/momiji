@@ -23,7 +23,7 @@ enum class ProductSort {
 data class ListProductsQuery(
     val likeName: String,
     val status: ProductStatus?,
-    val brandId: String?,
+    val brandId: String,
     val sort: ProductSort,
     val paging: PagingCondition,
 )
@@ -33,23 +33,23 @@ class ListProductsQueryService(
     private val dsl: DSLContext,
 ) {
     fun list(query: ListProductsQuery): Page<ProductView> {
-        // 検索: 空なら絞り込みなし。
+        // 検索: 空なら絞り込みなし
         val nameCondition =
             if (query.likeName.isBlank()) {
                 DSL.noCondition()
             } else {
                 PRODUCTS.NAME.like("%${query.likeName}%")
             }
-        // 状態フィルタ: null なら絞り込みなし（すべて）。
+        // 状態フィルタ: null なら絞り込みなし
         val statusCondition =
             if (query.status == null) {
                 DSL.noCondition()
             } else {
                 PRODUCTS.STATUS.eq(query.status.name)
             }
-        // ブランドフィルタ: null なら絞り込みなし（すべて）。
+        // ブランドフィルタ: 空なら絞り込みなし
         val brandCondition =
-            if (query.brandId == null) {
+            if (query.brandId.isBlank()) {
                 DSL.noCondition()
             } else {
                 PRODUCTS.BRAND_ID.eq(query.brandId)
