@@ -1,19 +1,11 @@
 import Link from "next/link"
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 import { listBrands } from "./actions"
 
 export default async function BrandListPage() {
-  const session = await auth()
-  if (!session || session.error === "RefreshTokenError") {
-    redirect("/")
-  }
-
   const brands = await listBrands()
 
   return (
-    <div className="flex min-h-screen justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-4xl flex-col gap-8 px-8 py-16">
+    <main className="flex w-full max-w-4xl flex-col gap-8 px-8 py-16">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
             ブランド管理
@@ -80,7 +72,6 @@ export default async function BrandListPage() {
             </tbody>
           </table>
         )}
-      </main>
-    </div>
+    </main>
   )
 }
