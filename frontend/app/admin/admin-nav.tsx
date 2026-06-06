@@ -3,7 +3,10 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-const NAV_ITEMS = [{ href: "/admin/brands", label: "ブランド管理" }]
+const NAV_ITEMS = [
+  { href: "/admin/brands", label: "ブランド管理" },
+  { href: "/admin/products", label: "商品管理" },
+]
 
 /**
  * admin 左サイドバーのナビ。 現在地を `usePathname` でハイライトする（client component が必要な理由）。
@@ -31,10 +34,6 @@ export function AdminNav() {
           </Link>
         )
       })}
-      {/* 商品マスタ画面を作ったらここを Link に差し替える */}
-      <span className="cursor-default rounded-lg px-3 py-2 text-sm text-zinc-400 dark:text-zinc-600">
-        商品管理（準備中）
-      </span>
     </nav>
   )
 }
