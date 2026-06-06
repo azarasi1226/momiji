@@ -4,8 +4,8 @@ import com.github.michaelbull.result.get
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.brand.BrandDescription
 import jp.momiji.domain.brand.BrandName
+import jp.momiji.event.brand.BrandArchivedEvent
 import jp.momiji.event.brand.BrandCreatedEvent
-import jp.momiji.event.brand.BrandDeletedEvent
 import jp.momiji.event.brand.BrandUpdatedEvent
 import org.junit.jupiter.api.Test
 
@@ -56,14 +56,14 @@ class UpdateBrandCommandHandlerTest : MomijiIntegrationTestBase() {
     }
 
     @Test
-    fun `異常系_削除済みブランドの更新はbrandNotFound`() {
+    fun `異常系_アーカイブ済みブランドの更新はbrandNotFound`() {
         val brandId = "01HXYZBRAND00000000000000U3"
 
         fixture
             .given()
             .events(
                 BrandCreatedEvent(id = brandId, name = "旧ブランド名", description = "旧説明"),
-                BrandDeletedEvent(id = brandId),
+                BrandArchivedEvent(id = brandId),
             ).`when`()
             .command(
                 UpdateBrandCommand(
