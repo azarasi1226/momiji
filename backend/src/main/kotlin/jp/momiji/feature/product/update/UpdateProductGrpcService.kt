@@ -9,7 +9,6 @@ import jp.momiji.domain.product.ProductDescription
 import jp.momiji.domain.product.ProductImageUrl
 import jp.momiji.domain.product.ProductName
 import jp.momiji.domain.product.ProductPrice
-import jp.momiji.feature.product.imageUrlOrNull
 import jp.momiji.feature.throwIfError
 import jp.momiji.grpc.momiji.product.update.v1.UpdateProductRequest
 import jp.momiji.grpc.momiji.product.update.v1.UpdateProductResponse
@@ -26,7 +25,7 @@ class UpdateProductGrpcService(
             { Ulid.validate(request.id) },
             { ProductName.create(request.name) },
             { ProductDescription.create(request.description) },
-            { ProductImageUrl.create(request.imageUrlOrNull) },
+            { ProductImageUrl.create(request.imageUrl) },
             { ProductPrice.create(request.price) },
         ) { id, name, description, imageUrl, price ->
             UpdateProductCommand(

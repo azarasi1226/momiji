@@ -8,7 +8,6 @@ import jp.momiji.domain.product.ProductDescription
 import jp.momiji.domain.product.ProductImageUrl
 import jp.momiji.domain.product.ProductName
 import jp.momiji.domain.product.ProductPrice
-import jp.momiji.feature.product.imageUrlOrNull
 import jp.momiji.feature.throwIfError
 import jp.momiji.grpc.momiji.product.create.v1.CreateProductRequest
 import jp.momiji.grpc.momiji.product.create.v1.CreateProductResponse
@@ -28,7 +27,7 @@ class CreateProductGrpcService(
             { Ulid.validate(request.brandId) },
             { ProductName.create(request.name) },
             { ProductDescription.create(request.description) },
-            { ProductImageUrl.create(request.imageUrlOrNull) },
+            { ProductImageUrl.create(request.imageUrl) },
             { ProductPrice.create(request.price) },
         ) { id, brandId, name, description, imageUrl, price ->
             CreateProductCommand(
