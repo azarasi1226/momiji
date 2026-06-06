@@ -6,6 +6,8 @@ import jp.momiji.domain.user.Email
 import jp.momiji.event.user.EmailChangeRequestedEvent
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
+import jp.momiji.feature.command.user.changeemail.request.RequestEmailChangeCommand
+import jp.momiji.feature.command.user.changeemail.request.RequestEmailChangeCommandResult
 import org.junit.jupiter.api.Test
 
 class RequestEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {

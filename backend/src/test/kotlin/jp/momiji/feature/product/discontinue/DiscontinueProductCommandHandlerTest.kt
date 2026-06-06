@@ -3,6 +3,8 @@ package jp.momiji.feature.product.discontinue
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.product.ProductDiscontinuedEvent
+import jp.momiji.feature.command.product.discontinue.DiscontinueProductCommand
+import jp.momiji.feature.command.product.discontinue.DiscontinueProductCommandResult
 import org.junit.jupiter.api.Test
 
 class DiscontinueProductCommandHandlerTest : MomijiIntegrationTestBase() {

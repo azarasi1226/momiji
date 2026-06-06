@@ -7,7 +7,7 @@ import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 
 /**
- * [IdpUserDeleter] (EventHandler) 単体の統合テスト。
+ * [jp.momiji.feature.command.user.delete.IdpUserDeleter] (EventHandler) 単体の統合テスト。
  *
  * 「[UserDeletedEvent] が流れたら、 そこに乗っている全 oidcSubject を IDP から削除する」
  * という EventHandler の責務だけに焦点を絞る。

@@ -9,7 +9,7 @@ import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 
 /**
- * [EmailToIdpSyncer] (EventHandler) 単体の統合テスト。
+ * [jp.momiji.feature.command.user.changeemail.confirm.EmailToIdpSyncer] (EventHandler) 単体の統合テスト。
  *
  * 「[EmailChangeConfirmedEvent] が流れたら、 LOOKUP_EXTERNAL_IDENTITIES から
  *   `LOCAL` の oidcSubject を引いて IDP 側の email も更新する」

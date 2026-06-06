@@ -7,7 +7,7 @@ import jp.momiji.eventually
 import org.junit.jupiter.api.Test
 
 /**
- * [OldEmailChangeNotifier] (EventHandler) 単体の統合テスト。
+ * [jp.momiji.feature.command.user.changeemail.confirm.OldEmailChangeNotifier] (EventHandler) 単体の統合テスト。
  *
  * 「[EmailChangeConfirmedEvent] が流れたら、 旧メールアドレス宛に変更完了通知を送る」
  * という EventHandler の責務だけに焦点を絞る。

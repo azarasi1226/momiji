@@ -6,6 +6,8 @@ import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import jp.momiji.feature.command.user.changeemail.EmailChangePayload
+import jp.momiji.feature.command.user.changeemail.EmailChangeTokenService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.security.KeyPairGenerator
@@ -16,7 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * [EmailChangeTokenService] の単体テスト。
+ * [jp.momiji.feature.command.user.changeemail.EmailChangeTokenService] の単体テスト。
  *
  * Spring 不要・外部 IO 無しの純粋ロジック (JWT sign / verify) なので、 コンストラクタ直接呼びで完結。
  *

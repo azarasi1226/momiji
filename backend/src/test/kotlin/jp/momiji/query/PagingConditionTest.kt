@@ -1,5 +1,6 @@
 package jp.momiji.query
 
+import jp.momiji.feature.query.PagingCondition
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

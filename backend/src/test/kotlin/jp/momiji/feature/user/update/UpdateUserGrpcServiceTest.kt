@@ -10,8 +10,10 @@ import jp.momiji.domain.user.Address1
 import jp.momiji.domain.user.Name
 import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
-import jp.momiji.feature.CommandResult
-import jp.momiji.feature.user.UserIdResolver
+import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.user.update.UpdateUserCommand
+import jp.momiji.feature.command.user.update.UpdateUserGrpcService
 import jp.momiji.grpc.momiji.user.update.v1.updateUserRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
@@ -24,7 +26,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * [UpdateUserGrpcService] の単体テスト。
+ * [jp.momiji.feature.command.user.update.UpdateUserGrpcService] の単体テスト。
  *
  * 統合テスト ([UpdateUserCommandHandlerTest]) が「CommandHandler 以降 → EventStore + projection」 を担うので、
  * ここでは GrpcService 固有の責務だけを 2 ケースで cover する:

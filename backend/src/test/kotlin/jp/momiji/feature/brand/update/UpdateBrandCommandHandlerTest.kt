@@ -7,6 +7,8 @@ import jp.momiji.domain.brand.BrandName
 import jp.momiji.event.brand.BrandArchivedEvent
 import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.event.brand.BrandUpdatedEvent
+import jp.momiji.feature.command.brand.update.UpdateBrandCommand
+import jp.momiji.feature.command.brand.update.UpdateBrandCommandResult
 import org.junit.jupiter.api.Test
 
 class UpdateBrandCommandHandlerTest : MomijiIntegrationTestBase() {

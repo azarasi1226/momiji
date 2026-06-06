@@ -8,7 +8,9 @@ import io.mockk.verify
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
-import jp.momiji.feature.CommandResult
+import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.user.create.CreateUserCommand
+import jp.momiji.feature.command.user.create.CreateUserGrpcService
 import jp.momiji.grpc.momiji.user.create.v1.createUserRequest
 import jp.momiji.port.idp.IdpUserInfoFetcher
 import jp.momiji.port.idp.OidcUserInfo

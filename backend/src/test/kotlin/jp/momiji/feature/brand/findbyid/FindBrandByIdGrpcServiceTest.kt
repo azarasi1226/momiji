@@ -3,6 +3,9 @@ package jp.momiji.feature.brand.findbyid
 import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.domain.BusinessException
+import jp.momiji.feature.query.brand.findbyid.BrandView
+import jp.momiji.feature.query.brand.findbyid.FindBrandByIdGrpcService
+import jp.momiji.feature.query.brand.findbyid.FindBrandByIdQueryService
 import jp.momiji.grpc.momiji.brand.findbyid.v1.findBrandByIdRequest
 import jp.momiji.grpc.momiji.brand.v1.BrandStatus
 import kotlinx.coroutines.runBlocking

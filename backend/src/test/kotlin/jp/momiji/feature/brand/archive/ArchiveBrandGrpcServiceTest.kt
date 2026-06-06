@@ -4,7 +4,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.momiji.domain.ValidationException
-import jp.momiji.feature.CommandResult
+import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.brand.archive.ArchiveBrandCommand
+import jp.momiji.feature.command.brand.archive.ArchiveBrandGrpcService
 import jp.momiji.grpc.momiji.brand.archive.v1.archiveBrandRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway

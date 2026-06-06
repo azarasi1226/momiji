@@ -7,8 +7,10 @@ import io.mockk.verify
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
 import jp.momiji.domain.user.EmailChangeToken
-import jp.momiji.feature.CommandResult
-import jp.momiji.feature.user.UserIdResolver
+import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeCommand
+import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeGrpcService
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.confirmEmailChangeRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway

@@ -3,6 +3,8 @@ package jp.momiji.feature.brand.archive
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.event.brand.BrandArchivedEvent
 import jp.momiji.event.brand.BrandCreatedEvent
+import jp.momiji.feature.command.brand.archive.ArchiveBrandCommand
+import jp.momiji.feature.command.brand.archive.ArchiveBrandCommandResult
 import org.junit.jupiter.api.Test
 
 class ArchiveBrandCommandHandlerTest : MomijiIntegrationTestBase() {

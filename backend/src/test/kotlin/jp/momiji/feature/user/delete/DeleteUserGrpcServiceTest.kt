@@ -5,8 +5,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.momiji.config.grpc.GrpcAuthContext
-import jp.momiji.feature.CommandResult
-import jp.momiji.feature.user.UserIdResolver
+import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.user.delete.DeleteUserCommand
+import jp.momiji.feature.command.user.delete.DeleteUserGrpcService
 import jp.momiji.grpc.momiji.user.delete.v1.deleteUserRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway

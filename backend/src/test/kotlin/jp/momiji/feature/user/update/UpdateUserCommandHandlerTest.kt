@@ -10,6 +10,8 @@ import jp.momiji.domain.user.PostalCode
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.event.user.UserUpdatedEvent
+import jp.momiji.feature.command.user.update.UpdateUserCommand
+import jp.momiji.feature.command.user.update.UpdateUserCommandResult
 import org.junit.jupiter.api.Test
 
 class UpdateUserCommandHandlerTest : MomijiIntegrationTestBase() {

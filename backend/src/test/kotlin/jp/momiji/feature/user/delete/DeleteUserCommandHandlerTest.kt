@@ -3,6 +3,8 @@ package jp.momiji.feature.user.delete
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
+import jp.momiji.feature.command.user.delete.DeleteUserCommand
+import jp.momiji.feature.command.user.delete.DeleteUserCommandResult
 import org.junit.jupiter.api.Test
 
 class DeleteUserCommandHandlerTest : MomijiIntegrationTestBase() {

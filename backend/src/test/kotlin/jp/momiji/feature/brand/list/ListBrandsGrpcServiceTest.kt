@@ -2,7 +2,9 @@ package jp.momiji.feature.brand.list
 
 import io.mockk.every
 import io.mockk.mockk
-import jp.momiji.feature.brand.findbyid.BrandView
+import jp.momiji.feature.query.brand.findbyid.BrandView
+import jp.momiji.feature.query.brand.list.ListBrandsGrpcService
+import jp.momiji.feature.query.brand.list.ListBrandsQueryService
 import jp.momiji.grpc.momiji.brand.list.v1.listBrandsRequest
 import jp.momiji.grpc.momiji.brand.v1.BrandStatus
 import kotlinx.coroutines.runBlocking

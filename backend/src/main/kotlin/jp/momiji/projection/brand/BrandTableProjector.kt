@@ -5,7 +5,6 @@ import jp.momiji.domain.brand.BrandStatus
 import jp.momiji.event.brand.BrandArchivedEvent
 import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.event.brand.BrandUpdatedEvent
-import jp.momiji.feature.InitialPosition
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
 import org.jooq.DSLContext

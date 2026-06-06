@@ -5,7 +5,10 @@ import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.BusinessException
-import jp.momiji.feature.user.UserIdResolver
+import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.query.user.findbyid.FindUserByIdGrpcService
+import jp.momiji.feature.query.user.findbyid.FindUserByIdQueryService
+import jp.momiji.feature.query.user.findbyid.UserView
 import jp.momiji.grpc.momiji.user.findbyid.v1.findUserByIdRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

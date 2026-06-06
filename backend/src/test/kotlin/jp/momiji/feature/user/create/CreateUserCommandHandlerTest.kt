@@ -6,6 +6,8 @@ import jp.momiji.domain.idp.IdentityProvider
 import jp.momiji.domain.user.Email
 import jp.momiji.event.user.ExternalIdentityLinkedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.feature.command.user.create.CreateUserCommand
+import jp.momiji.feature.command.user.create.CreateUserCommandResult
 import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.Test
 

@@ -9,6 +9,8 @@ import jp.momiji.domain.product.ProductPrice
 import jp.momiji.event.brand.BrandArchivedEvent
 import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.event.product.ProductCreatedEvent
+import jp.momiji.feature.command.product.create.CreateProductCommand
+import jp.momiji.feature.command.product.create.CreateProductCommandResult
 import org.junit.jupiter.api.Test
 
 class CreateProductCommandHandlerTest : MomijiIntegrationTestBase() {

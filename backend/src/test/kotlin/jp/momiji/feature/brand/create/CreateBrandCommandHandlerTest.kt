@@ -5,6 +5,8 @@ import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.domain.brand.BrandDescription
 import jp.momiji.domain.brand.BrandName
 import jp.momiji.event.brand.BrandCreatedEvent
+import jp.momiji.feature.command.brand.create.CreateBrandCommand
+import jp.momiji.feature.command.brand.create.CreateBrandCommandResult
 import org.junit.jupiter.api.Test
 
 class CreateBrandCommandHandlerTest : MomijiIntegrationTestBase() {

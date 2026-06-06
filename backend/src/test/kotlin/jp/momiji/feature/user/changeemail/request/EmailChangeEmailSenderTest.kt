@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 /**
- * [EmailChangeEmailSender] (EventHandler) 単体の統合テスト。
+ * [jp.momiji.feature.command.user.changeemail.request.EmailChangeEmailSender] (EventHandler) 単体の統合テスト。
  *
  * CommandHandler のテスト ([jp.momiji.feature.user.RequestEmailChangeTest]) は
  * 「コマンドを受けて EmailChangeRequestedEvent を発行する」までの責務。

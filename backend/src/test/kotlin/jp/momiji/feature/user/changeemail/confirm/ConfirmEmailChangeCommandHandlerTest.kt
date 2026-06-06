@@ -6,8 +6,10 @@ import jp.momiji.domain.user.EmailChangeToken
 import jp.momiji.event.user.EmailChangeConfirmedEvent
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
-import jp.momiji.feature.user.changeemail.EmailChangePayload
-import jp.momiji.feature.user.changeemail.EmailChangeTokenService
+import jp.momiji.feature.command.user.changeemail.EmailChangePayload
+import jp.momiji.feature.command.user.changeemail.EmailChangeTokenService
+import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeCommand
+import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeCommandResult
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
