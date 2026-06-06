@@ -14,3 +14,14 @@ internal fun productStatusToProto(dbValue: String): ProtoProductStatus =
         ProductStatus.ACTIVE -> ProtoProductStatus.PRODUCT_STATUS_ACTIVE
         ProductStatus.DISCONTINUED -> ProtoProductStatus.PRODUCT_STATUS_DISCONTINUED
     }
+
+/**
+ * gRPC の proto enum を**状態フィルタ**のドメイン enum に変換する（一覧の絞り込み用）。
+ * UNSPECIFIED / 未知の値は `null`（= 絞り込みなし＝すべて）にする。
+ */
+internal fun productStatusFilterFromProto(proto: ProtoProductStatus): ProductStatus? =
+    when (proto) {
+        ProtoProductStatus.PRODUCT_STATUS_ACTIVE -> ProductStatus.ACTIVE
+        ProtoProductStatus.PRODUCT_STATUS_DISCONTINUED -> ProductStatus.DISCONTINUED
+        else -> null
+    }
