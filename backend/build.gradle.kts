@@ -181,6 +181,26 @@ tasks.matching { it.name.startsWith("runKtlint") }.configureEach {
 }
 
 // =====================================================
+// =================== seed (tool) =====================
+// =====================================================
+// テストデータ投入用の独立ソースセット。 main とは別領域に置き、 app jar には含めない。
+sourceSets {
+    create("seed") {
+        compileClasspath += sourceSets.main.get().output + configurations.runtimeClasspath.get()
+        runtimeClasspath += sourceSets.main.get().output + configurations.runtimeClasspath.get()
+    }
+}
+
+// テストデータ投入用 task を gradleに登録
+tasks.register<JavaExec>("seedData") {
+    group = "application"
+    description = "ローカル backend に brand/product のテストデータを投入（docker 一式 + bootRunが起動されている必要があります。）"
+    mainClass.set("jp.momiji.seed.SeederKt")
+    classpath = sourceSets["seed"].runtimeClasspath
+    dependsOn("classes")
+}
+
+// =====================================================
 // =======================kover=========================
 // =====================================================
 // レポート生成: ./gradlew koverHtmlReport  → build/reports/kover/html/index.html
