@@ -220,6 +220,8 @@ kover {
                     "jp.momiji.adapter",
                     // Query系の処理は単純なDBアクセスの集まりで、ロジックがほとんどないため、測っても意味が薄い
                     "jp.momiji.feature.query",
+                    // Seed 用コードはカバレッジ測る必要ナッシング！
+                    "jp.momiji.seed"
                 )
                 classes(
                     // エントリーポイント
