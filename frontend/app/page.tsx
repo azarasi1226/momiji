@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { auth, signIn, signOut } from "@/auth"
 import { buildLogoutUrl } from "@/lib/idp"
+import { Button } from "@/components/ui/button"
 
 export default async function Home() {
   const session = await auth()
@@ -11,36 +12,25 @@ export default async function Home() {
   const isLoggedIn = !!session && !sessionExpired
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-8 py-32 px-16 bg-white dark:bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-muted/30 font-sans">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-8 bg-background px-16 py-32">
         {isLoggedIn ? (
           <>
-            <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-              ログイン中
-            </h1>
-            <div className="text-zinc-600 dark:text-zinc-400 text-center">
+            <h1 className="text-2xl font-semibold">ログイン中</h1>
+            <div className="text-center text-muted-foreground">
               <p>{session.user?.name}</p>
               <p>{session.user?.email}</p>
             </div>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/shop/products"
-                className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-              >
-                商品一覧
-              </Link>
-              <Link
-                href="/profile"
-                className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-              >
-                プロフィール
-              </Link>
-              <Link
-                href="/admin/brands"
-                className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-              >
-                ブランド管理
-              </Link>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg">
+                <Link href="/shop/products">商品一覧</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/profile">プロフィール</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/admin/brands">ブランド管理</Link>
+              </Button>
               <form
                 action={async () => {
                   "use server"
@@ -61,22 +51,17 @@ export default async function Home() {
                   redirect(logoutUrl)
                 }}
               >
-                <button
-                  type="submit"
-                  className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-                >
+                <Button type="submit" variant="outline" size="lg">
                   ログアウト
-                </button>
+                </Button>
               </form>
             </div>
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-              momiji
-            </h1>
+            <h1 className="text-2xl font-semibold">momiji</h1>
             {sessionExpired && (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-destructive">
                 セッションの有効期限が切れました。 再度ログインしてください。
               </p>
             )}
@@ -91,12 +76,9 @@ export default async function Home() {
                 await signIn("oidc")
               }}
             >
-              <button
-                type="submit"
-                className="flex h-12 items-center justify-center gap-2 rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-              >
+              <Button type="submit" size="lg">
                 ログイン
-              </button>
+              </Button>
             </form>
           </>
         )}
