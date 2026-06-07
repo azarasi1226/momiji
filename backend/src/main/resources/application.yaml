@@ -16,12 +16,14 @@ spring:
         - datastore-mysql
         - idp-keycloak
         - mail-smtp
+        - storage-minio
       test:
         - app-common
         - app-test
         - observability-otlp
         - datastore-mysql
         - idp-cognito
+        - storage-s3
         #- mail-smtp (mail-sendgrid みたいなのを作るべし)
       prod:
         - app-common
@@ -29,4 +31,5 @@ spring:
         - observability-otlp
         - datastore-mysql
         - idp-cognito
+        - storage-s3
         #- mail-smtp (mail-sendgrid みたいなのを作るべし)
