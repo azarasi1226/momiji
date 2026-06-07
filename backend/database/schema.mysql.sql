@@ -62,3 +62,11 @@ CREATE TABLE baskets (
 CREATE INDEX idx_baskets_product_id ON baskets (product_id);
 
 -- ユーザーが消されたら user_id で一括削除する処理があるが、複合インデックスの左側が user_id なので定義する必要なし
+
+CREATE TABLE stocks (
+  product_id varchar(255) NOT NULL,
+  on_hand int NOT NULL,
+  reserved int NOT NULL,
+  updated_at datetime(6) NOT NULL,
+  PRIMARY KEY (product_id)
+);
