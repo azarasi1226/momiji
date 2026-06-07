@@ -16,6 +16,10 @@ import { UpdateProductService } from "@/grpc/gen/momiji/product/update/v1/update
 import { DiscontinueProductService } from "@/grpc/gen/momiji/product/discontinue/v1/discontinue_pb.js"
 import { ProductStatus } from "@/grpc/gen/momiji/product/v1/status_pb.js"
 import { ProductSortCondition } from "@/grpc/gen/momiji/product/v1/sort_pb.js"
+import { FindStockByProductIdService } from "@/grpc/gen/momiji/stock/findbyproductid/v1/findbyproductid_pb.js"
+import { ReceiveStockService } from "@/grpc/gen/momiji/stock/receive/v1/receive_pb.js"
+import { AdjustStockService } from "@/grpc/gen/momiji/stock/adjust/v1/adjust_pb.js"
+import { StockAdjustmentReason } from "@/grpc/gen/momiji/stock/v1/reason_pb.js"
 
 export type Product = {
   id: string
@@ -251,4 +255,79 @@ export async function discontinueProduct(id: string): Promise<void> {
 
   revalidatePath("/admin/products")
   redirect("/admin/products")
+}
+
+// ── 在庫 ───────────────────────────────────────────────────────────
+
+export type Stock = {
+  onHand: number
+  reserved: number
+  available: number
+}
+
+/** 商品の在庫状況。 在庫レコードが無い商品はサーバが暗黙ゼロを返す。 */
+export async function fetchStock(productId: string): Promise<Stock> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(FindStockByProductIdService, session.accessToken)
+    const res = await client.findStockByProductId({ productId })
+    return { onHand: res.onHand, reserved: res.reserved, available: res.available }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
+}
+
+/** UI の理由キー → proto enum。 未知/未指定は UNSPECIFIED（サーバが弾く）。 */
+const ADJUST_REASON_MAP: Record<string, StockAdjustmentReason> = {
+  DAMAGED: StockAdjustmentReason.DAMAGED,
+  LOST: StockAdjustmentReason.LOST,
+  STOCKTAKING: StockAdjustmentReason.STOCKTAKING,
+  CORRECTION: StockAdjustmentReason.CORRECTION,
+  OTHER: StockAdjustmentReason.OTHER,
+}
+
+/** 入庫（在庫を増やす）。 quantity は正の数。 */
+export async function receiveStock(
+  _prevState: ProductFormState,
+  formData: FormData,
+): Promise<ProductFormState> {
+  const session = await requireValidSession()
+  const productId = formData.get("productId") as string
+  const quantity = Number(formData.get("quantity") ?? 0)
+
+  try {
+    const client = createGrpcClient(ReceiveStockService, session.accessToken)
+    await client.receiveStock({ productId, quantity })
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    return toErrorState(e)
+  }
+
+  revalidatePath(`/admin/products/${productId}`)
+  return { success: true }
+}
+
+/** 在庫調整（符号付き差分 + 理由）。 増加できるのは棚卸しのときだけ（サーバが検証）。 */
+export async function adjustStock(
+  _prevState: ProductFormState,
+  formData: FormData,
+): Promise<ProductFormState> {
+  const session = await requireValidSession()
+  const productId = formData.get("productId") as string
+  const quantity = Number(formData.get("quantity") ?? 0)
+  const reason =
+    ADJUST_REASON_MAP[(formData.get("reason") as string) ?? ""] ??
+    StockAdjustmentReason.UNSPECIFIED
+
+  try {
+    const client = createGrpcClient(AdjustStockService, session.accessToken)
+    await client.adjustStock({ productId, quantity, reason })
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    return toErrorState(e)
+  }
+
+  revalidatePath(`/admin/products/${productId}`)
+  return { success: true }
 }
