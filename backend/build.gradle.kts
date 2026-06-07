@@ -219,6 +219,8 @@ kover {
                     // ポート / アダプタ（インターフェースと、外部依存の実装しかないので図る意味が薄い)
                     "jp.momiji.port",
                     "jp.momiji.adapter",
+                    // Query系の処理は単純なDBアクセスの集まりで、ロジックがほとんどないため、測っても意味が薄い
+                    "jp.momiji.feature.query",
                 )
                 classes(
                     // エントリーポイント
