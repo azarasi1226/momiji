@@ -49,3 +49,16 @@ CREATE TABLE products (
   updated_at datetime(6) NOT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE TABLE baskets (
+  user_id varchar(255) NOT NULL,
+  product_id varchar(255) NOT NULL,
+  item_quantity int NOT NULL,
+  added_at datetime(6) NOT NULL,
+  PRIMARY KEY (user_id, product_id)
+);
+
+-- 商品が生産終了になった時に product_id で対象行を一括削除する用
+CREATE INDEX idx_baskets_product_id ON baskets (product_id);
+
+-- ユーザーが消されたら user_id で一括削除する処理があるが、複合インデックスの左側が user_id なので定義する必要なし
