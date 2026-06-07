@@ -40,4 +40,7 @@ message Product {
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
   momiji.product.v1.ProductStatus status = 9;
+  int32 stock_on_hand = 10;
+  int32 stock_reserved = 11;
+  int32 stock_available = 12;
 }

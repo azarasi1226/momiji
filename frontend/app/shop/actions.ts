@@ -7,8 +7,10 @@ import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
 import { parseConnectError } from "@/lib/grpc-error"
 import { ListProductsService } from "@/grpc/gen/momiji/product/list/v1/list_pb.js"
+import { FindProductByIdService } from "@/grpc/gen/momiji/product/findbyid/v1/findbyid_pb.js"
 import { ProductStatus } from "@/grpc/gen/momiji/product/v1/status_pb.js"
 import { ProductSortCondition } from "@/grpc/gen/momiji/product/v1/sort_pb.js"
+import { FindStockByProductIdService } from "@/grpc/gen/momiji/stock/findbyproductid/v1/findbyproductid_pb.js"
 import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/v1/findbyid_pb.js"
 import { SetBasketItemService } from "@/grpc/gen/momiji/basket/setitem/v1/setitem_pb.js"
 import { DeleteBasketItemService } from "@/grpc/gen/momiji/basket/deleteitem/v1/deleteitem_pb.js"
@@ -77,6 +79,54 @@ export async function listShopProducts(params: {
       totalPage: res.paging?.totalPage ?? 0,
       pageNumber: res.paging?.pageNumber ?? 0,
     }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
+}
+
+// ── 商品詳細（購入者向け） ──────────────────────────────────────────
+
+export type ShopProductDetail = {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  price: number
+  // 販売中か（生産終了なら購入導線を出さない）。
+  isActive: boolean
+}
+
+export async function fetchShopProduct(id: string): Promise<ShopProductDetail> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(FindProductByIdService, session.accessToken)
+    const res = await client.findProductById({ id })
+    return {
+      id: res.id,
+      name: res.name,
+      description: res.description,
+      imageUrl: res.imageUrl ?? "",
+      price: res.price,
+      isActive: res.status === ProductStatus.ACTIVE,
+    }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
+}
+
+export type ShopStock = {
+  available: number
+}
+
+/** 購入者向けの在庫状況。 表示・数量上限に使うのは販売可能数（available）。 */
+export async function fetchShopStock(productId: string): Promise<ShopStock> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(FindStockByProductIdService, session.accessToken)
+    const res = await client.findStockByProductId({ productId })
+    return { available: res.available }
   } catch (e) {
     redirectIfUnauthenticated(e)
     throw e

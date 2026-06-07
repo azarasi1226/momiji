@@ -37,7 +37,8 @@ class ListProductsGrpcService(
                     pageNumber = page.paging.pageNumber
                 }
             products.addAll(
-                page.items.map { view ->
+                page.items.map { row ->
+                    val view = row.product
                     product {
                         id = view.id
                         brandId = view.brandId
@@ -48,6 +49,9 @@ class ListProductsGrpcService(
                         status = productStatusToProto(view.status)
                         createdAt = view.createdAt.toProtoTimestamp()
                         updatedAt = view.updatedAt.toProtoTimestamp()
+                        stockOnHand = row.onHand
+                        stockReserved = row.reserved
+                        stockAvailable = row.available
                     }
                 },
             )

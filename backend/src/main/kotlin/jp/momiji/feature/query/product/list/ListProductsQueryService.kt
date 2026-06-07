@@ -1,6 +1,7 @@
 package jp.momiji.feature.query.product.list
 
 import iss.jooq.generated.tables.references.PRODUCTS
+import iss.jooq.generated.tables.references.STOCKS
 import jp.momiji.domain.product.ProductStatus
 import jp.momiji.feature.query.Page
 import jp.momiji.feature.query.Paging
@@ -28,11 +29,20 @@ data class ListProductsQuery(
     val paging: PagingCondition,
 )
 
+/** 一覧の 1 行＝商品 + その在庫。 在庫レコードが無い商品は 0 とみなす。 */
+data class ListProductView(
+    val product: ProductView,
+    val onHand: Int,
+    val reserved: Int,
+) {
+    val available: Int get() = onHand - reserved
+}
+
 @Component
 class ListProductsQueryService(
     private val dsl: DSLContext,
 ) {
-    fun list(query: ListProductsQuery): Page<ProductView> {
+    fun list(query: ListProductsQuery): Page<ListProductView> {
         // 検索: 空なら絞り込みなし
         val nameCondition =
             if (query.likeName.isBlank()) {
@@ -71,8 +81,13 @@ class ListProductsQueryService(
                     PRODUCTS.STATUS,
                     PRODUCTS.CREATED_AT,
                     PRODUCTS.UPDATED_AT,
+                    STOCKS.ON_HAND,
+                    STOCKS.RESERVED,
                     totalCountField,
                 ).from(PRODUCTS)
+                // 在庫は別 read model。 在庫レコードが無い商品も一覧に出すので LEFT JOIN。
+                .leftJoin(STOCKS)
+                .on(STOCKS.PRODUCT_ID.eq(PRODUCTS.ID))
                 .where(condition)
                 .orderBy(query.sort.toOrderField())
                 .limit(query.paging.pageSize)
@@ -82,16 +97,22 @@ class ListProductsQueryService(
         val totalCount = records.firstOrNull()?.get(totalCountField)?.toLong() ?: 0L
         val items =
             records.map { record ->
-                ProductView(
-                    id = record[PRODUCTS.ID]!!,
-                    brandId = record[PRODUCTS.BRAND_ID]!!,
-                    name = record[PRODUCTS.NAME]!!,
-                    description = record[PRODUCTS.DESCRIPTION]!!,
-                    imageUrl = record[PRODUCTS.IMAGE_URL],
-                    price = record[PRODUCTS.PRICE]!!,
-                    status = record[PRODUCTS.STATUS]!!,
-                    createdAt = record[PRODUCTS.CREATED_AT]!!,
-                    updatedAt = record[PRODUCTS.UPDATED_AT]!!,
+                ListProductView(
+                    product =
+                        ProductView(
+                            id = record[PRODUCTS.ID]!!,
+                            brandId = record[PRODUCTS.BRAND_ID]!!,
+                            name = record[PRODUCTS.NAME]!!,
+                            description = record[PRODUCTS.DESCRIPTION]!!,
+                            imageUrl = record[PRODUCTS.IMAGE_URL],
+                            price = record[PRODUCTS.PRICE]!!,
+                            status = record[PRODUCTS.STATUS]!!,
+                            createdAt = record[PRODUCTS.CREATED_AT]!!,
+                            updatedAt = record[PRODUCTS.UPDATED_AT]!!,
+                        ),
+                    // LEFT JOIN なので在庫レコードが無ければ null → 0。
+                    onHand = record[STOCKS.ON_HAND] ?: 0,
+                    reserved = record[STOCKS.RESERVED] ?: 0,
                 )
             }
 

@@ -153,6 +153,7 @@ export default async function ProductListPage({
               <th className="py-2 pr-4 font-medium">商品名</th>
               <th className="py-2 pr-4 font-medium">ブランド</th>
               <th className="py-2 pr-4 font-medium">価格</th>
+              <th className="py-2 pr-4 font-medium">在庫</th>
               <th className="py-2 pr-4 font-medium">状態</th>
               <th className="py-2 pr-4 font-medium">更新日時</th>
               <th className="py-2 font-medium" />
@@ -170,6 +171,16 @@ export default async function ProductListPage({
                 </td>
                 <td className="py-3 pr-4">
                   ¥{product.price.toLocaleString("ja-JP")}
+                </td>
+                <td className="py-3 pr-4">
+                  <span className={product.stockAvailable <= 0 ? "text-red-600 dark:text-red-400" : ""}>
+                    {product.stockAvailable.toLocaleString("ja-JP")}
+                  </span>
+                  {product.stockReserved > 0 && (
+                    <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                      {" "}（確保 {product.stockReserved.toLocaleString("ja-JP")}）
+                    </span>
+                  )}
                 </td>
                 <td className="py-3 pr-4">
                   <span
