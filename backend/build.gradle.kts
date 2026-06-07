@@ -228,7 +228,7 @@ kover {
                     "jp.momiji.feature.command.EventProcessorDefinitions*",
                     // UserIdResolver は単純なマッピングロジックしか持たないため、測っても意味が薄い。
                     // （末尾に * を付けると top-level 関数の UserIdResolverKt ファサードも一緒に除外できる）
-                    "jp.momiji.feature.command.user.UserIdResolver",
+                    "jp.momiji.feature.command.UserIdResolver",
                 )
                 // コンフィグなんて図る必要ナッシング！
                 annotatedBy("org.springframework.context.annotation.Configuration")
