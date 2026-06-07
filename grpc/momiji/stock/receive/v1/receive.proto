@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package momiji.stock.receive.v1;
+
+// 入庫（在庫を増やす）。 管理者向け操作。
+service ReceiveStockService {
+  rpc ReceiveStock(ReceiveStockRequest) returns (ReceiveStockResponse);
+}
+
+message ReceiveStockRequest {
+  string product_id = 1;
+  // 入庫数（正の数）。
+  int32 quantity = 2;
+}
+
+message ReceiveStockResponse {}

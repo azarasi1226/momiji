@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package momiji.stock.adjust.v1;
+
+import "momiji/stock/v1/reason.proto";
+
+// 在庫調整（販売以外の理由で在庫を増減する）。 管理者向け操作。
+service AdjustStockService {
+  rpc AdjustStock(AdjustStockRequest) returns (AdjustStockResponse);
+}
+
+message AdjustStockRequest {
+  string product_id = 1;
+  // 符号付き差分（増加は正・減少は負、 0 不可）。
+  int32 quantity = 2;
+  momiji.stock.v1.StockAdjustmentReason reason = 3;
+}
+
+message AdjustStockResponse {}
