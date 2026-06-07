@@ -19,16 +19,18 @@ const SORT_OPTIONS = [
 export default async function ShopProductListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string; page?: string }>
+  searchParams: Promise<{ q?: string; sort?: string; instock?: string; page?: string }>
 }) {
   const sp = await searchParams
   const likeName = sp.q ?? ""
   const sort = sp.sort ?? "name_asc"
+  const inStockOnly = sp.instock === "1"
   const pageNumber = Math.max(1, Number(sp.page ?? "1") || 1)
 
   const page = await listShopProducts({
     likeName,
     sort,
+    inStockOnly,
     pageSize: PAGE_SIZE,
     pageNumber,
   })
@@ -54,6 +56,17 @@ export default async function ShopProductListPage({
             />
           </div>
           <input type="hidden" name="sort" value={sort} />
+          {/* 在庫ありのみ。 GET フォームなので未チェック時は instock 自体が送られない。 */}
+          <label className="flex h-10 items-center gap-2 text-sm text-zinc-700 dark:text-zinc-200">
+            <input
+              type="checkbox"
+              name="instock"
+              value="1"
+              defaultChecked={inStockOnly}
+              className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-600"
+            />
+            在庫ありのみ
+          </label>
           <button
             type="submit"
             className="h-10 rounded-full border border-zinc-200 px-6 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
