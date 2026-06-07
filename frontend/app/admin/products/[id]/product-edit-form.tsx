@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUploadField } from "../image-upload-field"
 import { updateProduct, type Product, type ProductFormState } from "../actions"
 
 function FieldError({ message }: { message?: string }) {
@@ -64,14 +65,8 @@ export function ProductEditForm({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="imageUrl">画像URL（任意）</Label>
-        <Input
-          id="imageUrl"
-          name="imageUrl"
-          type="url"
-          defaultValue={product.imageUrl}
-          aria-invalid={!!fieldErrors?.imageUrl}
-        />
+        <Label>商品画像（任意）</Label>
+        <ImageUploadField name="imageUrl" defaultUrl={product.imageUrl} />
         <FieldError message={fieldErrors?.imageUrl} />
       </div>
 

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ImageUploadField } from "../image-upload-field"
 import { createProduct, type ProductFormState } from "../actions"
 
 function FieldError({ message }: { message?: string }) {
@@ -74,8 +75,8 @@ export function ProductCreateForm({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="imageUrl">画像URL（任意）</Label>
-        <Input id="imageUrl" name="imageUrl" type="url" aria-invalid={!!fieldErrors?.imageUrl} />
+        <Label>商品画像（任意）</Label>
+        <ImageUploadField name="imageUrl" />
         <FieldError message={fieldErrors?.imageUrl} />
       </div>
 
