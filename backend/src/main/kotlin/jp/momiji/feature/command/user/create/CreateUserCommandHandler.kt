@@ -1,0 +1,85 @@
+package jp.momiji.feature.command.user.create
+
+import de.huxhorn.sulky.ulid.ULID
+import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
+import iss.jooq.generated.tables.references.LOOKUP_EMAIL
+import jp.momiji.event.user.ExternalIdentityLinkedEvent
+import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.feature.command.CommandResult
+import org.axonframework.messaging.commandhandling.annotation.CommandHandler
+import org.axonframework.messaging.eventhandling.gateway.EventAppender
+import org.jooq.DSLContext
+import org.springframework.stereotype.Component
+
+@Component
+class CreateUserCommandHandler(
+    private val dsl: DSLContext,
+) {
+    private val ulid = ULID()
+
+    @CommandHandler
+    fun handle(
+        command: CreateUserCommand,
+        eventAppender: EventAppender,
+    ): CommandResult {
+        // ①すでに issuer + subject が登録されていたら、何もしない(冪等性)
+        if (existsByIssuerAndSubject(command.oidcIssuer, command.oidcSubject)) {
+            return CreateUserCommandResult.success()
+        }
+
+        // ②Emailが検証されていなければエラーとする。
+        // ①よりも後で行う理由は、一度外部IDPとリンクが終わった後に外部IDP側で、email_verifiedっがfalseになったとしても成功(冪等性)とさせたいためである
+        if (!command.emailVerified) {
+            return CreateUserCommandResult.emailNotVerified()
+        }
+
+        // ③すでにemailアドレスが登録されていたら、既存ユーザーとIDPのIDをリンクする
+        val existingUserId = findUserIdByEmail(command.email.value)
+        if (existingUserId != null) {
+            eventAppender.append(
+                ExternalIdentityLinkedEvent(
+                    userId = existingUserId,
+                    oidcIssuer = command.oidcIssuer,
+                    oidcSubject = command.oidcSubject,
+                    oidcIdentityProvider = command.oidcIdentityProvider.name,
+                ),
+            )
+            return CreateUserCommandResult.success()
+        }
+
+        // ④新規ユーザー登録だった場合は、"ユーザー作成" "IDリンク"の２個イベントを出す
+        // Event は将来のスキーマ進化のためあえて String のまま (値オブジェクト型を持ち込まない)。
+        val newUserId = ulid.nextULID()
+        eventAppender.append(
+            UserCreatedEvent(
+                id = newUserId,
+                email = command.email.value,
+            ),
+            ExternalIdentityLinkedEvent(
+                userId = newUserId,
+                oidcIssuer = command.oidcIssuer,
+                oidcSubject = command.oidcSubject,
+                oidcIdentityProvider = command.oidcIdentityProvider.name,
+            ),
+        )
+        return CreateUserCommandResult.success()
+    }
+
+    private fun existsByIssuerAndSubject(
+        issuer: String,
+        subject: String,
+    ): Boolean =
+        dsl.fetchCount(
+            LOOKUP_EXTERNAL_IDENTITIES,
+            LOOKUP_EXTERNAL_IDENTITIES.OIDC_ISSUER
+                .eq(issuer)
+                .and(LOOKUP_EXTERNAL_IDENTITIES.OIDC_SUBJECT.eq(subject)),
+        ) > 0
+
+    private fun findUserIdByEmail(email: String): String? =
+        dsl
+            .select(LOOKUP_EMAIL.USER_ID)
+            .from(LOOKUP_EMAIL)
+            .where(LOOKUP_EMAIL.EMAIL.eq(email))
+            .fetchOne(LOOKUP_EMAIL.USER_ID)
+}

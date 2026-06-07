@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package momiji.brand.create.v1;
+
+service CreateBrandService {
+  rpc CreateBrand(CreateBrandRequest) returns (CreateBrandResponse);
+}
+
+message CreateBrandRequest {
+  // id は BFF が採番して渡す（冪等キー）。 同じ id での再送はサーバ側で no-op になる。
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message CreateBrandResponse {
+  string id = 1;
+}

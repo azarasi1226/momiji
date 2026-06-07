@@ -29,6 +29,12 @@ export default async function Home() {
               >
                 プロフィール
               </Link>
+              <Link
+                href="/admin/brands"
+                className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+              >
+                ブランド管理
+              </Link>
               <form
                 action={async () => {
                   "use server"

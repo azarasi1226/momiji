@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package momiji.product.list.v1;
+
+import "google/protobuf/timestamp.proto";
+import "momiji/common/v1/paging.proto";
+import "momiji/product/v1/status.proto";
+import "momiji/product/v1/sort.proto";
+
+service ListProductsService {
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+}
+
+message ListProductsRequest {
+  // 商品名の部分一致検索。 空なら絞り込みなし（全件）。
+  string like_name = 1;
+  momiji.product.v1.ProductSortCondition sort = 2;
+  // 0 ならサーバ既定のページサイズ。
+  int32 page_size = 3;
+  // 1 始まり。 0 / 負なら 1 として扱う。
+  int32 page_number = 4;
+  // 状態フィルタ。 UNSPECIFIED = すべて（絞り込みなし）。
+  momiji.product.v1.ProductStatus status = 5;
+  // ブランドフィルタ（brand_id）。 空なら絞り込みなし（すべてのブランド）。
+  string brand_id = 6;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  momiji.common.v1.Paging paging = 2;
+}
+
+message Product {
+  string id = 1;
+  string brand_id = 2;
+  string name = 3;
+  string description = 4;
+  string image_url = 5;
+  int32 price = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  momiji.product.v1.ProductStatus status = 9;
+}

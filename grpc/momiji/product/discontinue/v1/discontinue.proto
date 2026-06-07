@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.product.discontinue.v1;
+
+service DiscontinueProductService {
+  rpc DiscontinueProduct(DiscontinueProductRequest) returns (DiscontinueProductResponse);
+}
+
+message DiscontinueProductRequest {
+  string id = 1;
+}
+
+message DiscontinueProductResponse {}

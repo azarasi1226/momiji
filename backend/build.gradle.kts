@@ -17,8 +17,6 @@ group = "momiji"
 version = "0.0.1-SNAPSHOT"
 description = "Identity Service Demo"
 
-val jooqVersion = "3.21.5"
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -37,11 +35,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
 
-    // O11y
+    // o11y
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
     // logback のログを OTel SDK に橋渡しする appender。これが無いとログが OTLP export されず Loki に届かない。
     // バージョンは OTel コア (Spring Boot 4.0.6 管理の 1.55.0) に合わせる: instrumentation 2.21.0-alpha → core 1.55.0。
-    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.28.1-alpha")
+    // ※ 2.28.1-alpha は core 1.62 系前提で LogRecordBuilder.setException を呼ぶため、 1.55.0 と組むと
+    //   例外つきログで NoSuchMethodError になる。 管理 core に合わせて 2.21.0-alpha に固定する。
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.21.0-alpha")
     // JDBC observation を提供するライブラリ。 これを入れると JDBC クエリが自動的に span 化される。
     implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.2.1")
     // UseCaseLogicTracingAspect が `@Aspect` / `@Around` / `ProceedingJoinPoint` を使うため必要。
@@ -49,7 +49,7 @@ dependencies {
     // parsing には aspectjweaver が別途必要。
     implementation("org.aspectj:aspectjweaver")
 
-    // テスト
+    // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -59,6 +59,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
+    val jooqVersion = "3.21.5"
     implementation("org.jooq:jooq:$jooqVersion")
     jooqCodegen("com.mysql:mysql-connector-j")
     jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用
@@ -180,6 +181,26 @@ tasks.matching { it.name.startsWith("runKtlint") }.configureEach {
 }
 
 // =====================================================
+// =================== seed (tool) =====================
+// =====================================================
+// テストデータ投入用の独立ソースセット。 main とは別領域に置き、 app jar には含めない。
+sourceSets {
+    create("seed") {
+        compileClasspath += sourceSets.main.get().output + configurations.runtimeClasspath.get()
+        runtimeClasspath += sourceSets.main.get().output + configurations.runtimeClasspath.get()
+    }
+}
+
+// テストデータ投入用 task を gradleに登録
+tasks.register<JavaExec>("seedData") {
+    group = "application"
+    description = "ローカル backend に brand/product のテストデータを投入（docker 一式 + bootRunが起動されている必要があります。）"
+    mainClass.set("jp.momiji.seed.SeederKt")
+    classpath = sourceSets["seed"].runtimeClasspath
+    dependsOn("classes")
+}
+
+// =====================================================
 // =======================kover=========================
 // =====================================================
 // レポート生成: ./gradlew koverHtmlReport  → build/reports/kover/html/index.html
@@ -189,24 +210,27 @@ kover {
         filters {
             excludes {
                 packages(
-                    // jOOQ自動生成
+                    // jOOQ自動生成 / GRPC自動生成
                     "iss.jooq.generated",
-                    // GRPC自動生成
                     "jp.momiji.grpc",
                     // Bean 配線（設定なので測っても意味が薄い）
                     "jp.momiji.config",
                     // ポート / アダプタ（インターフェースと、外部依存の実装しかないので図る意味が薄い)
                     "jp.momiji.port",
                     "jp.momiji.adapter",
+                    // Query系の処理は単純なDBアクセスの集まりで、ロジックがほとんどないため、測っても意味が薄い
+                    "jp.momiji.feature.query",
+                    // Seed 用コードはカバレッジ測る必要ナッシング！
+                    "jp.momiji.seed",
                 )
                 classes(
                     // エントリーポイント
                     "jp.momiji.DemoApplication*",
                     // Axon Event Processor 定義クラス（イベントハンドラーは測りたいが、Processor定義クラスは設定の塊なので測っても意味が薄い）
-                    "jp.momiji.feature.EventProcessorDefinitions*",
+                    "jp.momiji.feature.command.EventProcessorDefinitions*",
                     // UserIdResolver は単純なマッピングロジックしか持たないため、測っても意味が薄い。
                     // （末尾に * を付けると top-level 関数の UserIdResolverKt ファサードも一緒に除外できる）
-                    "jp.momiji.feature.user.UserIdResolver",
+                    "jp.momiji.feature.command.UserIdResolver",
                 )
                 // コンフィグなんて図る必要ナッシング！
                 annotatedBy("org.springframework.context.annotation.Configuration")

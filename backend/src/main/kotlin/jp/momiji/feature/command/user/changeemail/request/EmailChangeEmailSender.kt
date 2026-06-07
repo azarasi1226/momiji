@@ -1,0 +1,49 @@
+package jp.momiji.feature.command.user.changeemail.request
+
+import jp.momiji.event.user.EmailChangeRequestedEvent
+import jp.momiji.feature.command.InitialPosition
+import jp.momiji.feature.command.pooledStreamingProcessorFor
+import jp.momiji.feature.command.user.changeemail.EmailChangePayload
+import jp.momiji.feature.command.user.changeemail.EmailChangeTokenService
+import jp.momiji.port.mail.MailSender
+import org.axonframework.messaging.eventhandling.annotation.EventHandler
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
+
+@Component
+class EmailChangeEmailSender(
+    private val emailChangeTokenService: EmailChangeTokenService,
+    private val mailSender: MailSender,
+    @Value("\${momiji.base-url:http://localhost:9090}") private val baseUrl: String,
+) {
+    @EventHandler
+    fun on(event: EmailChangeRequestedEvent) {
+        val token =
+            emailChangeTokenService.sign(
+                EmailChangePayload(userId = event.userId, newEmail = event.newEmail),
+            )
+
+        mailSender.send(
+            to = event.newEmail,
+            subject = "メールアドレス変更の確認",
+            body =
+                """
+                メールアドレスの変更がリクエストされました。
+                以下のトークンを入力してください
+
+                $token
+
+                このリクエストに心当たりがない場合は、このメールを無視してください。
+                """.trimIndent(),
+        )
+    }
+
+    @Configuration
+    class Config {
+        @Bean
+        fun emailChangeEmailSenderProcessor() =
+            pooledStreamingProcessorFor<EmailChangeEmailSender>("email-change-mail-send", InitialPosition.LATEST)
+    }
+}
