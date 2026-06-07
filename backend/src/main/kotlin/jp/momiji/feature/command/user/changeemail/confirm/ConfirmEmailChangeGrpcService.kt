@@ -4,8 +4,8 @@ import com.github.michaelbull.result.getOrElse
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
 import jp.momiji.domain.user.EmailChangeToken
-import jp.momiji.feature.command.throwIfError
 import jp.momiji.feature.command.UserIdResolver
+import jp.momiji.feature.command.throwIfError
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeRequest
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeResponse
 import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.ConfirmEmailChangeServiceGrpcKt

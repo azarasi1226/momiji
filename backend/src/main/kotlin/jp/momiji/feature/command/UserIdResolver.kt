@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserIdResolver(
-  private val dsl: DSLContext,
+    private val dsl: DSLContext,
 ) {
     /**
      * AccessTokenからユーザーIDを解決する。
