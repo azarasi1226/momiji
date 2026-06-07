@@ -22,10 +22,16 @@ export default async function Home() {
               <p>{session.user?.name}</p>
               <p>{session.user?.email}</p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/shop/products"
+                className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+              >
+                商品一覧
+              </Link>
               <Link
                 href="/profile"
-                className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+                className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
               >
                 プロフィール
               </Link>

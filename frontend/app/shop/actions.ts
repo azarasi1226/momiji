@@ -1,0 +1,196 @@
+"use server"
+
+import { Code, ConnectError } from "@connectrpc/connect"
+import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
+import { createGrpcClient } from "@/lib/grpc"
+import { requireValidSession } from "@/lib/session"
+import { parseConnectError } from "@/lib/grpc-error"
+import { ListProductsService } from "@/grpc/gen/momiji/product/list/v1/list_pb.js"
+import { ProductStatus } from "@/grpc/gen/momiji/product/v1/status_pb.js"
+import { ProductSortCondition } from "@/grpc/gen/momiji/product/v1/sort_pb.js"
+import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/v1/findbyid_pb.js"
+import { SetBasketItemService } from "@/grpc/gen/momiji/basket/setitem/v1/setitem_pb.js"
+import { DeleteBasketItemService } from "@/grpc/gen/momiji/basket/deleteitem/v1/deleteitem_pb.js"
+import { ClearBasketService } from "@/grpc/gen/momiji/basket/clear/v1/clear_pb.js"
+
+/** Unauthenticated は session 切れなのでログインへ飛ばす。 */
+function redirectIfUnauthenticated(e: unknown): void {
+  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
+    redirect("/")
+  }
+}
+
+// ── 商品一覧（購入者向け: ACTIVE のみ） ───────────────────────────────
+
+export type ShopProduct = {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  price: number
+}
+
+export type ShopProductsPage = {
+  products: ShopProduct[]
+  totalCount: number
+  totalPage: number
+  pageNumber: number
+}
+
+const SORT_MAP: Record<string, ProductSortCondition> = {
+  name_asc: ProductSortCondition.NAME_ASC,
+  name_desc: ProductSortCondition.NAME_DESC,
+  price_asc: ProductSortCondition.PRICE_ASC,
+  price_desc: ProductSortCondition.PRICE_DESC,
+  created_desc: ProductSortCondition.CREATED_AT_DESC,
+  created_asc: ProductSortCondition.CREATED_AT_ASC,
+}
+
+export async function listShopProducts(params: {
+  likeName?: string
+  sort?: string
+  pageSize?: number
+  pageNumber?: number
+}): Promise<ShopProductsPage> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(ListProductsService, session.accessToken)
+    const res = await client.listProducts({
+      likeName: params.likeName ?? "",
+      // 購入者は販売中（ACTIVE）の商品しか見えない。
+      status: ProductStatus.ACTIVE,
+      brandId: "",
+      sort: SORT_MAP[params.sort ?? ""] ?? ProductSortCondition.UNSPECIFIED,
+      pageSize: params.pageSize ?? 0,
+      pageNumber: params.pageNumber ?? 0,
+    })
+    return {
+      products: res.products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        imageUrl: p.imageUrl ?? "",
+        price: p.price,
+      })),
+      totalCount: Number(res.paging?.totalCount ?? 0),
+      totalPage: res.paging?.totalPage ?? 0,
+      pageNumber: res.paging?.pageNumber ?? 0,
+    }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
+}
+
+// ── 買い物かご ─────────────────────────────────────────────────────
+
+export type BasketItem = {
+  productId: string
+  productName: string
+  productPrice: number
+  productImageUrl: string
+  itemQuantity: number
+}
+
+export type BasketPage = {
+  items: BasketItem[]
+  totalCount: number
+  totalPage: number
+  pageNumber: number
+}
+
+export async function findBasket(params: {
+  pageSize?: number
+  pageNumber?: number
+}): Promise<BasketPage> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(FindBasketByIdService, session.accessToken)
+    const res = await client.findBasketById({
+      pageSize: params.pageSize ?? 0,
+      pageNumber: params.pageNumber ?? 0,
+    })
+    return {
+      items: res.items.map((i) => ({
+        productId: i.productId,
+        productName: i.productName,
+        productPrice: i.productPrice,
+        productImageUrl: i.productImageUrl ?? "",
+        itemQuantity: i.itemQuantity,
+      })),
+      totalCount: Number(res.paging?.totalCount ?? 0),
+      totalPage: res.paging?.totalPage ?? 0,
+      pageNumber: res.paging?.pageNumber ?? 0,
+    }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
+}
+
+export type BasketActionState = {
+  success?: boolean
+  error?: string
+} | null
+
+function toErrorState(e: unknown): BasketActionState {
+  const parsed = parseConnectError(e)
+  if (parsed?.fieldErrors) {
+    return { error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です" }
+  }
+  if (parsed?.businessError) return { error: parsed.businessError }
+  if (parsed?.unknownError) {
+    return {
+      error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+    }
+  }
+  if (parsed?.fallback) return { error: parsed.fallback }
+  return { error: "処理に失敗しました" }
+}
+
+/**
+ * カゴに商品をセット（追加 or 個数変更）。 個数は**絶対値**（加算ではない）。
+ * 商品一覧の「カゴに入れる」と、カゴ画面の個数更新の両方から使う。
+ */
+export async function setBasketItem(
+  productId: string,
+  itemQuantity: number,
+): Promise<BasketActionState> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(SetBasketItemService, session.accessToken)
+    await client.setBasketItem({ productId, itemQuantity })
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    return toErrorState(e)
+  }
+  revalidatePath("/shop/basket")
+  return { success: true }
+}
+
+export async function deleteBasketItem(productId: string): Promise<BasketActionState> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(DeleteBasketItemService, session.accessToken)
+    await client.deleteBasketItem({ productId })
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    return toErrorState(e)
+  }
+  revalidatePath("/shop/basket")
+  return { success: true }
+}
+
+export async function clearBasket(): Promise<BasketActionState> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(ClearBasketService, session.accessToken)
+    await client.clearBasket({})
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    return toErrorState(e)
+  }
+  revalidatePath("/shop/basket")
+  return { success: true }
+}
