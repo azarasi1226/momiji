@@ -11,7 +11,7 @@ import jp.momiji.domain.user.Name
 import jp.momiji.domain.user.PhoneNumber
 import jp.momiji.domain.user.PostalCode
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserRequest
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserResponse
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserServiceGrpcKt

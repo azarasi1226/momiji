@@ -210,9 +210,8 @@ kover {
         filters {
             excludes {
                 packages(
-                    // jOOQ自動生成
+                    // jOOQ自動生成 / GRPC自動生成
                     "iss.jooq.generated",
-                    // GRPC自動生成
                     "jp.momiji.grpc",
                     // Bean 配線（設定なので測っても意味が薄い）
                     "jp.momiji.config",
@@ -226,10 +225,10 @@ kover {
                     // エントリーポイント
                     "jp.momiji.DemoApplication*",
                     // Axon Event Processor 定義クラス（イベントハンドラーは測りたいが、Processor定義クラスは設定の塊なので測っても意味が薄い）
-                    "jp.momiji.feature.EventProcessorDefinitions*",
+                    "jp.momiji.feature.command.EventProcessorDefinitions*",
                     // UserIdResolver は単純なマッピングロジックしか持たないため、測っても意味が薄い。
                     // （末尾に * を付けると top-level 関数の UserIdResolverKt ファサードも一緒に除外できる）
-                    "jp.momiji.feature.user.UserIdResolver",
+                    "jp.momiji.feature.command.user.UserIdResolver",
                 )
                 // コンフィグなんて図る必要ナッシング！
                 annotatedBy("org.springframework.context.annotation.Configuration")

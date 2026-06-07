@@ -4,7 +4,7 @@ import com.google.protobuf.timestamp
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
-import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdRequest
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdResponse
 import jp.momiji.grpc.momiji.user.findbyid.v1.FindUserByIdServiceGrpcKt

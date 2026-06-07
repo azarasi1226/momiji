@@ -8,7 +8,7 @@ import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
 import jp.momiji.domain.user.Email
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.user.changeemail.request.RequestEmailChangeCommand
 import jp.momiji.feature.command.user.changeemail.request.RequestEmailChangeGrpcService
 import jp.momiji.grpc.momiji.user.changeemail.request.v1.requestEmailChangeRequest

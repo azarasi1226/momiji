@@ -6,7 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.user.UserIdResolver
+import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.user.delete.DeleteUserCommand
 import jp.momiji.feature.command.user.delete.DeleteUserGrpcService
 import jp.momiji.grpc.momiji.user.delete.v1.deleteUserRequest

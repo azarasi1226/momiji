@@ -1,4 +1,4 @@
-package jp.momiji.feature.command.user
+package jp.momiji.feature.command
 
 import iss.jooq.generated.tables.references.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.domain.BusinessError
@@ -6,11 +6,10 @@ import jp.momiji.domain.BusinessException
 import org.jooq.DSLContext
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Component
-import kotlin.requireNotNull
 
 @Component
 class UserIdResolver(
-    private val dsl: DSLContext,
+  private val dsl: DSLContext,
 ) {
     /**
      * AccessTokenからユーザーIDを解決する。
