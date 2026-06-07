@@ -31,7 +31,6 @@ class StockTableProjector(
         upsertOnHand(event.productId, event.onHandQuantity, timestamp)
     }
 
-
     private fun upsertOnHand(
         productId: String,
         onHand: Int,

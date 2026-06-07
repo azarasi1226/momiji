@@ -33,9 +33,16 @@ export type Product = {
   updatedAt: string
 }
 
+/** 一覧の 1 行（商品 + 在庫）。 在庫は read model の LEFT JOIN で、 無ければ 0。 */
+export type ProductListItem = Product & {
+  stockOnHand: number
+  stockReserved: number
+  stockAvailable: number
+}
+
 /** 一覧の 1 ページ分（商品 + ページング情報）。 */
 export type ProductsPage = {
-  products: Product[]
+  products: ProductListItem[]
   totalCount: number
   totalPage: number
   pageSize: number
@@ -112,6 +119,9 @@ export async function listProducts(
         status: productStatusName(p.status),
         createdAt: p.createdAt ? timestampDate(p.createdAt).toISOString() : "",
         updatedAt: p.updatedAt ? timestampDate(p.updatedAt).toISOString() : "",
+        stockOnHand: p.stockOnHand,
+        stockReserved: p.stockReserved,
+        stockAvailable: p.stockAvailable,
       })),
       totalCount: Number(res.paging?.totalCount ?? 0),
       totalPage: res.paging?.totalPage ?? 0,
