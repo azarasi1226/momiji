@@ -116,6 +116,24 @@ class SetBasketItemCommandHandlerTest : MomijiIntegrationTestBase() {
     }
 
     @Test
+    fun `冪等性_既にカゴにある商品を同じ個数で再セットしてもイベントを出さず成功`() {
+        val userId = "01HXYZUSER000000000000SET07"
+        val productId = "01HXYZPRODUCT0000000000ST07"
+
+        fixture
+            .given()
+            .events(
+                userCreated(userId),
+                productCreated(productId),
+                BasketItemSetEvent(userId = userId, productId = productId, itemQuantity = 4),
+            ).`when`()
+            .command(command(userId, productId, quantity = 4))
+            .then()
+            .resultMessagePayload(SetBasketItemCommandResult.success())
+            .noEvents()
+    }
+
+    @Test
     fun `異常系_新規商品でカゴの種類数が上限に達していれば productMaxKindOver`() {
         val userId = "01HXYZUSER000000000000SET06"
         val productId = "01HXYZPRODUCT0000000000ST06"

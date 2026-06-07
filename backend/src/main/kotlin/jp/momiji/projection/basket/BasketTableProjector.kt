@@ -31,8 +31,10 @@ class BasketTableProjector(
             .set(BASKETS.ITEM_QUANTITY, event.itemQuantity)
             .set(BASKETS.ADDED_AT, at)
             .onDuplicateKeyUpdate()
+            // 個数変更（duplicate key）では item_quantity だけ更新し、added_at は更新しない。
+            // added_at は「最初にカゴへ入れた時刻」を表し、カゴの並び順（追加順）を固定するため。
+            // INSERT 時のみ added_at がセットされ、個数を変えても並びが入れ替わらない。
             .set(BASKETS.ITEM_QUANTITY, event.itemQuantity)
-            .set(BASKETS.ADDED_AT, at)
             .execute()
     }
 

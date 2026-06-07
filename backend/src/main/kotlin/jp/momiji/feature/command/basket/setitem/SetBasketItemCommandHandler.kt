@@ -37,9 +37,14 @@ class SetBasketItemCommandHandler {
         if (state.productStatus != ProductStatus.ACTIVE) {
             return SetBasketItemCommandResult.productNotFound()
         }
+        // 冪等性: 既に同じ個数で入っているなら状態は変わらないのでイベントを出さず成功。
+        val currentQuantity = state.itemQuantities[command.productId]
+        if (currentQuantity == command.itemQuantity.value) {
+            return SetBasketItemCommandResult.success()
+        }
         // 既にカゴにある商品の個数変更は上限に数えない。 新規追加のときだけ種類数の上限を見る。
-        val isNewProduct = command.productId !in state.itemProductIds
-        if (isNewProduct && state.itemProductIds.size >= MAX_ITEM_KIND_COUNT) {
+        val isNewProduct = currentQuantity == null
+        if (isNewProduct && state.itemQuantities.size >= MAX_ITEM_KIND_COUNT) {
             return SetBasketItemCommandResult.productMaxKindOver()
         }
 
@@ -62,7 +67,8 @@ class SetBasketItemCommandHandler {
     class State(
         var userExists: Boolean,
         var productStatus: ProductStatus?,
-        val itemProductIds: MutableSet<String>,
+        // productId -> 現在カゴに入っている個数。 種類数の上限判定と、同一個数の冪等判定に使う。
+        val itemQuantities: MutableMap<String, Int>,
     ) {
         companion object {
             @JvmStatic
@@ -91,7 +97,7 @@ class SetBasketItemCommandHandler {
         constructor() : this(
             userExists = false,
             productStatus = null,
-            itemProductIds = mutableSetOf(),
+            itemQuantities = mutableMapOf(),
         )
 
         @EventSourcingHandler
@@ -116,17 +122,17 @@ class SetBasketItemCommandHandler {
 
         @EventSourcingHandler
         fun evolve(event: BasketItemSetEvent) {
-            itemProductIds.add(event.productId)
+            itemQuantities[event.productId] = event.itemQuantity
         }
 
         @EventSourcingHandler
         fun evolve(event: BasketItemDeletedEvent) {
-            itemProductIds.remove(event.productId)
+            itemQuantities.remove(event.productId)
         }
 
         @EventSourcingHandler
         fun evolve(event: BasketClearedEvent) {
-            itemProductIds.clear()
+            itemQuantities.clear()
         }
     }
 
