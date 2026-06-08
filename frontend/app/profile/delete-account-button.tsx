@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Button } from "@/components/ui/button"
 import { deleteAccount } from "./actions"
 
 export function DeleteAccountButton() {
@@ -22,40 +23,46 @@ export function DeleteAccountButton() {
   if (!confirming) {
     return (
       <div className="flex w-full flex-col gap-2">
-        <button
+        <Button
           type="button"
+          variant="destructive"
+          className="mt-2 w-fit"
           onClick={() => setConfirming(true)}
-          className="mt-2 flex h-12 items-center justify-center rounded-full border border-red-500 px-8 text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950"
         >
           アカウントを削除する
-        </button>
+        </Button>
       </div>
     )
   }
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <p className="text-sm text-red-500">
+      <p className="text-sm text-destructive">
         本当にアカウントを削除しますか？この操作は取り消せません。
       </p>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-4">
-        <button
+        <Button
           type="button"
+          variant="destructive"
+          className="flex-1"
           onClick={handleDelete}
           disabled={isPending}
-          className="flex h-12 flex-1 items-center justify-center rounded-full bg-red-500 px-8 text-white transition-colors hover:bg-red-600 disabled:opacity-50"
         >
           {isPending ? "削除中..." : "削除する"}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          onClick={() => { setConfirming(false); setError(null) }}
+          variant="outline"
+          className="flex-1"
+          onClick={() => {
+            setConfirming(false)
+            setError(null)
+          }}
           disabled={isPending}
-          className="flex h-12 flex-1 items-center justify-center rounded-full border border-zinc-200 px-8 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
         >
           キャンセル
-        </button>
+        </Button>
       </div>
     </div>
   )

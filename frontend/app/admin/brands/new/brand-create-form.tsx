@@ -1,19 +1,15 @@
 "use client"
 
 import { useActionState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { createBrand, type BrandFormState } from "../actions"
 
-function inputClassName(hasError: boolean): string {
-  const base =
-    "rounded-lg border px-4 py-2 dark:bg-zinc-900 dark:text-zinc-50"
-  return hasError
-    ? `${base} border-red-500 dark:border-red-400`
-    : `${base} border-zinc-200 dark:border-zinc-700`
-}
-
-function FieldErrorMessage({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <p className="text-xs text-red-500 dark:text-red-400">{message}</p>
+  return <p className="text-xs text-destructive">{message}</p>
 }
 
 export function BrandCreateForm() {
@@ -25,45 +21,28 @@ export function BrandCreateForm() {
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="text-sm text-zinc-500 dark:text-zinc-400">
-          ブランド名
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          className={inputClassName(!!fieldErrors?.name)}
-        />
-        <FieldErrorMessage message={fieldErrors?.name} />
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="name">ブランド名</Label>
+        <Input id="name" name="name" type="text" required aria-invalid={!!fieldErrors?.name} />
+        <FieldError message={fieldErrors?.name} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label
-          htmlFor="description"
-          className="text-sm text-zinc-500 dark:text-zinc-400"
-        >
-          説明（任意）
-        </label>
-        <textarea
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="description">説明（任意）</Label>
+        <Textarea
           id="description"
           name="description"
           rows={5}
-          className={inputClassName(!!fieldErrors?.description)}
+          aria-invalid={!!fieldErrors?.description}
         />
-        <FieldErrorMessage message={fieldErrors?.description} />
+        <FieldError message={fieldErrors?.description} />
       </div>
 
-      {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
+      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="mt-2 flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-      >
+      <Button type="submit" disabled={isPending} className="mt-2 w-fit">
         {isPending ? "作成中..." : "作成"}
-      </button>
+      </Button>
     </form>
   )
 }

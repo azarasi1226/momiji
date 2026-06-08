@@ -1,0 +1,9 @@
+# ローカル環境だけの利用を想定
+momiji:
+  storage:
+    region: ${AWS_REGION:ap-northeast-1}
+    bucket: ${STORAGE_BUCKET:momiji-images}
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+    access-key: ${STORAGE_ACCESS_KEY:minioadmin}
+    secret-key: ${STORAGE_SECRET_KEY:minioadmin}
+    public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:9000/momiji-images}

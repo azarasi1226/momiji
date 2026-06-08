@@ -20,6 +20,7 @@ import { FindStockByProductIdService } from "@/grpc/gen/momiji/stock/findbyprodu
 import { ReceiveStockService } from "@/grpc/gen/momiji/stock/receive/v1/receive_pb.js"
 import { AdjustStockService } from "@/grpc/gen/momiji/stock/adjust/v1/adjust_pb.js"
 import { StockAdjustmentReason } from "@/grpc/gen/momiji/stock/v1/reason_pb.js"
+import { IssueImageUploadUrlService } from "@/grpc/gen/momiji/image/upload/v1/upload_pb.js"
 
 export type Product = {
   id: string
@@ -340,4 +341,24 @@ export async function adjustStock(
 
   revalidatePath(`/admin/products/${productId}`)
   return { success: true }
+}
+
+// ── 画像アップロード ────────────────────────────────────────────────
+
+/**
+ * 画像アップロード用の presigned PUT URL と保存用の恒久 URL を発行する。
+ * 実ファイルはブラウザが uploadUrl へ直接 PUT する（このアプリ/サーバを経由しない）。
+ */
+export async function issueImageUploadUrl(
+  contentType: string,
+): Promise<{ uploadUrl: string; publicUrl: string }> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(IssueImageUploadUrlService, session.accessToken)
+    const res = await client.issueImageUploadUrl({ contentType })
+    return { uploadUrl: res.uploadUrl, publicUrl: res.publicUrl }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    throw e
+  }
 }

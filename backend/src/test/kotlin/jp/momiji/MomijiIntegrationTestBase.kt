@@ -8,6 +8,7 @@ import jp.momiji.port.idp.IdpUserClient
 import jp.momiji.port.idp.IdpUserInfoFetcher
 import jp.momiji.port.idp.TokenClientIdExtractor
 import jp.momiji.port.mail.MailSender
+import jp.momiji.port.storage.ImageStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -97,6 +98,14 @@ abstract class MomijiIntegrationTestBase {
      */
     @MockkBean(relaxed = true)
     lateinit var tokenClientIdExtractor: TokenClientIdExtractor
+
+    /**
+     * IssueImageUploadUrlGrpcService (@Service) が常に生成され ImageStorage を注入要求するが、
+     * 統合テストでは storage-s3 profile を有効化しないため実装 bean ( S3ImageStorage ) が存在しない。
+     * idp / mail と同じく mock で供給する（presign は外部 IO なので統合テストでは検証しない）。
+     */
+    @MockkBean(relaxed = true)
+    lateinit var imageStorage: ImageStorage
 
     lateinit var fixture: AxonTestFixture
 

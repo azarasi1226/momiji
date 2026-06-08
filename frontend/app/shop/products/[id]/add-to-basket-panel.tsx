@@ -2,6 +2,16 @@
 
 import Link from "next/link"
 import { useState, useTransition } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { setBasketItem } from "../../actions"
 
 // 在庫が少ないとき「残りN点」を出す閾値（Amazon 風の煽り表示）。
@@ -36,83 +46,69 @@ export function AddToBasketPanel({
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
-      <p className="text-2xl font-bold text-black dark:text-zinc-50">
-        ¥{price.toLocaleString("ja-JP")}
-        <span className="ml-1 text-sm font-normal text-zinc-500 dark:text-zinc-400">税込</span>
-      </p>
+    <Card>
+      <CardContent className="flex w-full flex-col gap-4">
+        <p className="text-2xl font-bold">
+          ¥{price.toLocaleString("ja-JP")}
+          <span className="ml-1 text-sm font-normal text-muted-foreground">税込</span>
+        </p>
 
-      {/* 在庫状況 */}
-      <StockStatus available={available} />
+        <StockStatus available={available} />
 
-      {inStock ? (
-        <>
-          <div className="flex items-center gap-2">
-            <label htmlFor="quantity" className="text-sm text-zinc-600 dark:text-zinc-400">
-              数量
-            </label>
-            <select
-              id="quantity"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              disabled={isPending}
-              className="h-10 rounded-lg border border-zinc-200 px-3 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-            >
-              {Array.from({ length: maxQuantity }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+        {inStock ? (
+          <>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="quantity" className="text-sm text-muted-foreground">
+                数量
+              </Label>
+              <Select
+                value={String(quantity)}
+                onValueChange={(v) => setQuantity(Number(v))}
+                disabled={isPending}
+              >
+                <SelectTrigger id="quantity" size="sm" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: maxQuantity }, (_, i) => i + 1).map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button type="button" size="lg" onClick={handleAdd} disabled={isPending}>
+              {isPending ? "追加中..." : "カートに入れる"}
+            </Button>
+          </>
+        ) : (
+          <Button type="button" size="lg" disabled>
+            在庫切れ
+          </Button>
+        )}
+
+        {message && (
+          <div className="flex flex-col gap-1">
+            <p className={message.ok ? "text-xs text-green-600" : "text-xs text-destructive"}>
+              {message.text}
+            </p>
+            {message.ok && (
+              <Link href="/shop/basket" className="text-xs text-primary hover:underline">
+                買い物かごを見る →
+              </Link>
+            )}
           </div>
-
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={isPending}
-            className="flex h-12 items-center justify-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-          >
-            {isPending ? "追加中..." : "カートに入れる"}
-          </button>
-        </>
-      ) : (
-        <button
-          type="button"
-          disabled
-          className="flex h-12 cursor-not-allowed items-center justify-center rounded-full bg-zinc-200 px-6 text-sm font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500"
-        >
-          在庫切れ
-        </button>
-      )}
-
-      {message && (
-        <div className="flex flex-col gap-1">
-          <p
-            className={
-              message.ok
-                ? "text-xs text-green-600 dark:text-green-400"
-                : "text-xs text-red-600 dark:text-red-400"
-            }
-          >
-            {message.text}
-          </p>
-          {message.ok && (
-            <Link
-              href="/shop/basket"
-              className="text-xs text-blue-600 hover:underline dark:text-blue-400"
-            >
-              買い物かごを見る →
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
 function StockStatus({ available }: { available: number }) {
   if (available <= 0) {
-    return <p className="text-sm font-medium text-red-600 dark:text-red-400">在庫切れ</p>
+    return <p className="text-sm font-medium text-destructive">在庫切れ</p>
   }
   if (available <= LOW_STOCK_THRESHOLD) {
     return (

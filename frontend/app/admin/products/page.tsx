@@ -1,6 +1,25 @@
 import Link from "next/link"
 import { Pagination } from "@/components/pagination"
 import { QueryParamSelect } from "@/components/query-param-select"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { formatDateTime } from "@/lib/format"
 import { productStatusLabel } from "@/lib/status-labels"
 import { listAllBrands, listProducts } from "./actions"
@@ -16,8 +35,11 @@ const SORT_OPTIONS = [
   { value: "created_asc", label: "古い順" },
 ]
 
+// Radix Select は空文字値を許さないので「すべて」は "all" センチネルにし、サーバ側で "" に正規化する。
+const ALL = "all"
+
 const STATUS_OPTIONS = [
-  { value: "", label: "すべて" },
+  { value: ALL, label: "すべて" },
   { value: "ACTIVE", label: "販売中" },
   { value: "DISCONTINUED", label: "生産終了" },
 ]
@@ -35,8 +57,10 @@ export default async function ProductListPage({
 }) {
   const sp = await searchParams
   const likeName = sp.q ?? ""
-  const status = sp.status ?? ""
-  const brandId = sp.brand ?? ""
+  const statusParam = sp.status ?? ALL
+  const brandParam = sp.brand ?? ALL
+  const status = statusParam === ALL ? "" : statusParam
+  const brandId = brandParam === ALL ? "" : brandParam
   const sort = sp.sort ?? "name_asc"
   const pageNumber = Math.max(1, Number(sp.page ?? "1") || 1)
 
@@ -47,173 +71,127 @@ export default async function ProductListPage({
 
   const brandNames = Object.fromEntries(brands.map((b) => [b.id, b.name]))
   const brandOptions = [
-    { value: "", label: "すべて" },
+    { value: ALL, label: "すべて" },
     ...brands.map((b) => ({ value: b.id, label: b.name })),
   ]
 
   return (
     <main className="flex w-full max-w-5xl flex-col gap-6 px-8 py-16">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-          商品管理
-        </h1>
-        <Link
-          href="/admin/products/new"
-          className="flex h-10 items-center justify-center rounded-full bg-foreground px-6 text-sm text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-        >
-          新規作成
-        </Link>
+        <h1 className="text-2xl font-semibold">商品管理</h1>
+        <Button asChild>
+          <Link href="/admin/products/new">新規作成</Link>
+        </Button>
       </div>
 
-      {/* 左: 絞り込み（商品名・状態）を検索ボタンで適用。 右: 並び順（変更で即適用）。 */}
+      {/* 左: 絞り込み（商品名・状態・ブランド）を検索ボタンで適用。 右: 並び順（変更で即適用）。 */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <form method="get" className="flex flex-wrap items-end gap-3">
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="q"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
-            >
+            <Label htmlFor="q" className="text-xs text-muted-foreground">
               商品名で検索
-            </label>
-            <input
-              id="q"
-              name="q"
-              type="text"
-              defaultValue={likeName}
-              placeholder="部分一致"
-              className="h-10 rounded-lg border border-zinc-200 px-3 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-            />
+            </Label>
+            <Input id="q" name="q" type="text" defaultValue={likeName} placeholder="部分一致" />
           </div>
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="status"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
-            >
+            <Label htmlFor="status" className="text-xs text-muted-foreground">
               状態
-            </label>
-            <select
-              id="status"
-              name="status"
-              defaultValue={status}
-              className="h-10 rounded-lg border border-zinc-200 px-3 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-            >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            </Label>
+            <Select name="status" defaultValue={statusParam}>
+              <SelectTrigger id="status" className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-col gap-1">
-            <label
-              htmlFor="brand"
-              className="text-xs text-zinc-500 dark:text-zinc-400"
-            >
+            <Label htmlFor="brand" className="text-xs text-muted-foreground">
               ブランド
-            </label>
-            <select
-              id="brand"
-              name="brand"
-              defaultValue={brandId}
-              className="h-10 rounded-lg border border-zinc-200 px-3 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-            >
-              {brandOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            </Label>
+            <Select name="brand" defaultValue={brandParam}>
+              <SelectTrigger id="brand" className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {brandOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {/* 検索時に現在の並び順を維持する */}
           <input type="hidden" name="sort" value={sort} />
-          <button
-            type="submit"
-            className="h-10 rounded-full border border-zinc-200 px-6 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
-          >
+          <Button type="submit" variant="outline">
             検索
-          </button>
+          </Button>
         </form>
 
-        <QueryParamSelect
-          param="sort"
-          value={sort}
-          label="並び順"
-          options={SORT_OPTIONS}
-        />
+        <QueryParamSelect param="sort" value={sort} label="並び順" options={SORT_OPTIONS} />
       </div>
 
       {page.products.length === 0 ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          条件に一致する商品がありません。
-        </p>
+        <p className="text-sm text-muted-foreground">条件に一致する商品がありません。</p>
       ) : (
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-              <th className="py-2 pr-4 font-medium">商品名</th>
-              <th className="py-2 pr-4 font-medium">ブランド</th>
-              <th className="py-2 pr-4 font-medium">価格</th>
-              <th className="py-2 pr-4 font-medium">在庫</th>
-              <th className="py-2 pr-4 font-medium">状態</th>
-              <th className="py-2 pr-4 font-medium">更新日時</th>
-              <th className="py-2 font-medium" />
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>商品名</TableHead>
+              <TableHead>ブランド</TableHead>
+              <TableHead>価格</TableHead>
+              <TableHead>在庫</TableHead>
+              <TableHead>状態</TableHead>
+              <TableHead>更新日時</TableHead>
+              <TableHead className="text-right" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {page.products.map((product) => (
-              <tr
-                key={product.id}
-                className="border-b border-zinc-100 text-black dark:border-zinc-800 dark:text-zinc-50"
-              >
-                <td className="py-3 pr-4">{product.name}</td>
-                <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">
+              <TableRow key={product.id}>
+                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell className="text-muted-foreground">
                   {brandNames[product.brandId] ?? product.brandId}
-                </td>
-                <td className="py-3 pr-4">
-                  ¥{product.price.toLocaleString("ja-JP")}
-                </td>
-                <td className="py-3 pr-4">
-                  <span className={product.stockAvailable <= 0 ? "text-red-600 dark:text-red-400" : ""}>
+                </TableCell>
+                <TableCell>¥{product.price.toLocaleString("ja-JP")}</TableCell>
+                <TableCell>
+                  <span className={product.stockAvailable <= 0 ? "text-destructive" : ""}>
                     {product.stockAvailable.toLocaleString("ja-JP")}
                   </span>
                   {product.stockReserved > 0 && (
-                    <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                    <span className="text-xs text-muted-foreground">
                       {" "}（確保 {product.stockReserved.toLocaleString("ja-JP")}）
                     </span>
                   )}
-                </td>
-                <td className="py-3 pr-4">
-                  <span
-                    className={
-                      product.status === "DISCONTINUED"
-                        ? "rounded-full bg-zinc-200 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
-                        : "rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700 dark:bg-green-950 dark:text-green-400"
-                    }
-                  >
+                </TableCell>
+                <TableCell>
+                  <Badge variant={product.status === "DISCONTINUED" ? "secondary" : "default"}>
                     {productStatusLabel(product.status)}
-                  </span>
-                </td>
-                <td className="py-3 pr-4 text-zinc-500 dark:text-zinc-400">
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground">
                   {formatDateTime(product.updatedAt)}
-                </td>
-                <td className="py-3 text-right">
-                  <Link
-                    href={`/admin/products/${product.id}`}
-                    className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                  >
-                    編集
-                  </Link>
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button asChild variant="link" size="sm">
+                    <Link href={`/admin/products/${product.id}`}>編集</Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       )}
 
-      {/* ページング（中央の番号付き）+ 件数 */}
       <div className="flex flex-col items-center gap-3">
         <Pagination currentPage={page.pageNumber} totalPage={page.totalPage} />
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-muted-foreground">
           全 {page.totalCount.toLocaleString("ja-JP")} 件
         </p>
       </div>

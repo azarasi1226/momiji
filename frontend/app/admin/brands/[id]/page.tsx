@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 import { brandStatusLabel } from "@/lib/status-labels"
 import { fetchBrand } from "../actions"
 import { BrandEditForm } from "./brand-edit-form"
@@ -14,27 +16,28 @@ export default async function BrandDetailPage({
 
   return (
     <main className="flex w-full max-w-2xl flex-col gap-8 px-8 py-16">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-            ブランド編集
-          </h1>
-          <Link
-            href="/admin/brands"
-            className="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            戻る
-          </Link>
-        </div>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">ブランド編集</h1>
+        <Link
+          href="/admin/brands"
+          className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          戻る
+        </Link>
+      </div>
 
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">
-          ID: {brand.id} ／ 状態: {brandStatusLabel(brand.status)}
-        </p>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <span>ID: {brand.id}</span>
+        <Badge variant={brand.status === "ARCHIVED" ? "secondary" : "default"}>
+          {brandStatusLabel(brand.status)}
+        </Badge>
+      </div>
 
-        <BrandEditForm brand={brand} />
+      <BrandEditForm brand={brand} />
 
-        <hr className="w-full border-zinc-200 dark:border-zinc-700" />
+      <Separator />
 
-        <ArchiveBrandButton id={brand.id} />
+      <ArchiveBrandButton id={brand.id} />
     </main>
   )
 }

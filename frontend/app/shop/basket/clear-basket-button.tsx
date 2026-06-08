@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { Button } from "@/components/ui/button"
 import { clearBasket } from "../actions"
 
 /** カゴを空にする。 誤操作防止に確認を挟む。 */
@@ -22,36 +23,40 @@ export function ClearBasketButton() {
 
   if (!confirming) {
     return (
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
+        className="text-destructive hover:text-destructive"
         onClick={() => setConfirming(true)}
-        className="text-sm text-red-600 transition-colors hover:underline dark:text-red-400"
       >
         カゴを空にする
-      </button>
+      </Button>
     )
   }
 
   return (
     <div className="flex items-center gap-3">
-      {error && <span className="text-xs text-red-600 dark:text-red-400">{error}</span>}
-      <span className="text-sm text-zinc-600 dark:text-zinc-400">本当に空にしますか？</span>
-      <button
+      {error && <span className="text-xs text-destructive">{error}</span>}
+      <span className="text-sm text-muted-foreground">本当に空にしますか？</span>
+      <Button
         type="button"
+        variant="destructive"
+        size="sm"
         onClick={handleClear}
         disabled={isPending}
-        className="h-9 rounded-full bg-red-500 px-4 text-xs text-white transition-colors hover:bg-red-600 disabled:opacity-50"
       >
         {isPending ? "処理中..." : "空にする"}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="outline"
+        size="sm"
         onClick={() => setConfirming(false)}
         disabled={isPending}
-        className="h-9 rounded-full border border-zinc-200 px-4 text-xs text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
       >
         キャンセル
-      </button>
+      </Button>
     </div>
   )
 }

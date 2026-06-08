@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
 
 /**
  * 汎用ページングコンポーネント。 `currentPage` / `totalPage` を渡すだけで使える drop-in。
@@ -34,74 +35,49 @@ export function Pagination({
 
   return (
     <nav className="flex items-center justify-center gap-1" aria-label="ページネーション">
-      <ArrowLink href={hrefFor(currentPage - 1)} disabled={currentPage <= 1} label="前のページ">
-        ‹
-      </ArrowLink>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        asChild={currentPage > 1}
+        disabled={currentPage <= 1}
+        aria-label="前のページ"
+      >
+        {currentPage > 1 ? <Link href={hrefFor(currentPage - 1)}>‹</Link> : <span>‹</span>}
+      </Button>
 
       {items.map((item, i) =>
         item === ELLIPSIS ? (
           <span
             key={`ellipsis-${i}`}
-            className="flex h-9 w-9 items-center justify-center text-sm text-zinc-400 dark:text-zinc-600"
+            className="flex h-7 w-7 items-center justify-center text-sm text-muted-foreground"
           >
             …
           </span>
         ) : item === currentPage ? (
-          <span
-            key={item}
-            aria-current="page"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground text-sm font-medium text-background"
-          >
+          <Button key={item} variant="default" size="icon-sm" aria-current="page">
             {item}
-          </span>
+          </Button>
         ) : (
-          <Link
-            key={item}
-            href={hrefFor(item)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-          >
-            {item}
-          </Link>
+          <Button key={item} variant="ghost" size="icon-sm" asChild>
+            <Link href={hrefFor(item)}>{item}</Link>
+          </Button>
         ),
       )}
 
-      <ArrowLink
-        href={hrefFor(currentPage + 1)}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        asChild={currentPage < totalPage}
         disabled={currentPage >= totalPage}
-        label="次のページ"
+        aria-label="次のページ"
       >
-        ›
-      </ArrowLink>
+        {currentPage < totalPage ? (
+          <Link href={hrefFor(currentPage + 1)}>›</Link>
+        ) : (
+          <span>›</span>
+        )}
+      </Button>
     </nav>
-  )
-}
-
-function ArrowLink({
-  href,
-  disabled,
-  label,
-  children,
-}: {
-  href: string
-  disabled: boolean
-  label: string
-  children: React.ReactNode
-}) {
-  if (disabled) {
-    return (
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg text-sm text-zinc-300 dark:text-zinc-700">
-        {children}
-      </span>
-    )
-  }
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-lg text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-    >
-      {children}
-    </Link>
   )
 }
 

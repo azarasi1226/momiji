@@ -25,6 +25,8 @@ data class ListProductsQuery(
     val likeName: String,
     val status: ProductStatus?,
     val brandId: String,
+    // true なら販売可能数（available）が 1 以上の商品だけに絞る。
+    val inStockOnly: Boolean,
     val sort: ProductSort,
     val paging: PagingCondition,
 )
@@ -64,7 +66,17 @@ class ListProductsQueryService(
             } else {
                 PRODUCTS.BRAND_ID.eq(query.brandId)
             }
-        val condition = nameCondition.and(statusCondition).and(brandCondition)
+        // 在庫フィルタ: 在庫ありのみ。 LEFT JOIN で在庫行が無い商品は NULL → 0 扱いで除外。
+        val inStockCondition =
+            if (query.inStockOnly) {
+                DSL
+                    .coalesce(STOCKS.ON_HAND, DSL.inline(0))
+                    .minus(DSL.coalesce(STOCKS.RESERVED, DSL.inline(0)))
+                    .greaterThan(0)
+            } else {
+                DSL.noCondition()
+            }
+        val condition = nameCondition.and(statusCondition).and(brandCondition).and(inStockCondition)
 
         // 総件数はウィンドウ関数 count() over() で 1 クエリにまとめて取る（別 count クエリを撃たない）。
         val totalCountField = DSL.count().over()

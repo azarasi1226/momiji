@@ -21,16 +21,16 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 font-sans dark:bg-black">
-      <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-zinc-200 px-4 py-8 dark:border-zinc-800">
+    <div className="flex min-h-screen bg-muted/30 font-sans">
+      <aside className="flex w-60 shrink-0 flex-col gap-6 border-r bg-background px-4 py-8">
         <Link
           href="/"
-          className="px-3 text-sm text-zinc-500 transition-colors hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           ← ホーム
         </Link>
         <div className="flex flex-col gap-2">
-          <p className="px-3 text-xs font-semibold tracking-wide text-zinc-400 dark:text-zinc-500">
+          <p className="px-3 text-xs font-semibold tracking-wide text-muted-foreground">
             マスタ管理
           </p>
           <AdminNav />
