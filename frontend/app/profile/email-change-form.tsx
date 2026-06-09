@@ -1,22 +1,18 @@
 "use client"
 
 import { useActionState, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   requestEmailChange,
   confirmEmailChange,
   type EmailChangeState,
 } from "./actions"
 
-function inputClassName(hasError: boolean): string {
-  const base = "rounded-lg border px-4 py-2 dark:bg-zinc-900 dark:text-zinc-50"
-  return hasError
-    ? `${base} border-red-500 dark:border-red-400`
-    : `${base} border-zinc-200 dark:border-zinc-700`
-}
-
-function FieldErrorMessage({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <p className="text-xs text-red-500 dark:text-red-400">{message}</p>
+  return <p className="text-xs text-destructive">{message}</p>
 }
 
 export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
@@ -42,54 +38,30 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
     const tokenError = confirmState?.fieldErrors?.token
     return (
       <div className="flex w-full flex-col gap-4">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
-          メールアドレス変更の確認
-        </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h2 className="text-lg font-medium">メールアドレス変更の確認</h2>
+        <p className="text-sm text-muted-foreground">
           新しいメールアドレスに確認メールを送信しました。メールに記載されたトークンを入力してください。
         </p>
 
         <form action={confirmAction} className="flex w-full flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="token" className="text-sm text-zinc-500 dark:text-zinc-400">
-              確認トークン
-            </label>
-            <input
-              id="token"
-              name="token"
-              type="text"
-              required
-              className={inputClassName(!!tokenError)}
-            />
-            <FieldErrorMessage message={tokenError} />
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="token">確認トークン</Label>
+            <Input id="token" name="token" type="text" required aria-invalid={!!tokenError} />
+            <FieldError message={tokenError} />
           </div>
 
-          {confirmState?.error && (
-            <p className="text-sm text-red-500">{confirmState.error}</p>
-          )}
+          {confirmState?.error && <p className="text-sm text-destructive">{confirmState.error}</p>}
           {confirmState?.success && (
-            <p className="text-sm text-green-600 dark:text-green-400">
-              メールアドレスを変更しました
-            </p>
+            <p className="text-sm text-green-600">メールアドレスを変更しました</p>
           )}
 
           <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={isConfirming}
-              className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-            >
+            <Button type="submit" disabled={isConfirming}>
               {isConfirming ? "確認中..." : "確認"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setStep("request")
-              }}
-              className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-8 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            >
+            </Button>
+            <Button type="button" variant="outline" onClick={() => setStep("request")}>
               戻る
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -100,39 +72,21 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <h2 className="text-lg font-medium text-black dark:text-zinc-50">
-        メールアドレスの変更
-      </h2>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        現在: {currentEmail}
-      </p>
+      <h2 className="text-lg font-medium">メールアドレスの変更</h2>
+      <p className="text-sm text-muted-foreground">現在: {currentEmail}</p>
 
       <form action={requestAction} className="flex w-full flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="newEmail" className="text-sm text-zinc-500 dark:text-zinc-400">
-            新しいメールアドレス
-          </label>
-          <input
-            id="newEmail"
-            name="newEmail"
-            type="email"
-            required
-            className={inputClassName(!!newEmailError)}
-          />
-          <FieldErrorMessage message={newEmailError} />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="newEmail">新しいメールアドレス</Label>
+          <Input id="newEmail" name="newEmail" type="email" required aria-invalid={!!newEmailError} />
+          <FieldError message={newEmailError} />
         </div>
 
-        {requestState?.error && (
-          <p className="text-sm text-red-500">{requestState.error}</p>
-        )}
+        {requestState?.error && <p className="text-sm text-destructive">{requestState.error}</p>}
 
-        <button
-          type="submit"
-          disabled={isRequesting}
-          className="flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-        >
+        <Button type="submit" disabled={isRequesting}>
           {isRequesting ? "送信中..." : "変更リクエスト送信"}
-        </button>
+        </Button>
       </form>
     </div>
   )

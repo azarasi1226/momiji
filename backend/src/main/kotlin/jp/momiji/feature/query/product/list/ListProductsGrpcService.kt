@@ -23,6 +23,7 @@ class ListProductsGrpcService(
                 likeName = request.likeName,
                 status = productStatusFilterFromProto(request.status),
                 brandId = request.brandId,
+                inStockOnly = request.inStockOnly,
                 sort = request.sort.toProductSort(),
                 paging = PagingCondition.of(request.pageSize, request.pageNumber),
             )

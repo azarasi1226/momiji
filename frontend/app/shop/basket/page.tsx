@@ -1,4 +1,7 @@
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import { findBasket } from "../actions"
 import { BasketItemRow } from "./basket-item-row"
 import { ClearBasketButton } from "./clear-basket-button"
@@ -18,25 +21,20 @@ export default async function BasketPage() {
   return (
     <main className="flex w-full max-w-3xl flex-col gap-6 px-8 py-12">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">買い物かご</h1>
+        <h1 className="text-2xl font-semibold">買い物かご</h1>
         {basket.items.length > 0 && <ClearBasketButton />}
       </div>
 
       {basket.items.length === 0 ? (
         <div className="flex flex-col items-start gap-4">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            カゴに商品がありません。
-          </p>
-          <Link
-            href="/shop/products"
-            className="flex h-10 items-center justify-center rounded-full bg-foreground px-6 text-sm text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-          >
-            商品一覧へ
-          </Link>
+          <p className="text-sm text-muted-foreground">カゴに商品がありません。</p>
+          <Button asChild>
+            <Link href="/shop/products">商品一覧へ</Link>
+          </Button>
         </div>
       ) : (
         <>
-          <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white px-5 dark:border-zinc-800 dark:bg-zinc-950">
+          <Card className="px-5 py-0">
             {basket.items.map((item) => (
               <BasketItemRow
                 key={item.productId}
@@ -47,20 +45,22 @@ export default async function BasketPage() {
                 itemQuantity={item.itemQuantity}
               />
             ))}
-          </div>
+          </Card>
 
-          <div className="flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
-            <span className="text-sm text-zinc-600 dark:text-zinc-400">
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
               {basket.totalCount.toLocaleString("ja-JP")} 種類
             </span>
-            <span className="text-lg font-semibold text-black dark:text-zinc-50">
+            <span className="text-lg font-semibold">
               合計 ¥{total.toLocaleString("ja-JP")}
             </span>
           </div>
 
           <Link
             href="/shop/products"
-            className="text-sm text-zinc-500 transition-colors hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             ← 買い物を続ける
           </Link>

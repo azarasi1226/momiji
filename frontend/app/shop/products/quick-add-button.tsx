@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { Button } from "@/components/ui/button"
 import { setBasketItem } from "../actions"
 
 /**
@@ -25,22 +26,11 @@ export function QuickAddButton({ productId }: { productId: string }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <button
-        type="button"
-        onClick={handleAdd}
-        disabled={isPending}
-        className="flex h-10 items-center justify-center rounded-full bg-foreground px-4 text-sm text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-      >
+      <Button type="button" onClick={handleAdd} disabled={isPending} className="w-full">
         {isPending ? "追加中..." : "カートに入れる"}
-      </button>
+      </Button>
       {message && (
-        <p
-          className={
-            message.ok
-              ? "text-xs text-green-600 dark:text-green-400"
-              : "text-xs text-red-600 dark:text-red-400"
-          }
-        >
+        <p className={message.ok ? "text-xs text-green-600" : "text-xs text-destructive"}>
           {message.text}
         </p>
       )}

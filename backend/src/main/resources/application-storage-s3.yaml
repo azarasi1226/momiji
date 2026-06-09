@@ -1,0 +1,7 @@
+# 本番 / テスト 用ストレージ（実 S3）。 presigned PUT 発行に使う。
+momiji:
+  storage:
+    region: ${AWS_REGION:ap-northeast-1}
+    bucket: ${STORAGE_BUCKET}
+    # 保存・表示に使う恒久 URL の基準（CloudFront or 公開S3。 末尾に /<key> が付く）。
+    public-base-url: ${STORAGE_PUBLIC_BASE_URL}

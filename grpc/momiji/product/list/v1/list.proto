@@ -23,6 +23,8 @@ message ListProductsRequest {
   momiji.product.v1.ProductStatus status = 5;
   // ブランドフィルタ（brand_id）。 空なら絞り込みなし（すべてのブランド）。
   string brand_id = 6;
+  // true なら販売可能数（available = on_hand - reserved）が 1 以上の商品だけに絞る。
+  bool in_stock_only = 7;
 }
 
 message ListProductsResponse {

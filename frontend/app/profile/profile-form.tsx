@@ -1,19 +1,14 @@
 "use client"
 
 import { useActionState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { updateProfile, type UpdateProfileState, type UserProfile } from "./actions"
 
-// 共通スタイル。 fieldError 有無で border 色を切り替える。
-function inputClassName(hasError: boolean): string {
-  const base = "rounded-lg border px-4 py-2 dark:bg-zinc-900 dark:text-zinc-50"
-  return hasError
-    ? `${base} border-red-500 dark:border-red-400`
-    : `${base} border-zinc-200 dark:border-zinc-700`
-}
-
-function FieldErrorMessage({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <p className="text-xs text-red-500 dark:text-red-400">{message}</p>
+  return <p className="text-xs text-destructive">{message}</p>
 }
 
 export function ProfileForm({ profile }: { profile: UserProfile }) {
@@ -25,108 +20,82 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm text-zinc-500 dark:text-zinc-400">
-          メールアドレス
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={profile.email}
-          disabled
-          className="rounded-lg border border-zinc-200 bg-zinc-100 px-4 py-2 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
-        />
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="email">メールアドレス</Label>
+        <Input id="email" type="email" value={profile.email} disabled />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="text-sm text-zinc-500 dark:text-zinc-400">
-          名前
-        </label>
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="name">名前</Label>
+        <Input
           id="name"
           name="name"
           type="text"
           defaultValue={profile.name}
           required
-          className={inputClassName(!!fieldErrors?.name)}
+          aria-invalid={!!fieldErrors?.name}
         />
-        <FieldErrorMessage message={fieldErrors?.name} />
+        <FieldError message={fieldErrors?.name} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="phoneNumber" className="text-sm text-zinc-500 dark:text-zinc-400">
-          電話番号
-        </label>
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="phoneNumber">電話番号</Label>
+        <Input
           id="phoneNumber"
           name="phoneNumber"
           type="tel"
           defaultValue={profile.phoneNumber}
           required
-          className={inputClassName(!!fieldErrors?.phoneNumber)}
+          aria-invalid={!!fieldErrors?.phoneNumber}
         />
-        <FieldErrorMessage message={fieldErrors?.phoneNumber} />
+        <FieldError message={fieldErrors?.phoneNumber} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="postalCode" className="text-sm text-zinc-500 dark:text-zinc-400">
-          郵便番号
-        </label>
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="postalCode">郵便番号</Label>
+        <Input
           id="postalCode"
           name="postalCode"
           type="text"
           defaultValue={profile.postalCode}
           required
-          className={inputClassName(!!fieldErrors?.postalCode)}
+          aria-invalid={!!fieldErrors?.postalCode}
         />
-        <FieldErrorMessage message={fieldErrors?.postalCode} />
+        <FieldError message={fieldErrors?.postalCode} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="address1" className="text-sm text-zinc-500 dark:text-zinc-400">
-          住所1
-        </label>
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="address1">住所1</Label>
+        <Input
           id="address1"
           name="address1"
           type="text"
           defaultValue={profile.address1}
           required
-          className={inputClassName(!!fieldErrors?.address1)}
+          aria-invalid={!!fieldErrors?.address1}
         />
-        <FieldErrorMessage message={fieldErrors?.address1} />
+        <FieldError message={fieldErrors?.address1} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="address2" className="text-sm text-zinc-500 dark:text-zinc-400">
-          住所2
-        </label>
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="address2">住所2</Label>
+        <Input
           id="address2"
           name="address2"
           type="text"
           defaultValue={profile.address2}
           required
-          className={inputClassName(!!fieldErrors?.address2)}
+          aria-invalid={!!fieldErrors?.address2}
         />
-        <FieldErrorMessage message={fieldErrors?.address2} />
+        <FieldError message={fieldErrors?.address2} />
       </div>
 
-      {state?.error && (
-        <p className="text-sm text-red-500">{state.error}</p>
-      )}
-      {state?.success && (
-        <p className="text-sm text-green-600 dark:text-green-400">更新しました</p>
-      )}
+      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {state?.success && <p className="text-sm text-green-600">更新しました</p>}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="mt-2 flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-      >
+      <Button type="submit" disabled={isPending} className="mt-2 w-fit">
         {isPending ? "更新中..." : "更新"}
-      </button>
+      </Button>
     </form>
   )
 }

@@ -52,6 +52,7 @@ const SORT_MAP: Record<string, ProductSortCondition> = {
 export async function listShopProducts(params: {
   likeName?: string
   sort?: string
+  inStockOnly?: boolean
   pageSize?: number
   pageNumber?: number
 }): Promise<ShopProductsPage> {
@@ -63,6 +64,7 @@ export async function listShopProducts(params: {
       // 購入者は販売中（ACTIVE）の商品しか見えない。
       status: ProductStatus.ACTIVE,
       brandId: "",
+      inStockOnly: params.inStockOnly ?? false,
       sort: SORT_MAP[params.sort ?? ""] ?? ProductSortCondition.UNSPECIFIED,
       pageSize: params.pageSize ?? 0,
       pageNumber: params.pageNumber ?? 0,

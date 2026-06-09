@@ -34,6 +34,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 `AUTH_PROVIDER` で local(Keycloak) / prod(Cognito) を環境ごとに切り替える ([ADR 0003](../docs/adr/0003-idp-linking.md) の 2 IDP 運用)。
 有効化した provider 側の `<PROVIDER>_CLIENT_ID` / `_CLIENT_SECRET` / `<PROVIDER>_ISSUER` だけ設定すればよい。
 
+## TODO
+
+- **`@import "shadcn/tailwind.css"` を一行 import に戻す**
+  - radix-nova スタイルが想定する `@import "shadcn/tailwind.css"`（`shadcn` パッケージの `dist/tailwind.css`）を [app/globals.css](app/globals.css) でそのまま import すると、その中の `@theme inline { @keyframes ... }` を turbopack/lightningcss が処理できず、**import 以降の `@theme inline` / `:root` が丸ごと脱落 → テーマカラー(primary 等)が一切効かなくなる**。
+  - 暫定対応として、その import をやめ、コンポーネント(select/checkbox 等)が使う custom variant (`data-open` / `data-closed` / `data-checked` …) と `no-scrollbar` を globals.css に**手でインライン展開**している。
+  - 原因が turbopack の export `style` 条件の解決側か、lightningcss/Tailwind のパース側かは未確定。`next` / `tailwindcss` / `shadcn` のいずれかの bump で解消する可能性あり。
+  - 確認手順: globals.css を一行 import に戻す → `rm -rf .next && pnpm build` → 出力 CSS を `--primary` で grep（出れば解消）。
+  - 解消したら、インライン展開した custom variant / utility を消して `@import "shadcn/tailwind.css"` 一行に戻す。新しい radix-nova コンポーネントを `shadcn add` した際にインライン定義の追従漏れが起きるリスクも消える。
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
