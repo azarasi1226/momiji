@@ -11,3 +11,7 @@ rules:
   - expected: サーバー
     patterns:
       - サーバ(?!ー)
+  # IdP（Identity Provider）の表記統一: IDP → IdP
+  - expected: IdP
+    patterns:
+      - /\bIDP\b/
