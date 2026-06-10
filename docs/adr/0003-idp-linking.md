@@ -163,7 +163,7 @@ frontend ( Auth.js ) は OIDC 認可リクエストで `openid` `email` `profile
 ## 関連
 
 - [ADR 0001](./0001-value-objects.md): `IdentityProvider` enum と値オブジェクト集約の文脈
-- [ADR 0002](./0002-grpc-error-response.md): `BusinessException` ( whitelist 違反時 ) の gRPC 構造化エラー変換経路
+- [ADR 0012](./0012-gRPCでのエラー返却.md): `BusinessException` ( whitelist 違反時 ) の gRPC 構造化エラー返却経路（エラーの3分類は [ADR 0002](./0002-エラーの種類と分類.md)）
 - ソースコード:
   - `backend/src/main/kotlin/jp/momiji/domain/idp/` (IdentityProvider, IdentityProviderResolver)
   - `backend/src/main/kotlin/jp/momiji/feature/idp/` (KeycloakUserClient, CognitoUserClient)

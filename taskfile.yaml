@@ -62,3 +62,15 @@ tasks:
     dir: ./grpc
     cmds:
       - buf generate
+
+  docs-lint:
+    desc: ドキュメント（/docs 配下）の Markdown と日本語の校正 lint
+    dir: ./docs
+    cmds:
+      - pnpm run lint
+
+  docs-fix:
+    desc: ドキュメント（/docs 配下）の Markdown と日本語の校正 fix
+    dir: ./docs
+    cmds:
+      - pnpm run fix
