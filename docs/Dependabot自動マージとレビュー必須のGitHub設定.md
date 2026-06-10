@@ -36,7 +36,7 @@ Web UI 側の操作。リポジトリ管理者権限が必要。**3つが3つと
 
 これが OFF だと、ワークフローの `gh pr review --approve` が次のエラーで落ちる:
 
-```
+```text
 failed to create review: GitHub Actions is not permitted to approve pull requests. (addPullRequestReview)
 ```
 
@@ -77,7 +77,7 @@ gh api -X PUT repos/<owner>/<repo>/actions/permissions/workflow \
 
 ## 動作の流れ（patch 更新の場合）
 
-```
+```text
 Dependabot が patch PR を作成
   └─ Pull Request Verification（proto-lint / backend / frontend）が走る
   └─ dependabot-auto-merge が走る

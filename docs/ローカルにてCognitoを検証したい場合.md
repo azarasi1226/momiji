@@ -3,6 +3,7 @@
 ## Backend
 
 ### 1. CognitoConfig修正
+
 ```kotlin
 @Configuration
 @Profile("idp-cognito")
@@ -22,8 +23,10 @@ class CognitoConfig {
 ```
 
 ### 2. application.yaml
+
 ローカルプロファイルのkeyclaok.yamlをidp-cognitoに差し替える
-```
+
+```yaml
       local:
         - app-common
         - app-local
@@ -33,8 +36,8 @@ class CognitoConfig {
         - mail-smtp
 ```
 
-
 ### 3. local.env.properties
+
 環境変数に
 
 `COGNITO_USER_POOL_ID={UserPoolID}`
@@ -44,7 +47,7 @@ class CognitoConfig {
 
 ### 1. .env.localを追加する (コレ追加するとオーバーライドされる)
 
-```
+```text
 // ここを設定
 AUTH_PROVIDER=cognito
 
