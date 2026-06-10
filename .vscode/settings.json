@@ -1,0 +1,10 @@
+{
+  // textlint 本体・設定・ルールは docs/ 配下にある。
+  // textlint 拡張は ${workspaceFolder} を展開しないため、絶対パスで指定する（machine 依存）。
+  "textlint.nodePath": "c:/Develop/Repository/momiji/docs/node_modules",
+  "textlint.configPath": "c:/Develop/Repository/momiji/docs/.textlintrc.json",
+  "textlint.ignorePath": "c:/Develop/Repository/momiji/docs/.textlintignore",
+  // 入力中に校正を表示（保存時だけで良ければ onSave に）
+  "textlint.run": "onType",
+  "textlint.languages": ["markdown"]
+}
