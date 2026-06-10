@@ -36,6 +36,7 @@ Web UI 側の操作。リポジトリ管理者権限が必要。**3つが3つと
 **☑Allow auto-merge** という項目のチェックを付ける
 
 ### ③ レビュー必須の branch protection を追加する
+
 `Settings → Branches`（または `Settings → Rules → Rulesets`）で `main` に対してルールを追加:
 
 - ☑ **Require a pull request before merging**
