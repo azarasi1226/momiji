@@ -1,0 +1,17 @@
+{
+  "name": "momiji-docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "momiji のドキュメント（ADR・設計）向け Markdown lint / 日本語校正",
+  "scripts": {
+    "lint": "markdownlint-cli2 \"**/*.md\" && textlint \"**/*.md\"",
+    "fix": "markdownlint-cli2 --fix \"**/*.md\" && textlint --fix \"**/*.md\""
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.22.1",
+    "textlint": "^15.7.1",
+    "textlint-rule-ja-space-between-half-and-full-width": "^3.0.0",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2",
+    "textlint-rule-prh": "^6.1.0"
+  }
+}

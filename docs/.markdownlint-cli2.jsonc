@@ -1,0 +1,15 @@
+{
+  // momiji ドキュメント向け markdownlint 設定。
+  // 日本語＋Mermaid のため、過剰に出る規則を緩和する。初回 lint を見て調整する。
+  "config": {
+    "default": true,
+    "MD013": false, // 行長制限 off（日本語・Mermaid・URL で過剰になるため）
+    "MD033": false, // inline HTML 許可
+    "MD024": { "siblings_only": true }, // 同名見出しは別セクションなら許可
+    "MD026": false, // 見出し末尾の句読点を許可（日本語見出し）
+    "MD034": false, // 裸 URL を許可（ADR で多用）
+    "MD041": false, // 先頭行が見出しでなくても可
+    "MD060": false // テーブル列スタイル（余白）の強制は off（装飾的・自動修正不可）
+  },
+  "ignores": ["node_modules/**"]
+}

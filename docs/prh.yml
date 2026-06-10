@@ -1,0 +1,13 @@
+version: 1
+
+# momiji ドキュメントの表記ゆれ辞書。
+# textlint-rule-prh から参照される（docs/.textlintrc.json）。
+# 誤置換を避けるため、確実なものから少しずつ追加する。
+rules:
+  # 長音（JTF スタイル）: ユーザ→ユーザー, サーバ→サーバー
+  - expected: ユーザー
+    patterns:
+      - ユーザ(?!ー)
+  - expected: サーバー
+    patterns:
+      - サーバ(?!ー)
