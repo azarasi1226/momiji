@@ -30,7 +30,7 @@ Web UI 側の操作。リポジトリ管理者権限が必要。**3つが3つと
 直リンク: `https://github.com/<owner>/<repo>/settings/actions`
 
 - ☑ **Allow GitHub Actions to create and approve pull requests**
-  （日本語UI: 「GitHub Actions によるプルリクエストの作成と承認を許可する」）
+  （日本語 UI: 「GitHub Actions によるプルリクエストの作成と承認を許可する」）
 
 > ⚠️ approve の設定なのに **Branches/Rulesets ではなく Actions 配下**にある。ここが一番ハマりやすい。
 

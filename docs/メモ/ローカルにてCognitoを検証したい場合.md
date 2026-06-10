@@ -24,7 +24,7 @@ class CognitoConfig {
 
 ### 2. application.yaml
 
-ローカルプロファイルのkeyclaok.yamlをidp-cognitoに差し替える
+ローカルプロファイルの keyclaok.yaml を idp-cognito に差し替える
 
 ```yaml
       local:
