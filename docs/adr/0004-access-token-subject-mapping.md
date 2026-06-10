@@ -94,18 +94,18 @@ OIDC の使い分けから外れる ( ID Token は authentication 結果、 API 
 - access token のみで backend の `sub` 検証が完結する ( 軽量、 userinfo round-trip 不要、 オフライン JWT 検証可能 )
 - BFF / Postman 両経路で同じ backend 検証ロジック ( `JwtAuthenticationToken.token.subject` ) が動く
 - OAuth 2.0 / OIDC の標準パターンに沿った設計
-- access token に **必要最低限の `sub` のみ**を乗せる方針 ( custom claim は乗せない、 IDP 判定は admin REST 経路、 ADR 0003 ) と整合
+- access token に **必要最低限の `sub` のみ**を乗せる方針 ( custom claim は乗せない、 IdP 判定は admin REST 経路、 ADR 0003 ) と整合
 
 注意すべき点:
 
 - 「OIDC 仕様で `sub` は標準だから access token にも default で乗る」 という**誤解をしない** ( 仕様レベルでは ID Token と userinfo のみが必須 )
 - subject mapper を削除した場合、 backend は `subject = null` を読むが、 **例外ではなく正常レスポンス + null** で扱われるため、 サイレントに「user not found」 になりデバッグが難航する ( 今回の罠 )
 - realm.json の mapper 設定変更は **必ず動作確認**してからリリースすること
-- 将来 IDP を切り替える場合 ( Cognito 等 ) 、 同様に「access token に `sub` を乗せる」 設定が必要。 Cognito の場合は User Pool の token 設定で確認
+- 将来 IdP を切り替える場合 ( Cognito 等 ) 、 同様に「access token に `sub` を乗せる」 設定が必要。 Cognito の場合は User Pool の token 設定で確認
 
 ## 関連
 
-- [ADR 0003](./0003-idp-linking.md): IDP 連携と独自リンク戦略 ( sub 検証経路の前提 )
+- [ADR 0003](./0003-idp-linking.md): IdP 連携と独自リンク戦略 ( sub 検証経路の前提 )
 - 仕様:
   - [OAuth 2.0 (RFC 6749)](https://datatracker.ietf.org/doc/html/rfc6749) ‐ access token は opaque、 構造は未規定
   - [JWT Profile for OAuth 2.0 Access Tokens (RFC 9068)](https://datatracker.ietf.org/doc/html/rfc9068) ‐ access token を JWT として運ぶ場合の標準。 `sub` は SHOULD ( 強い推奨 ) だが MUST ではない
