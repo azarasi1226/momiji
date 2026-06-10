@@ -1,156 +1,96 @@
 # 🍁Momiji
-CQRS, EventSourcing, DCB, 垂直スライスアーキテクチャをベースに
-OIDCでマルチアカウントリンクを実現するサンプルプロジェクト
+**CQRS / Event Sourcing / DCB / 垂直スライスアーキテクチャ**で構築する、フルスタック EC サイトのサンプルプロジェクト
 
-## プロジェクト構造
-```
+## 🧱 技術スタック
+
+| 領域 | 技術 |
+| --- | --- |
+| backend | Kotlin / Spring Boot 4 / **Axon Framework 5（DCB）** / jOOQ / gRPC |
+| frontend | Next.js（BFF パターン）/ shadcn/ui / tailwind |
+| database | MySQL |
+| 認証 | OIDC 準拠 IdP（ローカル: Keycloak、本番: Cognito）。破壊的変更なしに交換可能 |
+| 決済 | Stripe |
+| ローカル環境 | docker （MySQL / Axon Server / Keycloak / Mailpit / MinIO / o11y スタック） |
+| 可観測性 | OpenTelemetry / Prometheus / Grafana / Tempo / Loki |
+
+## 📁プロジェクト構造
+
+```:text
 momiji
-├─ frontend (NextJS)
-├─ backend (server side kotlin)
-│   └─ database
-├─ grpc (proto + buf 設定)
-├─ local (docker-compose / 各種 provisioning 等のローカル環境構築用)
-│   ├─ docker-compose.yaml
-│   ├─ keycloak/momiji-realm.json
-│   ├─ prometheus/prometheus.yaml     ← メトリクス scrape 設定
-│   └─ grafana/provisioning/          ← Grafana 自動セットアップ
-│       ├─ datasources/prometheus.yaml
-│       └─ dashboards/momiji-backend.json
+├─ frontend      : (NextJS)
+├─ backend       : (server side kotlin)
+│   └─ database  : (atlas)
+├─ grpc          : (proto + buf 設定)
+├─ local         : (docker-compose / 各種ローカル環境構築用設定)
 ├─ docs
-│   ├─ adr/                            ← Architecture Decision Records
-│   └─ sample.md
+│   ├─ adr/      
+│   ├─ 手順書/
+│   └─ 設計/
 ├─ README.md
-└─ taskfile.yaml
+└─ taskfile.yaml : (プロジェクトで利用するtask一式) 
 ```
 
-## ローカル開発ポート一覧
+## 🏗️ ローカル環境の構築
 
-| サービス | ポート | URL |
-|---|---|---|
-| frontend (NextJS) | 3000 | http://localhost:3000 |
-| backend gRPC | 9091 | (gRPC client から) |
-| Axon Server UI | 8024 | http://localhost:8024 |
-| MySQL | 3336 | mysql://localhost:3336 |
-| Keycloak | 8085 | http://localhost:8085 |
-| Mailpit (SMTP / UI) | 1025 / 8025 | http://localhost:8025 |
-| **Prometheus** | 19090 | http://localhost:19090 |
-| **Grafana** | 3001 | http://localhost:3001 (匿名 Admin で自動ログイン) |
-| **Tempo** (trace API) | 3200 | http://localhost:3200 (UI は持たない、 Grafana から読み出し) |
+### 0. 前提
 
-## 特徴
-* IDP は Cognito, Auth0, Keycloak などのメジャーな OIDC 準拠 IDP を使用でき、破壊的な変更なしにいつでも交換できる
-* ログイン方式は複数対応する。IDP 独自のパスワード認証や各種ソーシャルログイン (Google, GitHub など) が利用可能
-* 同じユーザーが異なるログイン方法を使っても、email アドレスが同一であれば Momiji 内部では一つのアカウントに紐づく
-  > 例: ユーザー A (tanaka@gmail.com) が Google ソーシャルログインで登録済みの状態で、同じ email の GitHub アカウントで初回ログインした場合、両方のソーシャルアカウントが Momiji 内部の同一アカウントに紐づく
-* BFF (Next.js) が IDP との認証を担当し、バックエンド (Relying Party) へは Access Token を Bearer ヘッダーで渡して検証する構成とする
-* BFF 内部では NextAuth.js を使用し、データベースに ID Token / Access Token / Refresh Token を保存する。Cookie にはセッション ID のみを保管する
-* ユーザーは Momiji 内の email アドレスをいつでも変更できる。email アドレスを変更しても、既存のソーシャルログイン紐づけは解除されない。
-* BFF 側でログアウトした場合、サーバー上のセッションが破棄される。ブラウザには Token が露出していないため、即時のログアウトが実現できる。
+- [aqua](https://aquaproj.github.io/)（CLI ツールのバージョン管理ツール）
+- Docker
+- JDK 25（backend の実行用。`JAVA_HOME` を通しておく）
+- Node.js（frontend の実行用。pnpm 自体は aqua で入るが、Next.js の実行には Node 本体が必要）
 
-## 懸念
+### 1. CLI ツールのインストール
 
-### email 自動リンクによるアカウント乗っ取り
-
-| |                                                                                                                      |
-|---|----------------------------------------------------------------------------------------------------------------------|
-| **リスク** | 攻撃者が他人の email でソーシャルアカウントを作成し、既存の Momiji アカウントに紐づけてしまう                                                               |
-| **対策** | Momiji内アカウント作成時はIDP側の`email_verified` が `true` の場合のみ紐づけを行う。<br/>また、メールアドレスの所有が保証される IDP のみを使用する。 (Google, GitHub など) |
-
-### email 変更後に別人が紐づく可能性
-
-| |                                                                             |
-|---|-----------------------------------------------------------------------------|
-| **リスク** | Momiji内部のメールアドレス変更機能にて、変更先の email を持つソーシャルアカウントで第三者がログインすると、意図せず同一アカウントに紐づく |
-| **対策** | メール変更時にメール検証を行い、所有者確認が完了するまでメールは反映しない                                       |
-
-### IDP 移行時のユーザーデータ引き継ぎ
-
-| |                                                                                               |
-|---|-----------------------------------------------------------------------------------------------|
-| **リスク** | IDP を切り替えた場合、既存ユーザーとの紐づけが切れる                                                                  |
-| **対策** | email を内部のユニークな識別子として使用すれば再紐づけは可能。ただしユーザーに再ログインが必要。<br/>パスワードは IDP 側でハッシュ化されているはずなので再登録になるだろう |
-
-## ログインフロー
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant BFF as BFF (Next.js)
-    participant IDP as IDP
-    participant M as Momiji
-
-    B->>BFF: 1. ログイン開始
-    BFF->>IDP: 2. /authorize (リダイレクト)
-    IDP-->>B: 3. ログイン画面を表示
-    B->>IDP: 4. 認証完了
-    IDP->>BFF: 5. Authorization Code
-    BFF->>IDP: 6. Code → Token 交換
-    IDP-->>BFF: Access Token
-
-    Note over BFF, M: ユーザー同期 (毎回ログイン時に実行)
-    BFF->>M: 7. POST /users/me (Bearer Token)
-    M->>IDP: 7a. GET /userinfo (Bearer Token)
-    IDP-->>M: sub, issuer, email, email_verified
-    Note over M: issuer + subject で検索<br/>存在 → 既存ユーザーを返す<br/>未登録 & email_verified=true & 同一 email 存在 → 紐づけ<br/>未登録 & email_verified=true & 新規 → 作成<br/>email_verified=false → 拒否
-    alt 成功
-        M-->>BFF: 200 OK (ユーザー情報)
-        BFF-->>B: 8. ログイン完了 (セッション確立)
-    else 失敗
-        M-->>BFF: Error
-        Note over BFF: セッション破棄 & IDP ログアウト
-        BFF-->>B: ログイン失敗
-    end
+```bash
+aqua i
 ```
 
-## ユーザー情報参照フロー
+### 2. 初回セットアップ
 
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant BFF as BFF (Next.js)
-    participant M as Momiji
-
-    B->>BFF: 1. データ取得リクエスト
-    BFF->>M: 2. GET /users/me (Bearer Token)
-    Note over M: Access Token から sub と issuer を取得し<br/>external_identities から内部ユーザー ID を特定
-    M-->>BFF: ユーザー情報
-    BFF-->>B: レスポンス
+```bash
+task setup   # コンテナ起動 → DB マイグレーション → proto コード生成
 ```
 
-## ログアウトフロー
+### 3. Stripe の準備（クレジットカード機能を動かす場合のみ）
 
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant BFF as BFF (Next.js)
-    participant IDP as IDP
+[docs/手順書/ローカル環境における Stripe のセットアップ手順.md](docs/手順書/ローカル環境におけるStripeのセットアップ.md) を参照
 
-    B->>BFF: 1. ログアウトリクエスト
-    Note over BFF: サーバー上のセッションを破棄<br/>(DB から Token を削除)
-    BFF->>IDP: 2. RP-Initiated Logout (セッション無効化)
-    IDP-->>BFF: OK
-    BFF-->>B: 3. ログアウト完了 (Cookie 削除)
-    Note over B: ブラウザには Token が存在しないため<br/>即時にログアウトが完了する
+> 簡単に説明すると、 Stripe の無料アカウントを作成しシークレットを取得後、環境変数を3箇所設定するのだが、あらかじめダミー値がセットされているので、**スキップ**することもできる。その場合、クレジットカード決済に関する処理はすべてエラーになる。
+
+### 4. backend 起動
+
+```bash
+cd backend
+./gradlew bootRun   # HTTP: 9090 / gRPC: 9091
 ```
 
-## 複数のログイン方法で一つのMomiji内部アカウントと紐づける仕組み
-| テーブル | 説明 |
-|---|---|
-| **external_identities** | IDP 内部のユーザーと Momiji 内部のユーザーを紐づけるためのテーブル |
-| **users** | Momiji 内部のアカウント情報を管理するテーブル |
+### 5. seed 実行(初期のサンプルデータ投入)
 
-* external_identities の主キーは `issuer` + `subject` の複合キーである。subject は同一 IDP 内でユニークだが、IDP が異なれば同じ subject が存在しうる。issuer(IDPを識別する値) を組み合わせることで、IDP を移行しても既存のレコードと衝突しない設計になっている。
-
-```mermaid
-erDiagram
-    users {
-        string id PK "U-001, U-002"
-        string email "alice@ex, bob@ex"
-    }
-    lookup_external_identities {
-        string oidc_issuer PK "auth0.com"
-        string oidc_subject PK "google|11, github|22"
-        string user_id FK "U-001, U-002"
-    }
-    users ||--o{ lookup_external_identities : ""
+```bash
+./gradle seedData
 ```
+
+### 6. frontend 起動
+
+```bash
+cd ../frontend
+pnpm install   # 初回のみ
+pnpm dev       # http://localhost:3000
+```
+
+## 🖥️ ローカル環境確認リンク一覧
+
+| サービス | ポート | URL | 備考 |
+| --- | --- | --- | --- |
+| frontend (NextJS) | 3000 | <http://localhost:3000> | |
+| backend gRPC | 9091 | | |
+| backend HTTP (Stripe webhook) | 9090 | | |
+| Axon Server UI | 8024 | <http://localhost:8024> | |
+| MySQL | 3336 | mysql://localhost:3336 | root / passw0rd |
+| Keycloak | 8085 | <http://localhost:8085> | 管理コンソール: admin / admin |
+| Mailpit (SMTP / UI) | 1025 / 8025 | <http://localhost:8025> | |
+| MinIO (S3 API / 管理コンソール) | 9000 / 9001 | <http://localhost:9001> | minioadmin / minioadmin |
+| Prometheus | 19090 | <http://localhost:19090> | |
+| Grafana | 3001 | <http://localhost:3001> | |
+| Tempo | 3200 | | UI なし |
+| Loki | 3100 | | UI なし |
