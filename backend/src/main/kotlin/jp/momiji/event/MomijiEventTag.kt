@@ -5,4 +5,5 @@ object MomijiEventTag {
     const val BRAND_ID = "brand_id"
     const val PRODUCT_ID = "product_id"
     const val PAYMENT_METHOD_ID = "payment_method_id"
+    const val SHIPPING_ADDRESS_ID = "shipping_address_id"
 }
