@@ -24,6 +24,7 @@ class StripeCustomerDeleter(
 ) {
     @EventHandler
     fun on(event: UserDeletedEvent) {
+        // そのユーザが一度もクレジットカードを登録シていないならCustomerIdはnullなので、早期return
         val stripeCustomerId = event.stripeCustomerId ?: return
         paymentGateway.deleteCustomer(stripeCustomerId)
     }
