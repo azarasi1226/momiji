@@ -17,6 +17,7 @@ spring:
         - idp-keycloak
         - mail-smtp
         - storage-minio
+        - payment-stripe
       test:
         - app-common
         - app-test
@@ -24,6 +25,7 @@ spring:
         - datastore-mysql
         - idp-cognito
         - storage-s3
+        - payment-stripe
         #- mail-smtp (mail-sendgrid みたいなのを作るべし)
       prod:
         - app-common
@@ -32,4 +34,5 @@ spring:
         - datastore-mysql
         - idp-cognito
         - storage-s3
+        - payment-stripe
         #- mail-smtp (mail-sendgrid みたいなのを作るべし)

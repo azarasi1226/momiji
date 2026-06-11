@@ -119,7 +119,10 @@ services:
       - "9001:9001"   # 管理コンソール
 
   # 起動時に bucket を作成し、 匿名 GET（<img> 表示用の公開読み取り）を許可する。
+  # ワンショット（実行後 exit する）コンテナは `up --wait` が「待機失敗」と判定して exit 1 になるため、
+  # profile で通常の `up` から外し、 taskfile の docker-up が `run --rm` で個別に実行する。
   minio-init:
+    profiles: ["init"]
     image: minio/mc:RELEASE.2025-04-16T18-13-26Z
     depends_on:
       - minio

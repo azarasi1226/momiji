@@ -1,0 +1,10 @@
+# ローカル / テスト / 本番環境での利用を想定
+
+# ローカルは Stripe テストモードの sk_test_... と、 `stripe listen` が払い出す whsec_... を使う。
+
+# ここだけ例外的で気持ち悪いが既定値はダミー（アプリ起動だけは通すための placeholder）
+# 本番デプロイでは必ず実値の STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET を設定する。
+momiji:
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:sk_test_dummy}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_dummy}
