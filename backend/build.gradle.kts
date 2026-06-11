@@ -31,6 +31,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-mail")
+    // Stripe webhook を受ける HTTP エンドポイント用（既存の入口は gRPC のみ。 webhook は Stripe からの HTTP POST）。
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
@@ -86,6 +88,7 @@ dependencies {
     implementation("software.amazon.awssdk:ssooidc:2.42.8") // 同上
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1") // Result<V, E> 型 (値オブジェクトの validation 用)
+    implementation("com.stripe:stripe-java:33.0.0") // Stripe（カード登録: Customer/SetupIntent/PaymentMethod・webhook 署名検証）
 }
 
 kotlin {
