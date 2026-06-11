@@ -2,9 +2,9 @@ package jp.momiji.feature.command.payment.deletecard
 
 import jp.momiji.MomijiIntegrationTestBase
 import jp.momiji.event.payment.CardDeletedEvent
-import jp.momiji.event.payment.CardRegisteredEvent
-import jp.momiji.event.payment.DefaultCardChangedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.feature.command.payment.CardTestFixtures.defaultChangedEvent
+import jp.momiji.feature.command.payment.CardTestFixtures.registeredEvent
 import org.junit.jupiter.api.Test
 
 class DeleteCardCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -16,15 +16,8 @@ class DeleteCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "del1@example.com"),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del1",
-                    brand = "visa",
-                    last4 = "4242",
-                    expMonth = 1,
-                    expYear = 2030,
-                    default = true,
-                ),
+                registeredEvent(userId, "pm_del1"),
+                defaultChangedEvent(userId, "pm_del1"),
             ).`when`()
             .command(DeleteCardCommand(userId = userId, paymentMethodId = "pm_del1"))
             .then()
@@ -40,33 +33,10 @@ class DeleteCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "del4@example.com"),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del4_a",
-                    brand = "visa",
-                    last4 = "4242",
-                    expMonth = 1,
-                    expYear = 2030,
-                    default = true,
-                ),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del4_b",
-                    brand = "mastercard",
-                    last4 = "4444",
-                    expMonth = 2,
-                    expYear = 2031,
-                    default = false,
-                ),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del4_c",
-                    brand = "jcb",
-                    last4 = "0000",
-                    expMonth = 3,
-                    expYear = 2032,
-                    default = false,
-                ),
+                registeredEvent(userId, "pm_del4_a"),
+                defaultChangedEvent(userId, "pm_del4_a"),
+                registeredEvent(userId, "pm_del4_b", brand = "mastercard", last4 = "4444", expMonth = 2, expYear = 2031),
+                registeredEvent(userId, "pm_del4_c", brand = "jcb", last4 = "0000", expMonth = 3, expYear = 2032),
             ).`when`()
             .command(DeleteCardCommand(userId = userId, paymentMethodId = "pm_del4_a"))
             .then()
@@ -74,7 +44,7 @@ class DeleteCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .events(
                 CardDeletedEvent(userId = userId, paymentMethodId = "pm_del4_a"),
                 // 最古の残カード（b）が昇格する
-                DefaultCardChangedEvent(userId = userId, paymentMethodId = "pm_del4_b"),
+                defaultChangedEvent(userId, "pm_del4_b"),
             )
     }
 
@@ -86,24 +56,9 @@ class DeleteCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "del5@example.com"),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del5_a",
-                    brand = "visa",
-                    last4 = "4242",
-                    expMonth = 1,
-                    expYear = 2030,
-                    default = true,
-                ),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_del5_b",
-                    brand = "mastercard",
-                    last4 = "4444",
-                    expMonth = 2,
-                    expYear = 2031,
-                    default = false,
-                ),
+                registeredEvent(userId, "pm_del5_a"),
+                defaultChangedEvent(userId, "pm_del5_a"),
+                registeredEvent(userId, "pm_del5_b", brand = "mastercard", last4 = "4444", expMonth = 2, expYear = 2031),
             ).`when`()
             .command(DeleteCardCommand(userId = userId, paymentMethodId = "pm_del5_b"))
             .then()

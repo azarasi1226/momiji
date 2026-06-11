@@ -78,7 +78,8 @@ class UserPaymentState(
 
     @EventSourcingHandler
     fun evolve(event: CardRegisteredEvent) {
-        cards[event.paymentMethodId] = Card(isDefault = event.default)
+        // default の付与は別イベント（DefaultCardChangedEvent）が担う。 登録時点では非 default。
+        cards[event.paymentMethodId] = Card(isDefault = false)
     }
 
     @EventSourcingHandler

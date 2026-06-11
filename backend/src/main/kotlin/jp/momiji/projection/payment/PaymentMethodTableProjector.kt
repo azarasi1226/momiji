@@ -66,7 +66,8 @@ class PaymentMethodTableProjector(
             .set(PAYMENT_METHODS.LAST4, event.last4)
             .set(PAYMENT_METHODS.EXP_MONTH, event.expMonth)
             .set(PAYMENT_METHODS.EXP_YEAR, event.expYear)
-            .set(PAYMENT_METHODS.IS_DEFAULT, event.default.toByteFlag())
+            // default の付与は DefaultCardChangedEvent（同コマンドで一括追記される）が担うため、 登録時点では常に 0。
+            .set(PAYMENT_METHODS.IS_DEFAULT, false.toByteFlag())
             .set(PAYMENT_METHODS.CREATED_AT, at)
             .set(PAYMENT_METHODS.UPDATED_AT, at)
             // 冪等性: webhook 再送由来で同じ pm_ が来ても二重 insert しない（コマンド側でも冪等だが二重防御）。
@@ -110,12 +111,18 @@ class PaymentMethodTableProjector(
             .where(PAYMENT_METHODS.USER_ID.eq(event.userId))
             .execute()
         // 対象 pm_ を default にする。
-        dsl
-            .update(PAYMENT_METHODS)
-            .set(PAYMENT_METHODS.IS_DEFAULT, true.toByteFlag())
-            .set(PAYMENT_METHODS.UPDATED_AT, at)
-            .where(PAYMENT_METHODS.ID.eq(event.paymentMethodId))
-            .execute()
+        val updated =
+            dsl
+                .update(PAYMENT_METHODS)
+                .set(PAYMENT_METHODS.IS_DEFAULT, true.toByteFlag())
+                .set(PAYMENT_METHODS.UPDATED_AT, at)
+                .where(PAYMENT_METHODS.ID.eq(event.paymentMethodId))
+                .execute()
+        // CardRegistered の insert が先に処理される前提（同一コマンド追記順 + 既定 sequencing policy の全件直列）が
+        // 成り立つ限り 0 行にはならない。 黙って default 不在に陥らないよう痕跡を残す（規約: 対象不在は warn）。
+        if (updated == 0) {
+            logger.warn { "default 反映先のカード行がありません: paymentMethodId=${event.paymentMethodId}" }
+        }
     }
 }
 
