@@ -3,6 +3,7 @@ package jp.momiji.feature.command.user.shippingaddress
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.eventQualifiedName
 import jp.momiji.event.user.DefaultShippingAddressChangedEvent
+import jp.momiji.event.user.ShippingAddressDeletedEvent
 import jp.momiji.event.user.ShippingAddressRegisteredEvent
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
@@ -20,8 +21,8 @@ import org.axonframework.messaging.eventstreaming.Tag
  * 不変条件「配送先が 1 件でもあれば必ず default が 1 件ある」をこの State 上のガードで守る。
  *
  * **lean に保つ**: 配送先の住所フィールド等は持たない（ガードに必要な id と isDefault だけ）。
- * そのため Updated 系イベント（後続スライスで追加予定）はこの State に不要で、 criteria にも含めない。
- * 削除スライス追加時に ShippingAddressDeletedEvent を criteria と evolve に足すこと。
+ * そのため ShippingAddressUpdatedEvent はこの State に不要で、 criteria にも意図的に含めていない
+ * （編集は id と default に影響しないため。 値の冪等チェックもしない設計）。
  */
 @EventSourced(idType = String::class)
 class UserShippingAddressState(
@@ -43,6 +44,7 @@ class UserShippingAddressState(
                     UserCreatedEvent::class.eventQualifiedName(),
                     UserDeletedEvent::class.eventQualifiedName(),
                     ShippingAddressRegisteredEvent::class.eventQualifiedName(),
+                    ShippingAddressDeletedEvent::class.eventQualifiedName(),
                     DefaultShippingAddressChangedEvent::class.eventQualifiedName(),
                 )
     }
@@ -68,6 +70,11 @@ class UserShippingAddressState(
     fun evolve(event: ShippingAddressRegisteredEvent) {
         // default の付与は別イベント（DefaultShippingAddressChangedEvent）が担う。 登録時点では非 default。
         addresses[event.shippingAddressId] = Entry(isDefault = false)
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: ShippingAddressDeletedEvent) {
+        addresses.remove(event.shippingAddressId)
     }
 
     @EventSourcingHandler
