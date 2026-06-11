@@ -89,3 +89,24 @@ CREATE TABLE payment_methods (
 
 -- ユーザーのカード一覧取得・ユーザー削除時の user_id 一括削除用
 CREATE INDEX idx_payment_methods_user_id ON payment_methods (user_id);
+
+-- 配送先 ReadModel。 配送先はユーザー本人の住所とは限らない（受取人氏名・ドライバー連絡用電話を持つ）。
+CREATE TABLE shipping_addresses (
+  id varchar(255) NOT NULL,
+  user_id varchar(255) NOT NULL,
+  name varchar(255) NOT NULL,
+  phone_number varchar(255) NOT NULL,
+  postal_code varchar(255) NOT NULL,
+  prefecture varchar(255) NOT NULL,
+  city varchar(255) NOT NULL,
+  street_address varchar(255) NOT NULL,
+  building varchar(255) NOT NULL,
+  delivery_note varchar(500) NOT NULL,
+  is_default tinyint(1) NOT NULL,
+  created_at datetime(6) NOT NULL,
+  updated_at datetime(6) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+-- ユーザーの配送先一覧取得・ユーザー削除時の user_id 一括削除用
+CREATE INDEX idx_shipping_addresses_user_id ON shipping_addresses (user_id);
