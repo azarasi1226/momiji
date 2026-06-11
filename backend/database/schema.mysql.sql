@@ -1,11 +1,8 @@
+-- プロフィールは email と name のみ（Amazon 式）。 住所・電話は shipping_addresses にだけ存在する。
 CREATE TABLE users (
   id varchar(255) NOT NULL,
   email varchar(255) NOT NULL,
   name varchar(255) NOT NULL,
-  phone_number varchar(255) NOT NULL,
-  postal_code varchar(255) NOT NULL,
-  address1 varchar(255) NOT NULL,
-  address2 varchar(255) NOT NULL,
   -- Stripe Customer ID (cus_)。 lazy 作成（初回カード登録まで NULL）。 1 ユーザー = 1 Customer の 1:1。
   stripe_customer_id varchar(255) NULL,
   created_at datetime(6) NOT NULL,

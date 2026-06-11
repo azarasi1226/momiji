@@ -44,10 +44,6 @@ class UserTableProjector(
         dsl
             .update(USERS)
             .set(USERS.NAME, event.name)
-            .set(USERS.PHONE_NUMBER, event.phoneNumber)
-            .set(USERS.POSTAL_CODE, event.postalCode)
-            .set(USERS.ADDRESS1, event.address1)
-            .set(USERS.ADDRESS2, event.address2)
             .set(USERS.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
             .where(USERS.ID.eq(event.id))
             .execute()

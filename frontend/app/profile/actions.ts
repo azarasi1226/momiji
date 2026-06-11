@@ -4,7 +4,6 @@ import { signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createGrpcClient } from "@/lib/grpc"
-import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments"
 import { requireValidSession } from "@/lib/session"
 import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js"
 import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js"
@@ -15,14 +14,11 @@ import { parseConnectError } from "@/lib/grpc-error"
 import { Code, ConnectError } from "@connectrpc/connect"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 
+// プロフィールは email と name のみ（Amazon 式）。 住所・電話は配送先（shipping-addresses）が持つ。
 export type UserProfile = {
   id: string
   email: string
   name: string
-  phoneNumber: string
-  postalCode: string
-  address1: string
-  address2: string
   createdAt: string
   updatedAt: string
 }
@@ -48,10 +44,6 @@ export async function fetchProfile(): Promise<UserProfile> {
       id: response.id,
       email: response.email,
       name: response.name,
-      phoneNumber: response.phoneNumber,
-      postalCode: response.postalCode,
-      address1: response.address1,
-      address2: response.address2,
       createdAt: response.createdAt ? timestampDate(response.createdAt).toISOString() : "",
       updatedAt: response.updatedAt ? timestampDate(response.updatedAt).toISOString() : "",
     }
@@ -73,18 +65,10 @@ export async function updateProfile(
 ): Promise<UpdateProfileState> {
   const session = await requireValidSession()
 
-  // 電話番号・郵便番号は UI では分割枠（ハイフンは画面の飾り）。 backend の保存形式（ハイフン区切り）にここで結合する。
-  const phoneNumber = joinPhoneNumber(formData)
-  const postalCode = joinPostalCode(formData)
-
   try {
     const client = createGrpcClient(UpdateUserService, session.accessToken)
     await client.updateUser({
       name: formData.get("name") as string,
-      phoneNumber,
-      postalCode,
-      address1: formData.get("address1") as string,
-      address2: formData.get("address2") as string,
     })
   } catch (e) {
     redirectIfUnauthenticated(e)

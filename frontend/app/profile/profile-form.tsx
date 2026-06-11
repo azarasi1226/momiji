@@ -4,7 +4,6 @@ import { useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { PhoneNumberFields, PostalCodeFields } from "@/components/form/digit-fields"
 import { updateProfile, type UpdateProfileState, type UserProfile } from "./actions"
 
 function FieldError({ message }: { message?: string }) {
@@ -12,6 +11,7 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-xs text-destructive">{message}</p>
 }
 
+// プロフィールは email（変更フロー別建て）と name のみ。 住所・電話は配送先ページで管理する。
 export function ProfileForm({ profile }: { profile: UserProfile }) {
   const [state, formAction, isPending] = useActionState<UpdateProfileState, FormData>(
     updateProfile,
@@ -37,44 +37,6 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
           aria-invalid={!!fieldErrors?.name}
         />
         <FieldError message={fieldErrors?.name} />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="phoneNumber1">電話番号</Label>
-        <PhoneNumberFields defaultValue={profile.phoneNumber} invalid={!!fieldErrors?.phoneNumber} />
-        <FieldError message={fieldErrors?.phoneNumber} />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="postalCode1">郵便番号</Label>
-        <PostalCodeFields defaultValue={profile.postalCode} invalid={!!fieldErrors?.postalCode} />
-        <FieldError message={fieldErrors?.postalCode} />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="address1">住所1</Label>
-        <Input
-          id="address1"
-          name="address1"
-          type="text"
-          defaultValue={profile.address1}
-          required
-          aria-invalid={!!fieldErrors?.address1}
-        />
-        <FieldError message={fieldErrors?.address1} />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="address2">住所2</Label>
-        <Input
-          id="address2"
-          name="address2"
-          type="text"
-          defaultValue={profile.address2}
-          required
-          aria-invalid={!!fieldErrors?.address2}
-        />
-        <FieldError message={fieldErrors?.address2} />
       </div>
 
       {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
