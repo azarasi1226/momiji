@@ -7,7 +7,6 @@ import jp.momiji.port.payment.PaymentGateway
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component
  * が null なので何もしない。 削除は冪等（[PaymentGateway.deleteCustomer] が恒久エラーを握り、 一時障害はリトライ）。
  */
 @Component
-@Profile("payment-stripe")
 class StripeCustomerDeleter(
     private val paymentGateway: PaymentGateway,
 ) {
@@ -30,7 +28,6 @@ class StripeCustomerDeleter(
     }
 
     @Configuration
-    @Profile("payment-stripe")
     class Config {
         @Bean
         fun stripeCustomerDeleterProcessor() =
