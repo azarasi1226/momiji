@@ -72,12 +72,20 @@ export async function updateProfile(
 ): Promise<UpdateProfileState> {
   const session = await requireValidSession()
 
+  // 電話番号・郵便番号は UI では分割枠（ハイフンは画面の飾り）。 backend の保存形式（ハイフン区切り）にここで結合する。
+  const phoneNumber = ["phoneNumber1", "phoneNumber2", "phoneNumber3"]
+    .map((key) => (formData.get(key) as string) ?? "")
+    .join("-")
+  const postalCode = ["postalCode1", "postalCode2"]
+    .map((key) => (formData.get(key) as string) ?? "")
+    .join("-")
+
   try {
     const client = createGrpcClient(UpdateUserService, session.accessToken)
     await client.updateUser({
       name: formData.get("name") as string,
-      phoneNumber: formData.get("phoneNumber") as string,
-      postalCode: formData.get("postalCode") as string,
+      phoneNumber,
+      postalCode,
       address1: formData.get("address1") as string,
       address2: formData.get("address2") as string,
     })
