@@ -3,7 +3,9 @@ package jp.momiji.projection.user
 import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.SHIPPING_ADDRESSES
 import jp.momiji.event.user.DefaultShippingAddressChangedEvent
+import jp.momiji.event.user.ShippingAddressDeletedEvent
 import jp.momiji.event.user.ShippingAddressRegisteredEvent
+import jp.momiji.event.user.ShippingAddressUpdatedEvent
 import jp.momiji.event.user.UserDeletedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
@@ -51,6 +53,44 @@ class ShippingAddressTableProjector(
             // 冪等性: イベント再処理で同じ id が来ても二重 insert しない（コマンド側でも冪等だが二重防御）。
             .onDuplicateKeyIgnore()
             .execute()
+    }
+
+    @EventHandler
+    fun on(
+        event: ShippingAddressUpdatedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        val updated =
+            dsl
+                .update(SHIPPING_ADDRESSES)
+                .set(SHIPPING_ADDRESSES.NAME, event.name)
+                .set(SHIPPING_ADDRESSES.PHONE_NUMBER, event.phoneNumber)
+                .set(SHIPPING_ADDRESSES.POSTAL_CODE, event.postalCode)
+                .set(SHIPPING_ADDRESSES.PREFECTURE, event.prefecture)
+                .set(SHIPPING_ADDRESSES.CITY, event.city)
+                .set(SHIPPING_ADDRESSES.STREET_ADDRESS, event.streetAddress)
+                .set(SHIPPING_ADDRESSES.BUILDING, event.building)
+                .set(SHIPPING_ADDRESSES.DELIVERY_NOTE, event.deliveryNote)
+                .set(SHIPPING_ADDRESSES.UPDATED_AT, LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
+                .where(SHIPPING_ADDRESSES.ID.eq(event.shippingAddressId))
+                .execute()
+        // コマンド側で存在確認済みなので 0 行は異常。 黙って編集が消えないよう痕跡を残す（規約: 対象不在は warn）。
+        if (updated == 0) {
+            logger.warn { "編集対象の配送先行がありません: shippingAddressId=${event.shippingAddressId}" }
+        }
+    }
+
+    @EventHandler
+    fun on(event: ShippingAddressDeletedEvent) {
+        val deleted =
+            dsl
+                .deleteFrom(SHIPPING_ADDRESSES)
+                .where(SHIPPING_ADDRESSES.ID.eq(event.shippingAddressId))
+                .execute()
+        // 冪等性: 対象不在は例外でなく warn で握る（規約）。
+        if (deleted == 0) {
+            logger.warn { "削除対象の配送先行がありません: shippingAddressId=${event.shippingAddressId}" }
+        }
     }
 
     @EventHandler
