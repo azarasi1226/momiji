@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.PAYMENT_METHODS
+import iss.jooq.generated.tables.references.SHIPPING_ADDRESSES
 import iss.jooq.generated.tables.references.USERS
 import jp.momiji.port.idp.IdpUserClient
 import jp.momiji.port.idp.IdpUserInfoFetcher
@@ -152,6 +153,7 @@ abstract class MomijiIntegrationTestBase {
         dsl.deleteFrom(LOOKUP_EMAIL).execute()
         dsl.deleteFrom(LOOKUP_EXTERNAL_IDENTITIES).execute()
         dsl.deleteFrom(PAYMENT_METHODS).execute()
+        dsl.deleteFrom(SHIPPING_ADDRESSES).execute()
         dsl.deleteFrom(USERS).execute()
 
         fixture = AxonTestFixture.with(configurer)
