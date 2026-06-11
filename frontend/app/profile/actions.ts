@@ -4,6 +4,7 @@ import { signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createGrpcClient } from "@/lib/grpc"
+import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments"
 import { requireValidSession } from "@/lib/session"
 import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js"
 import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js"
@@ -73,12 +74,8 @@ export async function updateProfile(
   const session = await requireValidSession()
 
   // 電話番号・郵便番号は UI では分割枠（ハイフンは画面の飾り）。 backend の保存形式（ハイフン区切り）にここで結合する。
-  const phoneNumber = ["phoneNumber1", "phoneNumber2", "phoneNumber3"]
-    .map((key) => (formData.get(key) as string) ?? "")
-    .join("-")
-  const postalCode = ["postalCode1", "postalCode2"]
-    .map((key) => (formData.get(key) as string) ?? "")
-    .join("-")
+  const phoneNumber = joinPhoneNumber(formData)
+  const postalCode = joinPostalCode(formData)
 
   try {
     const client = createGrpcClient(UpdateUserService, session.accessToken)

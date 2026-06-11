@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CreditCard } from "lucide-react"
+import { CreditCard, MapPin } from "lucide-react"
 import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -46,6 +46,21 @@ export default async function ProfilePage() {
           <Button asChild variant="outline" size="sm">
             <Link href="/profile/payment-methods">
               <CreditCard />
+              管理する
+            </Link>
+          </Button>
+        </div>
+
+        <Separator />
+
+        <div className="flex w-full items-center justify-between">
+          <div className="flex flex-col">
+            <h2 className="text-lg font-medium">配送先</h2>
+            <p className="text-sm text-muted-foreground">お届け先の住所を管理します。</p>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/profile/shipping-addresses">
+              <MapPin />
               管理する
             </Link>
           </Button>
