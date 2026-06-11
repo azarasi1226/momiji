@@ -60,3 +60,34 @@ inline fun <T1, T2, T3, T4, T5, T6, T7, E, V> zipOrAccumulate(
         Err(results.filterErr())
     }
 }
+
+@OptIn(UnsafeResultValueAccess::class)
+inline fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, E, V> zipOrAccumulate(
+    producer1: () -> Result<T1, E>,
+    producer2: () -> Result<T2, E>,
+    producer3: () -> Result<T3, E>,
+    producer4: () -> Result<T4, E>,
+    producer5: () -> Result<T5, E>,
+    producer6: () -> Result<T6, E>,
+    producer7: () -> Result<T7, E>,
+    producer8: () -> Result<T8, E>,
+    producer9: () -> Result<T9, E>,
+    transform: (T1, T2, T3, T4, T5, T6, T7, T8, T9) -> V,
+): Result<V, List<E>> {
+    val r1 = producer1()
+    val r2 = producer2()
+    val r3 = producer3()
+    val r4 = producer4()
+    val r5 = producer5()
+    val r6 = producer6()
+    val r7 = producer7()
+    val r8 = producer8()
+    val r9 = producer9()
+
+    val results: List<Result<*, E>> = listOf(r1, r2, r3, r4, r5, r6, r7, r8, r9)
+    return if (results.allOk()) {
+        Ok(transform(r1.value, r2.value, r3.value, r4.value, r5.value, r6.value, r7.value, r8.value, r9.value))
+    } else {
+        Err(results.filterErr())
+    }
+}
