@@ -1,6 +1,7 @@
 package jp.momiji.feature.command.user.delete
 
 import jp.momiji.MomijiIntegrationTestBase
+import jp.momiji.event.payment.StripeCustomerRegisteredEvent
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.command.user.delete.DeleteUserCommand
@@ -29,6 +30,37 @@ class DeleteUserCommandHandlerTest : MomijiIntegrationTestBase() {
                 UserDeletedEvent(
                     id = userId,
                     oidcSubjects = emptyList(),
+                    stripeCustomerId = null,
+                ),
+            )
+    }
+
+    @Test
+    fun `StripeCustomer登録済みユーザーの削除イベントにはstripeCustomerIdが載る`() {
+        val userId = "01HXYZTESTUSER0000000000013"
+
+        fixture
+            .given()
+            .events(
+                UserCreatedEvent(
+                    id = userId,
+                    email = "erin@example.com",
+                ),
+                StripeCustomerRegisteredEvent(
+                    userId = userId,
+                    stripeCustomerId = "cus_erin",
+                ),
+            ).`when`()
+            .command(
+                DeleteUserCommand(id = userId),
+            ).then()
+            .resultMessagePayload(DeleteUserCommandResult.success())
+            .events(
+                UserDeletedEvent(
+                    id = userId,
+                    oidcSubjects = emptyList(),
+                    // State が payment スライスの StripeCustomerRegisteredEvent を fold して載せる
+                    stripeCustomerId = "cus_erin",
                 ),
             )
     }
@@ -62,6 +94,7 @@ class DeleteUserCommandHandlerTest : MomijiIntegrationTestBase() {
                 UserDeletedEvent(
                     id = userId,
                     oidcSubjects = emptyList(),
+                    stripeCustomerId = null,
                 ),
             ).`when`()
             .command(
