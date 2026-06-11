@@ -85,6 +85,7 @@ class StripePaymentGateway(
             // 4xx の不正リクエスト系（既に切り離し済み / pm_ 不在 = resource_missing 等）は恒久エラー。
             // リトライしても結果は変わらず、 望む終端状態（attach されていない）は実質達成済みなので冪等に握る。
             // ここで投げると pooledStreaming が同じイベントを無限リトライしてセグメントが詰まる。
+            // StripeのAPIページでInvalidRequestExceptionが送られてくるのをこの目で確認した。
             logger.warn(e) { "Stripe PaymentMethod の切り離しをスキップ（恒久エラー・冪等扱い）: paymentMethodId=$paymentMethodId" }
         }
         // 上記以外（ApiConnectionException / RateLimitException / 5xx の ApiException 等）は一時障害なので
