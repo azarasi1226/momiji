@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { CreditCard } from "lucide-react"
 import { auth } from "@/auth"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { fetchProfile } from "./actions"
 import { ProfileForm } from "./profile-form"
@@ -33,6 +35,21 @@ export default async function ProfilePage() {
         <Separator />
 
         <EmailChangeForm currentEmail={profile.email} />
+
+        <Separator />
+
+        <div className="flex w-full items-center justify-between">
+          <div className="flex flex-col">
+            <h2 className="text-lg font-medium">支払い方法</h2>
+            <p className="text-sm text-muted-foreground">登録済みのクレジットカードを管理します。</p>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/profile/payment-methods">
+              <CreditCard />
+              管理する
+            </Link>
+          </Button>
+        </div>
 
         <Separator />
 

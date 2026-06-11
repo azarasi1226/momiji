@@ -143,7 +143,7 @@ class ConfirmEmailChangeCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "alice@example.com"),
-                UserDeletedEvent(id = userId, oidcSubjects = emptyList()),
+                UserDeletedEvent(id = userId, oidcSubjects = emptyList(), stripeCustomerId = null),
             ).`when`()
             .command(
                 ConfirmEmailChangeCommand(

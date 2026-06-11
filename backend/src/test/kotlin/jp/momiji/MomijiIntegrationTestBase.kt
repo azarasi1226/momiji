@@ -3,11 +3,13 @@ package jp.momiji
 import com.ninjasquad.springmockk.MockkBean
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import iss.jooq.generated.tables.references.LOOKUP_EMAIL
+import iss.jooq.generated.tables.references.PAYMENT_METHODS
 import iss.jooq.generated.tables.references.USERS
 import jp.momiji.port.idp.IdpUserClient
 import jp.momiji.port.idp.IdpUserInfoFetcher
 import jp.momiji.port.idp.TokenClientIdExtractor
 import jp.momiji.port.mail.MailSender
+import jp.momiji.port.payment.PaymentGateway
 import jp.momiji.port.storage.ImageStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -107,6 +109,14 @@ abstract class MomijiIntegrationTestBase {
     @MockkBean(relaxed = true)
     lateinit var imageStorage: ImageStorage
 
+    /**
+     * PrepareCardRegistrationGrpcService が常に生成され PaymentGateway を注入要求するが、
+     * 統合テストでは payment-stripe profile を有効化しないため実装 bean ( StripePaymentGateway ) が存在しない。
+     * idp / mail と同じく mock で供給する（Stripe への外部 IO は統合テストでは検証しない）。
+     */
+    @MockkBean(relaxed = true)
+    lateinit var paymentGateway: PaymentGateway
+
     lateinit var fixture: AxonTestFixture
 
     companion object {
@@ -141,6 +151,7 @@ abstract class MomijiIntegrationTestBase {
         // EventStore側はテスト毎にユニークな userId を使うことで衝突を回避している。
         dsl.deleteFrom(LOOKUP_EMAIL).execute()
         dsl.deleteFrom(LOOKUP_EXTERNAL_IDENTITIES).execute()
+        dsl.deleteFrom(PAYMENT_METHODS).execute()
         dsl.deleteFrom(USERS).execute()
 
         fixture = AxonTestFixture.with(configurer)

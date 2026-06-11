@@ -84,7 +84,7 @@ export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
 
         {requestState?.error && <p className="text-sm text-destructive">{requestState.error}</p>}
 
-        <Button type="submit" disabled={isRequesting}>
+        <Button type="submit" disabled={isRequesting} className="w-fit">
           {isRequesting ? "送信中..." : "変更リクエスト送信"}
         </Button>
       </form>

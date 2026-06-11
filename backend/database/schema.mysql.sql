@@ -6,6 +6,8 @@ CREATE TABLE users (
   postal_code varchar(255) NOT NULL,
   address1 varchar(255) NOT NULL,
   address2 varchar(255) NOT NULL,
+  -- Stripe Customer ID (cus_)。 lazy 作成（初回カード登録まで NULL）。 1 ユーザー = 1 Customer の 1:1。
+  stripe_customer_id varchar(255) NULL,
   created_at datetime(6) NOT NULL,
   updated_at datetime(6) NOT NULL,
   PRIMARY KEY (id),
@@ -70,3 +72,20 @@ CREATE TABLE stocks (
   updated_at datetime(6) NOT NULL,
   PRIMARY KEY (product_id)
 );
+
+-- 生カード番号は持たず、 表示用の brand / 下 4 桁 / 有効期限のみ
+CREATE TABLE payment_methods (
+  id varchar(255) NOT NULL,
+  user_id varchar(255) NOT NULL,
+  brand varchar(255) NOT NULL,
+  last4 varchar(255) NOT NULL,
+  exp_month int NOT NULL,
+  exp_year int NOT NULL,
+  is_default tinyint(1) NOT NULL,
+  created_at datetime(6) NOT NULL,
+  updated_at datetime(6) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+-- ユーザーのカード一覧取得・ユーザー削除時の user_id 一括削除用
+CREATE INDEX idx_payment_methods_user_id ON payment_methods (user_id);

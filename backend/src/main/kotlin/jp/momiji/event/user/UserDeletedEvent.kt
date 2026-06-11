@@ -10,4 +10,7 @@ data class UserDeletedEvent(
     val id: String,
     // 　MomijiのユーザーとIDP内のユーザーを同期削除するための識別子
     val oidcSubjects: List<String>,
+    // Stripe Customer（cus_）を同期削除するための識別子。
+    // nullable なのはドメインの事実: Customer は lazy 作成なので、 カード未登録ユーザーには存在しない。
+    val stripeCustomerId: String?,
 )

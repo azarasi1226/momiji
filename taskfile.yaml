@@ -26,6 +26,14 @@ tasks:
     desc: コンテナ起動
     cmds:
       - docker compose -f ./local/docker-compose.yaml up -d --wait
+      # minio-init はワンショットで exit するため --wait に含められない（exit を待機失敗と判定される）
+      # minio-init だけ profile で外してあるので、↑のコマンドの対象とならず、 ここで個別に実行する。
+      - docker compose -f ./local/docker-compose.yaml run --rm minio-init
+
+  stripe-listen:
+    desc: Stripe のテストイベントをローカル backend の webhook に転送（要・初回 stripe login）
+    cmds:
+      - stripe listen --forward-to localhost:9090/api/webhooks/stripe
 
   docker-down:
     desc: コンテナ停止（ボリューム/データは残す）

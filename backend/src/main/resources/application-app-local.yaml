@@ -1,7 +1,11 @@
 # ローカル開発用の環境変数を properties ファイルから import
 spring:
   config:
-    import: classpath:local.env.properties
+    import:
+      - classpath:local.env.properties
+      # 各自の秘密値（Stripe の sk_test_ / whsec_ 等）を置く gitignore 対象ファイル。
+      # 無くても起動する（optional）。 ここで local.env.properties の値を上書きできる。
+      - optional:classpath:local.secret.properties
 
 logging:
   level:

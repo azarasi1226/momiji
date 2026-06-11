@@ -24,6 +24,7 @@ class IdpUserDeleterTest : MomijiIntegrationTestBase() {
             UserDeletedEvent(
                 id = userId,
                 oidcSubjects = listOf(subject1, subject2),
+                stripeCustomerId = null,
             )
 
         fixture
@@ -47,6 +48,7 @@ class IdpUserDeleterTest : MomijiIntegrationTestBase() {
             UserDeletedEvent(
                 id = userId,
                 oidcSubjects = emptyList(),
+                stripeCustomerId = null,
             )
 
         fixture
