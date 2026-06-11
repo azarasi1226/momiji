@@ -2,6 +2,7 @@ package jp.momiji.feature.command.user.delete
 
 import iss.jooq.generated.tables.LookupExternalIdentities.Companion.LOOKUP_EXTERNAL_IDENTITIES
 import jp.momiji.event.MomijiEventTag
+import jp.momiji.event.payment.StripeCustomerRegisteredEvent
 import jp.momiji.event.user.UserCreatedEvent
 import jp.momiji.event.user.UserDeletedEvent
 import jp.momiji.feature.command.CommandResult
@@ -33,7 +34,13 @@ class DeleteUserCommandHandler(
         }
 
         eventAppender.append(
-            UserDeletedEvent(id = command.id, oidcSubjects = findOidcSubjects(command.id)),
+            UserDeletedEvent(
+                id = command.id,
+                oidcSubjects = findOidcSubjects(command.id),
+                // 後続の StripeCustomerDeleter が Stripe 側の Customer を同期削除するための識別子。
+                // lookup でなくイベント由来（State の fold）なので projection の反映遅延に左右されない。
+                stripeCustomerId = state.stripeCustomerId,
+            ),
         )
         return DeleteUserCommandResult.success()
     }
@@ -50,11 +57,14 @@ class DeleteUserCommandHandler(
     class State(
         var created: Boolean,
         var deleted: Boolean,
+        // Stripe Customer（cus_）。 削除イベントに載せて Stripe 側の同期削除に使う（payment スライスのイベントを fold）。
+        var stripeCustomerId: String?,
     ) {
         @EntityCreator
         constructor() : this(
             created = false,
             deleted = false,
+            stripeCustomerId = null,
         )
 
         @EventSourcingHandler
@@ -65,6 +75,11 @@ class DeleteUserCommandHandler(
         @EventSourcingHandler
         fun evolve(event: UserDeletedEvent) {
             deleted = true
+        }
+
+        @EventSourcingHandler
+        fun evolve(event: StripeCustomerRegisteredEvent) {
+            stripeCustomerId = event.stripeCustomerId
         }
     }
 }
