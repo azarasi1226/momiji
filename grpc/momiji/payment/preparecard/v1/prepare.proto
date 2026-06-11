@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package momiji.payment.preparecard.v1;
+
+// カード登録の準備。 Stripe Customer(cus_) を lazy 作成し SetupIntent を作って client_secret を返す。
+// フロントはこの client_secret を Stripe.js の confirmSetup に渡してカード入力 / 3DS を行わせる。
+// カードの持ち主(user)は JWT から解決するのでリクエストには含めない。
+service PrepareCardRegistrationService {
+  rpc PrepareCardRegistration(PrepareCardRegistrationRequest) returns (PrepareCardRegistrationResponse);
+}
+
+message PrepareCardRegistrationRequest {}
+
+message PrepareCardRegistrationResponse {
+  // Stripe.js の confirmSetup に渡す client_secret。
+  string client_secret = 1;
+}

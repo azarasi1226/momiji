@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package momiji.payment.listcards.v1;
+
+// 保存カード一覧。 持ち主(user)は JWT から解決するのでリクエストには含めない。
+service ListCardsService {
+  rpc ListCards(ListCardsRequest) returns (ListCardsResponse);
+}
+
+message ListCardsRequest {}
+
+message ListCardsResponse {
+  repeated Card cards = 1;
+}
+
+message Card {
+  string id = 1;
+  string brand = 2;
+  string last4 = 3;
+  int32 exp_month = 4;
+  int32 exp_year = 5;
+  bool is_default = 6;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package momiji.payment.changedefaultcard.v1;
+
+// デフォルトカードを変更する。 持ち主(user)は JWT から解決する。
+service ChangeDefaultCardService {
+  rpc ChangeDefaultCard(ChangeDefaultCardRequest) returns (ChangeDefaultCardResponse);
+}
+
+message ChangeDefaultCardRequest {
+  string payment_method_id = 1;
+}
+
+message ChangeDefaultCardResponse {}

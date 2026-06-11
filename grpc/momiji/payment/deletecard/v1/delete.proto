@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package momiji.payment.deletecard.v1;
+
+// 登録済みカード(pm_)を削除する。 持ち主(user)は JWT から解決する。
+service DeleteCardService {
+  rpc DeleteCard(DeleteCardRequest) returns (DeleteCardResponse);
+}
+
+message DeleteCardRequest {
+  string payment_method_id = 1;
+}
+
+message DeleteCardResponse {}
