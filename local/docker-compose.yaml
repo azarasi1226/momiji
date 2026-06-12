@@ -21,15 +21,16 @@ services:
       retries: 30
       start_period: 5s
 
-  mysql:
-    image: mysql:9.7.0
+  postgres:
+    image: postgres:18
     environment:
-      MYSQL_ROOT_PASSWORD: passw0rd
-      MYSQL_DATABASE: momiji
+      POSTGRES_PASSWORD: passw0rd
+      POSTGRES_DB: momiji
+    # 他プロジェクトの postgres と衝突しないようホスト側は 5436 にずらす
     ports:
-      - "3336:3306"
+      - "5436:5432"
     volumes:
-      - momiji-mysql-data:/var/lib/mysql
+      - momiji-postgres-data:/var/lib/postgresql
 
   keycloak:
     image: keycloak/keycloak:26.6.2
@@ -131,7 +132,7 @@ services:
       - ./minio/init.sh:/init.sh:ro
 
 volumes:
-  momiji-mysql-data:
+  momiji-postgres-data:
   momiji-axonserver-data:
   momiji-axonserver-events:
   momiji-keycloak-data:

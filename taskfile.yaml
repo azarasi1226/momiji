@@ -49,7 +49,7 @@ tasks:
     desc: データベースのマイグレーション差分を生成
     dir: ./backend/database
     cmds:
-      - atlas migrate diff --dev-url "docker://mysql/8/dev" --dir "file://migrations" --to "file://schema.mysql.sql"
+      - atlas migrate diff --dev-url "docker://postgres/18/dev?search_path=public" --dir "file://migrations" --to "file://schema.postgresql.sql"
 
   atlas-migrate-apply:
     desc: データベースのマイグレーションを適用
@@ -57,7 +57,7 @@ tasks:
     deps:
       - docker-up
     cmds:
-      - atlas migrate apply --url "mysql://root:passw0rd@localhost:3336/momiji" --dir "file://migrations" --allow-dirty
+      - atlas migrate apply --url "postgres://postgres:passw0rd@localhost:5436/momiji?sslmode=disable" --dir "file://migrations" --allow-dirty
 
   buf-lint:
     desc: protoファイルのlintを実行
