@@ -5,9 +5,9 @@
 ユーザーの認証・アカウント管理サービス。**CQRS + Event Sourcing**（Axon Framework 5.1.1 の DCB）で構築し、外部 IdP（ローカル: Keycloak / 本番: Cognito）と連携する。フロントは BFF（Next.js + Auth.js）。
 
 - **docs**: ドキュメント、ADR等
-- **backend**: Kotlin / Spring Boot 4 / Axon 5.1.1（DCB）/ jOOQ + MySQL / gRPC(Connect)
+- **backend**: Kotlin / Spring Boot 4 / Axon 5.1.1（DCB）/ jOOQ + PostgreSQL / gRPC(Connect)
 - **frontend**: Next.js + Auth.js v5（BFF パターン、gRPC で backend を叩く）
-- **local/**: docker-compose（Axon Server / MySQL / Keycloak / Mailpit / Prometheus / Tempo / Grafana）
+- **local/**: docker-compose（Axon Server / PostgreSQL / Keycloak / Mailpit / Prometheus / Tempo / Grafana）
 
 ## ビルド・テスト・実行
 
@@ -18,7 +18,7 @@
 JAVA_HOME="/c/Users/seal1/.jdks/corretto-25.0.2" ./gradlew compileKotlin compileTestKotlin
 JAVA_HOME="/c/Users/seal1/.jdks/corretto-25.0.2" ./gradlew test            # 全テスト（Testcontainers 使用）
 JAVA_HOME="/c/Users/seal1/.jdks/corretto-25.0.2" ./gradlew test --tests "*XxxTest"
-./gradlew bootRun   # 起動（profile=local が既定）。要 Keycloak/MySQL 先行起動
+./gradlew bootRun   # 起動（profile=local が既定）。要 Keycloak/PostgreSQL 先行起動
 ```
 
 - ポート: HTTP `9090` / gRPC `9091`
@@ -37,7 +37,7 @@ npx tsc --noEmit
 ```bash
 docker compose -f local/docker-compose.yaml up -d
 ```
-Keycloak `8085` / MySQL `3336` / Mailpit `8025` / Grafana `3001` / Prometheus `19090`
+Keycloak `8085` / PostgreSQL `5436` / Mailpit `8025` / Grafana `3001` / Prometheus `19090`
 
 ## アーキテクチャ / パッケージ構成（backend `jp.momiji`）
 
