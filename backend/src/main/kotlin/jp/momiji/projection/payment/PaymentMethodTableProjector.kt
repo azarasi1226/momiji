@@ -66,8 +66,8 @@ class PaymentMethodTableProjector(
             .set(PAYMENT_METHODS.LAST4, event.last4)
             .set(PAYMENT_METHODS.EXP_MONTH, event.expMonth)
             .set(PAYMENT_METHODS.EXP_YEAR, event.expYear)
-            // default の付与は DefaultCardChangedEvent（同コマンドで一括追記される）が担うため、 登録時点では常に 0。
-            .set(PAYMENT_METHODS.IS_DEFAULT, false.toByteFlag())
+            // default の付与は DefaultCardChangedEvent（同コマンドで一括追記される）が担うため、 登録時点では常に false。
+            .set(PAYMENT_METHODS.IS_DEFAULT, false)
             .set(PAYMENT_METHODS.CREATED_AT, at)
             .set(PAYMENT_METHODS.UPDATED_AT, at)
             // 冪等性: webhook 再送由来で同じ pm_ が来ても二重 insert しない（コマンド側でも冪等だが二重防御）。
@@ -106,7 +106,7 @@ class PaymentMethodTableProjector(
         // 同一ユーザーの既存 default を全て落としてから、
         dsl
             .update(PAYMENT_METHODS)
-            .set(PAYMENT_METHODS.IS_DEFAULT, false.toByteFlag())
+            .set(PAYMENT_METHODS.IS_DEFAULT, false)
             .set(PAYMENT_METHODS.UPDATED_AT, at)
             .where(PAYMENT_METHODS.USER_ID.eq(event.userId))
             .execute()
@@ -114,7 +114,7 @@ class PaymentMethodTableProjector(
         val updated =
             dsl
                 .update(PAYMENT_METHODS)
-                .set(PAYMENT_METHODS.IS_DEFAULT, true.toByteFlag())
+                .set(PAYMENT_METHODS.IS_DEFAULT, true)
                 .set(PAYMENT_METHODS.UPDATED_AT, at)
                 .where(PAYMENT_METHODS.ID.eq(event.paymentMethodId))
                 .execute()
@@ -125,6 +125,3 @@ class PaymentMethodTableProjector(
         }
     }
 }
-
-// is_default は MySQL tinyint(1) = jOOQ では Byte。 Boolean を 0/1 に橋渡しする。
-private fun Boolean.toByteFlag(): Byte = if (this) 1 else 0

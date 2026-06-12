@@ -46,8 +46,8 @@ class ShippingAddressTableProjector(
             .set(SHIPPING_ADDRESSES.STREET_ADDRESS, event.streetAddress)
             .set(SHIPPING_ADDRESSES.BUILDING, event.building)
             .set(SHIPPING_ADDRESSES.DELIVERY_NOTE, event.deliveryNote)
-            // default の付与は DefaultShippingAddressChangedEvent（同コマンドで一括追記される）が担うため、 登録時点では常に 0。
-            .set(SHIPPING_ADDRESSES.IS_DEFAULT, false.toByteFlag())
+            // default の付与は DefaultShippingAddressChangedEvent（同コマンドで一括追記される）が担うため、 登録時点では常に false。
+            .set(SHIPPING_ADDRESSES.IS_DEFAULT, false)
             .set(SHIPPING_ADDRESSES.CREATED_AT, at)
             .set(SHIPPING_ADDRESSES.UPDATED_AT, at)
             // 冪等性: イベント再処理で同じ id が来ても二重 insert しない（コマンド側でも冪等だが二重防御）。
@@ -102,7 +102,7 @@ class ShippingAddressTableProjector(
         // 同一ユーザーの既存 default を全て落としてから、
         dsl
             .update(SHIPPING_ADDRESSES)
-            .set(SHIPPING_ADDRESSES.IS_DEFAULT, false.toByteFlag())
+            .set(SHIPPING_ADDRESSES.IS_DEFAULT, false)
             .set(SHIPPING_ADDRESSES.UPDATED_AT, at)
             .where(SHIPPING_ADDRESSES.USER_ID.eq(event.userId))
             .execute()
@@ -110,7 +110,7 @@ class ShippingAddressTableProjector(
         val updated =
             dsl
                 .update(SHIPPING_ADDRESSES)
-                .set(SHIPPING_ADDRESSES.IS_DEFAULT, true.toByteFlag())
+                .set(SHIPPING_ADDRESSES.IS_DEFAULT, true)
                 .set(SHIPPING_ADDRESSES.UPDATED_AT, at)
                 .where(SHIPPING_ADDRESSES.ID.eq(event.shippingAddressId))
                 .execute()
@@ -129,6 +129,3 @@ class ShippingAddressTableProjector(
             .execute()
     }
 }
-
-// is_default は MySQL tinyint(1) = jOOQ では Byte。 Boolean を 0/1 に橋渡しする。
-private fun Boolean.toByteFlag(): Byte = if (this) 1 else 0

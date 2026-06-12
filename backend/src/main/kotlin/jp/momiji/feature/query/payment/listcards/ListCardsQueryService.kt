@@ -31,7 +31,7 @@ class ListCardsQueryService(
                     last4 = record[PAYMENT_METHODS.LAST4]!!,
                     expMonth = record[PAYMENT_METHODS.EXP_MONTH]!!,
                     expYear = record[PAYMENT_METHODS.EXP_YEAR]!!,
-                    isDefault = record[PAYMENT_METHODS.IS_DEFAULT]!!.toInt() != 0,
+                    isDefault = record[PAYMENT_METHODS.IS_DEFAULT]!!,
                 )
             }
 }

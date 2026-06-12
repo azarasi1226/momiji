@@ -37,7 +37,7 @@ import org.testcontainers.lifecycle.Startable
  * 統合テストの基底クラス。
  *
  * CQRS+ES のコアパスを検証するための最小構成:
- * - MySQL TestContainer（jOOQ Lookup テーブル操作の本物の流れ）
+ * - PostgreSQL TestContainer（jOOQ Lookup テーブル操作の本物の流れ）
  * - Axon Server TestContainer（DCB EventStore、 CommandHandler / EventHandler の本物の流れ）
  *
  * 外部 IO の bean は **mock 化** することでコンテナと profile を削減している:
@@ -122,12 +122,12 @@ abstract class MomijiIntegrationTestBase {
 
     companion object {
         // コンテナを並列で起動
-        val mysql = TestContainerFactory.mysql()
+        val postgres = TestContainerFactory.postgres()
         val axonServer = TestContainerFactory.axonServer()
 
         init {
             runBlocking {
-                listOf<Startable>(mysql, axonServer)
+                listOf<Startable>(postgres, axonServer)
                     .map { container -> async(Dispatchers.IO) { container.start() } }
                     .awaitAll()
             }
@@ -136,10 +136,10 @@ abstract class MomijiIntegrationTestBase {
         @JvmStatic
         @DynamicPropertySource
         fun registerProperties(registry: DynamicPropertyRegistry) {
-            // MySQL（DataSource）
-            registry.add("spring.datasource.url") { mysql.jdbcUrl }
-            registry.add("spring.datasource.username") { mysql.username }
-            registry.add("spring.datasource.password") { mysql.password }
+            // PostgreSQL（DataSource）
+            registry.add("spring.datasource.url") { postgres.jdbcUrl }
+            registry.add("spring.datasource.username") { postgres.username }
+            registry.add("spring.datasource.password") { postgres.password }
 
             // Axon Server
             registry.add("axon.axonserver.servers") { axonServer.axonServerAddress }

@@ -37,7 +37,7 @@ class ListShippingAddressesQueryService(
                     streetAddress = record[SHIPPING_ADDRESSES.STREET_ADDRESS]!!,
                     building = record[SHIPPING_ADDRESSES.BUILDING]!!,
                     deliveryNote = record[SHIPPING_ADDRESSES.DELIVERY_NOTE]!!,
-                    isDefault = record[SHIPPING_ADDRESSES.IS_DEFAULT]!!.toInt() != 0,
+                    isDefault = record[SHIPPING_ADDRESSES.IS_DEFAULT]!!,
                 )
             }
 }

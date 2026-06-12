@@ -1,29 +1,29 @@
 package jp.momiji
 
 import io.axoniq.framework.testcontainer.AxonServerContainer
-import org.testcontainers.mysql.MySQLContainer
+import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
 import java.nio.file.Paths
 
 /**
  * 統合テスト用の TestContainer ファクトリ。 CQRS+ES のコアパス検証に必要な
- * MySQL (jOOQ Lookup) と Axon Server (DCB EventStore) だけを提供する。
+ * PostgreSQL (jOOQ Lookup) と Axon Server (DCB EventStore) だけを提供する。
  *
  * IDP / Mail / JwtDecoder / OidcUserInfoFetcher は @MockkBean で置き換えるので
  * Keycloak / MailHog のコンテナは立てない (MomijiIntegrationTestBase 参照)。
  */
 object TestContainerFactory {
-    fun mysql(): MySQLContainer =
-        MySQLContainer("mysql:8.0").apply {
+    fun postgres(): PostgreSQLContainer =
+        PostgreSQLContainer("postgres:18").apply {
             // backend/ をカレントとした相対パスで schema を取得し、コンテナの
-            // /docker-entrypoint-initdb.d/ に配置することで起動時に自動適用させる
+            // /docker-entrypoint-initdb.d/ に配置することで起動時に自動適用させる（postgres も同じ init 機構）
             val schemaPath =
                 Paths
-                    .get("database/schema.mysql.sql")
+                    .get("database/schema.postgresql.sql")
                     .toAbsolutePath()
             withCopyFileToContainer(
                 MountableFile.forHostPath(schemaPath),
-                "/docker-entrypoint-initdb.d/schema.mysql.sql",
+                "/docker-entrypoint-initdb.d/schema.postgresql.sql",
             )
         }
 
