@@ -13,7 +13,9 @@ class JooqConfig {
         DefaultConfigurationCustomizer { configuration: DefaultConfiguration ->
             configuration
                 .settings()
-                // MySQLはテーブル名やプロパティ名が小文字で定義されている場合に、大文字のクエリが発行されるとエラーになるのでSQLを小文字に変換する設定
+                // jOOQ codegen は識別子を大文字（IS_DEFAULT 等）で生成し、 既定で quote するため "IS_DEFAULT" と発行する。
+                // PostgreSQL は unquoted 識別子を小文字に畳むため列は is_default で作られ、 大文字 quote だと不一致でエラーになる。
+                // レンダリング名を小文字に変換して列名（小文字）と一致させる。
                 .withRenderNameCase(RenderNameCase.LOWER)
         }
 }

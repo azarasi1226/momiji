@@ -35,7 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("org.postgresql:postgresql")
 
     // o11y
     implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
@@ -56,15 +56,14 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
-    testImplementation("org.testcontainers:testcontainers-mysql")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
     val jooqVersion = "3.21.5"
     implementation("org.jooq:jooq:$jooqVersion")
-    jooqCodegen("com.mysql:mysql-connector-j")
-    jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用
+    jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用（H2 で schema を解釈するので実 DB ドライバは不要）
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 
     // Axon
@@ -139,7 +138,7 @@ jooq {
                 properties {
                     property {
                         key = "scripts"
-                        value = "./database/schema.mysql.sql"
+                        value = "./database/schema.postgresql.sql"
                     }
                 }
             }
