@@ -8,10 +8,10 @@
 | --- | --- |
 | backend | Kotlin / Spring Boot 4 / **Axon Framework 5（DCB）** / jOOQ / gRPC |
 | frontend | Next.js（BFF パターン）/ shadcn/ui / tailwind |
-| database | MySQL |
+| database | PostgreSQL |
 | 認証 | OIDC 準拠 IdP（ローカル: Keycloak、本番: Cognito）。破壊的変更なしに交換可能 |
 | 決済 | Stripe |
-| ローカル環境 | docker （MySQL / Axon Server / Keycloak / Mailpit / MinIO / o11y スタック） |
+| ローカル環境 | docker （PostgreSQL / Axon Server / Keycloak / Mailpit / MinIO / o11y スタック） |
 | 可観測性 | OpenTelemetry / Prometheus / Grafana / Tempo / Loki |
 
 ## 📁プロジェクト構造
@@ -87,7 +87,7 @@ pnpm dev       # http://localhost:3000
 | backend gRPC | 9091 | | |
 | backend HTTP (Stripe webhook) | 9090 | | |
 | Axon Server UI | 8024 | <http://localhost:8024> | |
-| MySQL | 3336 | mysql://localhost:3336 | root / passw0rd |
+| PostgreSQL | 5436 | postgres://localhost:5436/momiji | postgres / passw0rd |
 | Keycloak | 8085 | <http://localhost:8085> | 管理コンソール: admin / admin |
 | Mailpit (SMTP / UI) | 1025 / 8025 | <http://localhost:8025> | |
 | MinIO (S3 API / 管理コンソール) | 9000 / 9001 | <http://localhost:9001> | minioadmin / minioadmin |
