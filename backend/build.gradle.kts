@@ -140,6 +140,13 @@ jooq {
                         key = "scripts"
                         value = "./database/schema.postgresql.sql"
                     }
+                    // H2DBを利用した jooqCodeGen は、テーブル名・列名などを大文字として自動コードを生成する
+                    // しかし、実際のテーブル名はすべて小文字で書いているため、接続エラーが発生する。
+                    // 自動生成コードを小文字で統一する。
+                    property {
+                        key = "defaultNameCase"
+                        value = "lower"
+                    }
                 }
             }
             generate {
