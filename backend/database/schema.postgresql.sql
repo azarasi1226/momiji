@@ -4,18 +4,18 @@ CREATE TABLE users (
   email varchar(255) NOT NULL,
   name varchar(255) NOT NULL,
   -- Stripe Customer ID (cus_)。 lazy 作成（初回カード登録まで NULL）。 1 ユーザー = 1 Customer の 1:1。
-  stripe_customer_id varchar(255) NULL,
-  created_at datetime(6) NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  stripe_customer_id varchar(255),
+  created_at timestamp(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uk_users_email (email)
+  CONSTRAINT uk_users_email UNIQUE (email)
 );
 
 CREATE TABLE lookup_email (
     user_id varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     PRIMARY KEY (user_id),
-    UNIQUE KEY uk_lookup_email_email (email)
+    CONSTRAINT uk_lookup_email_email UNIQUE (email)
 );
 
 CREATE TABLE lookup_external_identities (
@@ -31,8 +31,8 @@ CREATE TABLE brands (
   name varchar(255) NOT NULL,
   description text NOT NULL,
   status varchar(255) NOT NULL,
-  created_at datetime(6) NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  created_at timestamp(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -44,8 +44,8 @@ CREATE TABLE products (
   image_url varchar(255),
   price int NOT NULL,
   status varchar(255) NOT NULL,
-  created_at datetime(6) NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  created_at timestamp(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE baskets (
   user_id varchar(255) NOT NULL,
   product_id varchar(255) NOT NULL,
   item_quantity int NOT NULL,
-  added_at datetime(6) NOT NULL,
+  added_at timestamp(6) NOT NULL,
   PRIMARY KEY (user_id, product_id)
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE stocks (
   product_id varchar(255) NOT NULL,
   on_hand int NOT NULL,
   reserved int NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (product_id)
 );
 
@@ -78,9 +78,9 @@ CREATE TABLE payment_methods (
   last4 varchar(255) NOT NULL,
   exp_month int NOT NULL,
   exp_year int NOT NULL,
-  is_default tinyint(1) NOT NULL,
-  created_at datetime(6) NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  is_default boolean NOT NULL,
+  created_at timestamp(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -99,9 +99,9 @@ CREATE TABLE shipping_addresses (
   street_address varchar(255) NOT NULL,
   building varchar(255) NOT NULL,
   delivery_note varchar(500) NOT NULL,
-  is_default tinyint(1) NOT NULL,
-  created_at datetime(6) NOT NULL,
-  updated_at datetime(6) NOT NULL,
+  is_default boolean NOT NULL,
+  created_at timestamp(6) NOT NULL,
+  updated_at timestamp(6) NOT NULL,
   PRIMARY KEY (id)
 );
 
