@@ -1,11 +1,9 @@
 "use server"
 
-import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import { Code, ConnectError } from "@connectrpc/connect"
 import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
-import { parseConnectError } from "@/lib/grpc-error"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { PrepareCardRegistrationService } from "@/grpc/gen/momiji/payment/preparecard/v1/prepare_pb.js"
 import { ListCardsService } from "@/grpc/gen/momiji/payment/listcards/v1/list_pb.js"
 import { DeleteCardService } from "@/grpc/gen/momiji/payment/deletecard/v1/delete_pb.js"
@@ -18,12 +16,6 @@ export type Card = {
   expMonth: number
   expYear: number
   isDefault: boolean
-}
-
-function redirectIfUnauthenticated(e: unknown): never | void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
-  }
 }
 
 /** 保存カード一覧を取得する。 */

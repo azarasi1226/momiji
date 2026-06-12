@@ -5,11 +5,7 @@ import { Label } from "@/components/ui/label"
 import { PhoneNumberFields, PostalCodeFields } from "@/components/form/digit-fields"
 import { PREFECTURES } from "@/lib/prefectures"
 import { lookupAddress, type ShippingAddress } from "./actions"
-
-export function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return <p className="text-xs text-destructive">{message}</p>
-}
+import { FieldError } from "@/components/form/field-error"
 
 /**
  * 配送先フォームの共通フィールド（追加・編集で共有）。

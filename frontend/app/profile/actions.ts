@@ -1,7 +1,6 @@
 "use server"
 
 import { signOut } from "@/auth"
-import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
@@ -10,8 +9,7 @@ import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js
 import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js"
 import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js"
 import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js"
-import { parseConnectError } from "@/lib/grpc-error"
-import { Code, ConnectError } from "@connectrpc/connect"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 
 // プロフィールは email と name のみ（Amazon 式）。 住所・電話は配送先（shipping-addresses）が持つ。
@@ -21,16 +19,6 @@ export type UserProfile = {
   name: string
   createdAt: string
   updatedAt: string
-}
-
-/**
- * gRPC 呼び出し中に backend から UNAUTHENTICATED が返った場合の共通ハンドラ。
- * Server Action / Server Component から呼んで、 "/" に飛ばして再ログインを促す。
- */
-function redirectIfUnauthenticated(e: unknown): never | void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
-  }
 }
 
 export async function fetchProfile(): Promise<UserProfile> {

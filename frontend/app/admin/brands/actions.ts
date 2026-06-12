@@ -1,13 +1,12 @@
 "use server"
 
-import { Code, ConnectError } from "@connectrpc/connect"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { ulid } from "ulid"
 import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
-import { parseConnectError } from "@/lib/grpc-error"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/v1/list_pb.js"
 import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/v1/findbyid_pb.js"
 import { CreateBrandService } from "@/grpc/gen/momiji/brand/create/v1/create_pb.js"
@@ -33,13 +32,6 @@ function brandStatusName(status: BrandStatus): string {
       return "ARCHIVED"
     default:
       return "UNKNOWN"
-  }
-}
-
-/** Unauthenticated は session 切れなのでログインへ飛ばす（プロフィール画面と同方針）。 */
-function redirectIfUnauthenticated(e: unknown): void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
   }
 }
 

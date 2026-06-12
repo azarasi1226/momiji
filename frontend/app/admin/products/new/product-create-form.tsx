@@ -14,11 +14,7 @@ import {
 } from "@/components/ui/select"
 import { ImageUploadField } from "../image-upload-field"
 import { createProduct, type ProductFormState } from "../actions"
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return <p className="text-xs text-destructive">{message}</p>
-}
+import { FieldError } from "@/components/form/field-error"
 
 export function ProductCreateForm({
   brands,

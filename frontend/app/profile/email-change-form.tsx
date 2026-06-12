@@ -9,11 +9,7 @@ import {
   confirmEmailChange,
   type EmailChangeState,
 } from "./actions"
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return <p className="text-xs text-destructive">{message}</p>
-}
+import { FieldError } from "@/components/form/field-error"
 
 export function EmailChangeForm({ currentEmail }: { currentEmail: string }) {
   const [step, setStep] = useState<"request" | "confirm">("request")

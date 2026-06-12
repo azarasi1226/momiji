@@ -1,13 +1,11 @@
 "use server"
 
-import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import { Code, ConnectError } from "@connectrpc/connect"
 import { ulid } from "ulid"
 import { createGrpcClient } from "@/lib/grpc"
 import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments"
 import { requireValidSession } from "@/lib/session"
-import { parseConnectError } from "@/lib/grpc-error"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { RegisterShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/register/v1/register_pb.js"
 import { UpdateShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/update/v1/update_pb.js"
 import { DeleteShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/delete/v1/delete_pb.js"
@@ -33,12 +31,6 @@ export type SaveAddressState = {
   error?: string
   fieldErrors?: Record<string, string>
 } | null
-
-function redirectIfUnauthenticated(e: unknown): never | void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
-  }
-}
 
 function toSaveErrorState(e: unknown, fallback: string): SaveAddressState {
   const parsed = parseConnectError(e)
