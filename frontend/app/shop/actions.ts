@@ -1,11 +1,9 @@
 "use server"
 
-import { Code, ConnectError } from "@connectrpc/connect"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
-import { parseConnectError } from "@/lib/grpc-error"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { ListProductsService } from "@/grpc/gen/momiji/product/list/v1/list_pb.js"
 import { FindProductByIdService } from "@/grpc/gen/momiji/product/findbyid/v1/findbyid_pb.js"
 import { ProductStatus } from "@/grpc/gen/momiji/product/v1/status_pb.js"
@@ -15,13 +13,6 @@ import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/v1/find
 import { SetBasketItemService } from "@/grpc/gen/momiji/basket/setitem/v1/setitem_pb.js"
 import { DeleteBasketItemService } from "@/grpc/gen/momiji/basket/deleteitem/v1/deleteitem_pb.js"
 import { ClearBasketService } from "@/grpc/gen/momiji/basket/clear/v1/clear_pb.js"
-
-/** Unauthenticated は session 切れなのでログインへ飛ばす。 */
-function redirectIfUnauthenticated(e: unknown): void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
-  }
-}
 
 // ── 商品一覧（購入者向け: ACTIVE のみ） ───────────────────────────────
 

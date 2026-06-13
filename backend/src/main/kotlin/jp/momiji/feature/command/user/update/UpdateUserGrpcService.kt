@@ -2,14 +2,9 @@ package jp.momiji.feature.command.user.update
 
 import com.github.michaelbull.result.onErr
 import com.github.michaelbull.result.onOk
-import com.github.michaelbull.result.zipOrAccumulate
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
-import jp.momiji.domain.user.Address1
-import jp.momiji.domain.user.Address2
 import jp.momiji.domain.user.Name
-import jp.momiji.domain.user.PhoneNumber
-import jp.momiji.domain.user.PostalCode
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
 import jp.momiji.grpc.momiji.user.update.v1.UpdateUserRequest
@@ -27,27 +22,14 @@ class UpdateUserGrpcService(
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
 
-        val commandResult =
-            zipOrAccumulate(
-                { Name.create(request.name) },
-                { PhoneNumber.create(request.phoneNumber) },
-                { PostalCode.create(request.postalCode) },
-                { Address1.create(request.address1) },
-                { Address2.create(request.address2) },
-            ) { name, phoneNumber, postalCode, address1, address2 ->
-                UpdateUserCommand(
-                    id = userId,
-                    name = name,
-                    phoneNumber = phoneNumber,
-                    postalCode = postalCode,
-                    address1 = address1,
-                    address2 = address2,
-                )
+        Name
+            .create(request.name)
+            .onErr { error -> throw ValidationException(listOf(error)) }
+            .onOk { name ->
+                commandGateway
+                    .updateUser(UpdateUserCommand(id = userId, name = name))
+                    .throwIfError()
             }
-
-        commandResult
-            .onErr { errors -> throw ValidationException(errors) }
-            .onOk { command -> commandGateway.updateUser(command).throwIfError() }
 
         return UpdateUserResponse.getDefaultInstance()
     }

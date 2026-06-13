@@ -2,8 +2,8 @@ package jp.momiji.config
 
 import jakarta.annotation.PostConstruct
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.TokenStore
-import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jdbc.GenericTokenTableFactory
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jdbc.JdbcTokenStore
+import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jdbc.PostgresTokenTableFactory
 import org.springframework.context.annotation.Configuration
 
 @Configuration
@@ -18,7 +18,7 @@ class AxonConfig(
             // TokenStoreテーブル(EventProcessorにおいて、どこまでEventが呼ばれたかを記録するテーブル)を作成する。
             // 内部では CREATE TABLE IF NOT EXITS構文によってテーブルが作成されてるので、Oracleなどでは使えないから自動的に呼ばれないのかな...?(自動的に呼んでほしい...)
             tokenStore.createSchema(
-                GenericTokenTableFactory.INSTANCE,
+                PostgresTokenTableFactory.INSTANCE,
             )
         }
     }

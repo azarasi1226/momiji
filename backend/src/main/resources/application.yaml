@@ -13,7 +13,7 @@ spring:
         - app-common
         - app-local
         - observability-otlp
-        - datastore-mysql
+        - datastore-postgresql
         - idp-keycloak
         - mail-smtp
         - storage-minio
@@ -22,7 +22,7 @@ spring:
         - app-common
         - app-test
         - observability-otlp
-        - datastore-mysql
+        - datastore-postgresql
         - idp-cognito
         - storage-s3
         - payment-stripe
@@ -31,7 +31,7 @@ spring:
         - app-common
         - app-prod
         - observability-otlp
-        - datastore-mysql
+        - datastore-postgresql
         - idp-cognito
         - storage-s3
         - payment-stripe

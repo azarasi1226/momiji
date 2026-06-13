@@ -1,5 +1,17 @@
 import { Code, ConnectError } from "@connectrpc/connect"
+import { redirect } from "next/navigation"
 import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js"
+
+/**
+ * gRPC 呼び出しで UNAUTHENTICATED が返ったら "/" に飛ばして再ログインを促す。
+ * Server Action / Server Component の catch から呼ぶ（redirect は内部で例外を投げるので、
+ * 該当時は呼び出し後に到達しない＝以降の throw/return はそれ以外のエラー用）。
+ */
+export function redirectIfUnauthenticated(e: unknown): void {
+  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
+    redirect("/")
+  }
+}
 
 /**
  * 構造化エラーを backend から取り出す共通パーサ。

@@ -10,14 +10,11 @@ service FindUserByIdService {
 
 message FindUserByIdRequest {}
 
+// プロフィールは email と name のみ。 住所・電話は配送先（momiji.user.shippingaddress）が持つ。
 message FindUserByIdResponse {
   string id = 1;
   string email = 2;
   string name = 3;
-  string phone_number = 4;
-  string postal_code = 5;
-  string address1 = 6;
-  string address2 = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }

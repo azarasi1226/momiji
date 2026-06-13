@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package momiji.user.shippingaddress.register.v1;
+
+// 配送先を登録する。 持ち主(user)は JWT から解決するのでリクエストには含めない。
+service RegisterShippingAddressService {
+  rpc RegisterShippingAddress(RegisterShippingAddressRequest) returns (RegisterShippingAddressResponse);
+}
+
+message RegisterShippingAddressRequest {
+  // id は BFF が採番して渡す（冪等キー）。 同じ id での再送はサーバ側で no-op になる。
+  string id = 1;
+  // 受取人氏名（ユーザー本人とは限らない）
+  string name = 2;
+  // ドライバー連絡用の電話番号（ハイフン区切り）
+  string phone_number = 3;
+  string postal_code = 4;
+  string prefecture = 5;
+  string city = 6;
+  // 番地
+  string street_address = 7;
+  // 建物名・部屋番号（任意）
+  string building = 8;
+  // 配達メモ（置き配等の配達指示。任意）
+  string delivery_note = 9;
+  // true なら登録と同時にこの配送先をデフォルトにする
+  bool make_default = 10;
+}
+
+message RegisterShippingAddressResponse {
+  string id = 1;
+}

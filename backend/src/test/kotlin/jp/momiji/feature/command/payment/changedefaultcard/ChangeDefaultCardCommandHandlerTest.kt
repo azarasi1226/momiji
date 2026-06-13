@@ -1,9 +1,9 @@
 package jp.momiji.feature.command.payment.changedefaultcard
 
 import jp.momiji.MomijiIntegrationTestBase
-import jp.momiji.event.payment.CardRegisteredEvent
-import jp.momiji.event.payment.DefaultCardChangedEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.feature.command.payment.CardTestFixtures.defaultChangedEvent
+import jp.momiji.feature.command.payment.CardTestFixtures.registeredEvent
 import org.junit.jupiter.api.Test
 
 class ChangeDefaultCardCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -15,29 +15,14 @@ class ChangeDefaultCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "def1@example.com"),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_def1_a",
-                    brand = "visa",
-                    last4 = "4242",
-                    expMonth = 1,
-                    expYear = 2030,
-                    default = true,
-                ),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_def1_b",
-                    brand = "mastercard",
-                    last4 = "4444",
-                    expMonth = 2,
-                    expYear = 2031,
-                    default = false,
-                ),
+                registeredEvent(userId, "pm_def1_a"),
+                defaultChangedEvent(userId, "pm_def1_a"),
+                registeredEvent(userId, "pm_def1_b", brand = "mastercard", last4 = "4444", expMonth = 2, expYear = 2031),
             ).`when`()
             .command(ChangeDefaultCardCommand(userId = userId, paymentMethodId = "pm_def1_b"))
             .then()
             .resultMessagePayload(ChangeDefaultCardCommandResult.success())
-            .events(DefaultCardChangedEvent(userId = userId, paymentMethodId = "pm_def1_b"))
+            .events(defaultChangedEvent(userId, "pm_def1_b"))
     }
 
     @Test
@@ -48,15 +33,8 @@ class ChangeDefaultCardCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 UserCreatedEvent(id = userId, email = "def2@example.com"),
-                CardRegisteredEvent(
-                    userId = userId,
-                    paymentMethodId = "pm_def2",
-                    brand = "visa",
-                    last4 = "4242",
-                    expMonth = 1,
-                    expYear = 2030,
-                    default = true,
-                ),
+                registeredEvent(userId, "pm_def2"),
+                defaultChangedEvent(userId, "pm_def2"),
             ).`when`()
             .command(ChangeDefaultCardCommand(userId = userId, paymentMethodId = "pm_def2"))
             .then()

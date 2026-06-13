@@ -7,11 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageUploadField } from "../image-upload-field"
 import { updateProduct, type Product, type ProductFormState } from "../actions"
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return <p className="text-xs text-destructive">{message}</p>
-}
+import { FieldError } from "@/components/form/field-error"
 
 export function ProductEditForm({
   product,

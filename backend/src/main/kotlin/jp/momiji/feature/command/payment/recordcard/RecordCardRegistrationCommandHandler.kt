@@ -1,6 +1,7 @@
 package jp.momiji.feature.command.payment.recordcard
 
 import jp.momiji.event.payment.CardRegisteredEvent
+import jp.momiji.event.payment.DefaultCardChangedEvent
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.payment.UserPaymentState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
@@ -25,10 +26,8 @@ class RecordCardRegistrationCommandHandler {
             return RecordCardRegistrationCommandResult.success()
         }
 
-        // default が存在しなければこのカードを default にする。
-        // 不変条件「カードがあれば必ず default が 1 枚」の登録側。
-        val isDefault = state.cards.values.none { it.isDefault }
-
+        // 「カードが増えた」と「default になった」はイベントを分ける（default の変化経路を
+        // DefaultCardChangedEvent の 1 種類に一本化するため。配送先と同じ設計）。
         eventAppender.append(
             CardRegisteredEvent(
                 userId = command.userId,
@@ -37,9 +36,19 @@ class RecordCardRegistrationCommandHandler {
                 last4 = command.last4,
                 expMonth = command.expMonth,
                 expYear = command.expYear,
-                default = isDefault,
             ),
         )
+
+        // default になる条件: default が 1 件も存在しない（初回カード。 万一 default 不在の
+        // 不変条件が壊れていてもここで自己修復される）。
+        if (state.cards.values.none { it.isDefault }) {
+            eventAppender.append(
+                DefaultCardChangedEvent(
+                    userId = command.userId,
+                    paymentMethodId = command.paymentMethodId,
+                ),
+            )
+        }
         return RecordCardRegistrationCommandResult.success()
     }
 }

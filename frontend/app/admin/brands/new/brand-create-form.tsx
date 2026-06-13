@@ -6,11 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { createBrand, type BrandFormState } from "../actions"
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null
-  return <p className="text-xs text-destructive">{message}</p>
-}
+import { FieldError } from "@/components/form/field-error"
 
 export function BrandCreateForm() {
   const [state, formAction, isPending] = useActionState<BrandFormState, FormData>(

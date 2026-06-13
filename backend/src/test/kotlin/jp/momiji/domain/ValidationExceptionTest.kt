@@ -1,8 +1,8 @@
 package jp.momiji.domain
 
-import jp.momiji.domain.user.Address1
 import jp.momiji.domain.user.Name
 import jp.momiji.domain.user.PhoneNumber
+import jp.momiji.domain.user.StreetAddress
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,12 +18,12 @@ class ValidationExceptionTest {
     fun `複数エラーは ' _ ' (空白区切りスラッシュ) で join される`() {
         val ex =
             ValidationException(
-                listOf(Name.Blank, PhoneNumber.Invalid, Address1.Blank),
+                listOf(Name.Blank, PhoneNumber.Invalid, StreetAddress.Blank),
             )
         assertEquals(
             "[name] 名前は必須です / " +
                 "[phoneNumber] 電話番号は ハイフン区切り (例: 090-0000-0000) で入力してください / " +
-                "[address1] 住所1 は必須です",
+                "[streetAddress] 番地は必須です",
             ex.message,
         )
     }

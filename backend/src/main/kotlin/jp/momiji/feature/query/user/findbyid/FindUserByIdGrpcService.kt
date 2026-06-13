@@ -30,10 +30,6 @@ class FindUserByIdGrpcService(
             id = user.id
             email = user.email
             name = user.name
-            phoneNumber = user.phoneNumber
-            postalCode = user.postalCode
-            address1 = user.address1
-            address2 = user.address2
             createdAt = user.createdAt.toProtoTimestamp()
             updatedAt = user.updatedAt.toProtoTimestamp()
         }

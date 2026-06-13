@@ -29,10 +29,6 @@ class UpdateUserCommandHandler {
             UserUpdatedEvent(
                 id = command.id,
                 name = command.name.value,
-                phoneNumber = command.phoneNumber.value,
-                postalCode = command.postalCode.value,
-                address1 = command.address1.value,
-                address2 = command.address2.value,
             ),
         )
         return UpdateUserCommandResult.success()

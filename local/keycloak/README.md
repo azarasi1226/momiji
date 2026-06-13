@@ -50,7 +50,7 @@ realm とは client をまとめる認証空間のことであり、 cognito の
 
 ### 方法1: Keycloak のボリュームだけ作り直す
 
-`down -v` は **MySQL / Axon Server などローカル全ボリュームを消す**ので使わない。Keycloak だけ作り直す:
+`down -v` は **PostgreSQL / Axon Server などローカル全ボリュームを消す**ので使わない。Keycloak だけ作り直す:
 
 ```bash
 # keycloak コンテナを停止・削除

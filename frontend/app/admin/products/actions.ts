@@ -1,13 +1,12 @@
 "use server"
 
-import { Code, ConnectError } from "@connectrpc/connect"
 import { timestampDate } from "@bufbuild/protobuf/wkt"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { ulid } from "ulid"
 import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
-import { parseConnectError } from "@/lib/grpc-error"
+import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { listBrands } from "../brands/actions"
 import { ListProductsService } from "@/grpc/gen/momiji/product/list/v1/list_pb.js"
 import { FindProductByIdService } from "@/grpc/gen/momiji/product/findbyid/v1/findbyid_pb.js"
@@ -85,13 +84,6 @@ function productStatusName(status: ProductStatus): string {
       return "DISCONTINUED"
     default:
       return "UNKNOWN"
-  }
-}
-
-/** Unauthenticated は session 切れなのでログインへ飛ばす。 */
-function redirectIfUnauthenticated(e: unknown): void {
-  if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
   }
 }
 
