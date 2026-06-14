@@ -1,8 +1,10 @@
 package jp.momiji.projection.order
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.ORDERS
 import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderStatus
+import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.order.OrderStartedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+
+private val logger = KotlinLogging.logger {}
 
 /**
  * 注文 ReadModel（orders / order_items）を更新する projection。
@@ -63,5 +67,24 @@ class OrderTableProjector(
                         .onDuplicateKeyIgnore()
                 },
             ).execute()
+    }
+
+    @EventHandler
+    fun on(
+        event: OrderFailedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
+        val updated =
+            dsl
+                .update(ORDERS)
+                .set(ORDERS.STATUS, OrderStatus.FAILED.name)
+                .set(ORDERS.UPDATED_AT, at)
+                .where(ORDERS.ID.eq(event.orderId))
+                .execute()
+        // OrderStarted で行は作られているはず。 規約: 対象不在は warn。
+        if (updated == 0) {
+            logger.warn { "失敗反映先の注文行がありません: orderId=${event.orderId}" }
+        }
     }
 }

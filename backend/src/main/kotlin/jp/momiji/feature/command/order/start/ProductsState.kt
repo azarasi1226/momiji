@@ -8,6 +8,7 @@ import jp.momiji.event.product.ProductDiscontinuedEvent
 import jp.momiji.event.product.ProductUpdatedEvent
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationReleasedEvent
 import jp.momiji.event.stock.StockReservedEvent
 import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
@@ -53,6 +54,7 @@ class ProductsState private constructor(
                             StockReceivedEvent::class.eventQualifiedName(),
                             StockAdjustedEvent::class.eventQualifiedName(),
                             StockReservedEvent::class.eventQualifiedName(),
+                            StockReservationReleasedEvent::class.eventQualifiedName(),
                         )
                 },
             )
@@ -111,6 +113,11 @@ class ProductsState private constructor(
     @EventSourcingHandler
     fun evolve(event: StockReservedEvent) {
         getOrCreate(event.productId).reserved += event.quantity
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: StockReservationReleasedEvent) {
+        getOrCreate(event.productId).reserved -= event.quantity
     }
 
     private class Product(

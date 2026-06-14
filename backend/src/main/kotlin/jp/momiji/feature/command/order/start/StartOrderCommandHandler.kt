@@ -31,7 +31,7 @@ class StartOrderCommandHandler {
         }
         // 冪等性: 同じ order_id が再処理されたら（Axon のコマンド再送等）新規イベントを出さず成功。
         // TODO: 冪等キーを利用した仕組みが必要
-        if (order.started) {
+        if (!order.notStarted) {
             return StartOrderCommandResult.success()
         }
 
