@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package momiji.order.start.v1;
+
+// カート（買い物かご）の内容を確定して注文を開始する。
+// 持ち主(user)は JWT から解決し、 注文明細は server 側で baskets から読む。
+// 配送先はユーザーの選択なのでクライアントから ID を受け取り、 server 側で所有権を検証する。
+// 決済カードは決済フェーズ（決済準備）で受け取る（ここには含めない）。
+service StartOrderService {
+  rpc StartOrder(StartOrderRequest) returns (StartOrderResponse);
+}
+
+message StartOrderRequest {
+  // 配送先の ID（このユーザーが登録済みの shipping_addresses の id）。 所有権は server で検証する。
+  string shipping_address_id = 1;
+  // クライアントが画面で見ていた商品合計金額（円）。 server 側の権威価格で計算した合計と突き合わせ、
+  // projection 遅延や価格変更による食い違いがあれば弾く（見ていた額と違う額で確定させない）。
+  int64 expected_total_amount = 2;
+}
+
+message StartOrderResponse {
+  // サーバ採番した order id
+  string order_id = 1;
+}
