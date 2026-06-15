@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { CreditCard, MapPin } from "lucide-react"
@@ -8,6 +9,10 @@ import { fetchProfile } from "./actions"
 import { ProfileForm } from "./profile-form"
 import { EmailChangeForm } from "./email-change-form"
 import { DeleteAccountButton } from "./delete-account-button"
+
+export const metadata: Metadata = {
+  title: "プロフィール",
+}
 
 export default async function ProfilePage() {
   const session = await auth()

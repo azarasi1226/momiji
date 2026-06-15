@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Pagination } from "@/components/pagination"
 import { QueryParamSelect } from "@/components/query-param-select"
@@ -23,6 +24,10 @@ import {
 import { formatDateTime } from "@/lib/format"
 import { productStatusLabel } from "@/lib/status-labels"
 import { listAllBrands, listProducts } from "./actions"
+
+export const metadata: Metadata = {
+  title: "商品管理",
+}
 
 const PAGE_SIZE = 20
 

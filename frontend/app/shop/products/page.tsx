@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Pagination } from "@/components/pagination"
 import { QueryParamSelect } from "@/components/query-param-select"
@@ -9,6 +10,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { listShopProducts } from "../actions"
 import { QuickAddButton } from "./quick-add-button"
+
+export const metadata: Metadata = {
+  title: "商品一覧",
+}
 
 const PAGE_SIZE = 20
 
