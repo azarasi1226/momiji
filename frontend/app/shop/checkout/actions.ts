@@ -4,6 +4,7 @@ import { createGrpcClient } from "@/lib/grpc"
 import { requireValidSession } from "@/lib/session"
 import { redirectIfUnauthenticated, parseConnectError } from "@/lib/grpc-error"
 import { StartOrderService } from "@/grpc/gen/momiji/order/start/v1/start_pb.js"
+import { PreparePaymentService } from "@/grpc/gen/momiji/order/preparepayment/v1/preparepayment_pb.js"
 
 export type StartOrderState = {
   success?: boolean
@@ -41,5 +42,40 @@ export async function startOrder(
       }
     }
     return { error: parsed?.fallback ?? "注文の開始に失敗しました" }
+  }
+}
+
+export type PreparePaymentState = {
+  success?: boolean
+  clientSecret?: string
+  error?: string
+} | null
+
+/**
+ * 注文の決済を準備する（PaymentIntent 作成）。 成功すると client_secret が返り、 フロントの Stripe.js で
+ * confirm（3DS）する。 注文・カードの所有権は server 側で検証される。
+ */
+export async function preparePayment(
+  orderId: string,
+  paymentMethodId: string,
+): Promise<PreparePaymentState> {
+  const session = await requireValidSession()
+  try {
+    const client = createGrpcClient(PreparePaymentService, session.accessToken)
+    const res = await client.preparePayment({ orderId, paymentMethodId })
+    return { success: true, clientSecret: res.clientSecret }
+  } catch (e) {
+    redirectIfUnauthenticated(e)
+    const parsed = parseConnectError(e)
+    if (parsed?.businessError) return { error: parsed.businessError }
+    if (parsed?.fieldErrors) {
+      return { error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です" }
+    }
+    if (parsed?.unknownError) {
+      return {
+        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
+      }
+    }
+    return { error: parsed?.fallback ?? "決済の準備に失敗しました" }
   }
 }

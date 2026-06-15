@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { fetchShippingAddresses } from "@/app/profile/shipping-addresses/actions"
+import { fetchCards } from "@/app/profile/payment-methods/actions"
 import { findBasket } from "../actions"
 import { CheckoutForm, type CheckoutItem } from "./checkout-form"
 
@@ -8,9 +9,10 @@ import { CheckoutForm, type CheckoutItem } from "./checkout-form"
 const PAGE_SIZE = 100
 
 export default async function CheckoutPage() {
-  const [basket, addresses] = await Promise.all([
+  const [basket, addresses, cards] = await Promise.all([
     findBasket({ pageSize: PAGE_SIZE, pageNumber: 1 }),
     fetchShippingAddresses(),
+    fetchCards(),
   ])
 
   const total = basket.items.reduce(
@@ -37,7 +39,7 @@ export default async function CheckoutPage() {
           </Button>
         </div>
       ) : (
-        <CheckoutForm items={items} total={total} addresses={addresses} />
+        <CheckoutForm items={items} total={total} addresses={addresses} cards={cards} />
       )}
     </main>
   )
