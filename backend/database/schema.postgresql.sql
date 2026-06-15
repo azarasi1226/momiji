@@ -114,8 +114,10 @@ CREATE TABLE orders (
   user_id varchar(255) NOT NULL,
   -- OrderStatus の name（STARTED / PAID / SHIPPED / COMPLETED / FAILED）
   status varchar(255) NOT NULL,
-  -- 決済に使うカード（Stripe pm_）の参照。 決済フェーズ（決済準備/支払い成功）で埋まる（注文開始時点は NULL）。
+  -- 決済に使うカード（Stripe pm_）の参照。 決済準備で埋まる（注文開始時点は NULL）。
   payment_method_id varchar(255),
+  -- 決済の PaymentIntent（Stripe pi_）。 決済準備で埋まる（返金・相関用。 注文開始時点は NULL）。
+  payment_intent_id varchar(255),
   -- 配送先スナップショット（注文時点の宛先を固定）
   recipient_name varchar(255) NOT NULL,
   phone_number varchar(255) NOT NULL,
