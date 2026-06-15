@@ -26,8 +26,7 @@ class LoggingCommandDispatchInterceptor : MessageDispatchInterceptor<CommandMess
         chain: MessageDispatchInterceptorChain<CommandMessage>,
     ): MessageStream<*> {
         logger.debug {
-            "\n" +
-                "コマンド発行: ${message.payloadType().simpleName} " +
+            "コマンド発行: ${message.payloadType().simpleName} " +
                 "(id=${message.identifier()}, type=${message.type()}) payload=${message.payload()}"
         }
         return chain.proceed(message, context)
