@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "biome check",
+    "format": "biome format --write",
+    "check": "biome check --write"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.12.0",
@@ -32,8 +34,7 @@
     "@types/node": "^25.9.3",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "16.1.6",
+    "@biomejs/biome": "^2.5.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   }
