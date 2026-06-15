@@ -1,42 +1,42 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link";
+import { useState, useTransition } from "react";
+import type { Card as PaymentCard } from "@/app/profile/payment-methods/actions";
+import type { ShippingAddress } from "@/app/profile/shipping-addresses/actions";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { getStripe } from "@/lib/stripe"
-import type { ShippingAddress } from "@/app/profile/shipping-addresses/actions"
-import type { Card as PaymentCard } from "@/app/profile/payment-methods/actions"
-import { startOrder, preparePayment } from "./actions"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { getStripe } from "@/lib/stripe";
+import { preparePayment, startOrder } from "./actions";
 
 export type CheckoutItem = {
-  productId: string
-  productName: string
-  productPrice: number
-  itemQuantity: number
-}
+  productId: string;
+  productName: string;
+  productPrice: number;
+  itemQuantity: number;
+};
 
 type Props = {
-  items: CheckoutItem[]
-  total: number
-  addresses: ShippingAddress[]
-  cards: PaymentCard[]
-}
+  items: CheckoutItem[];
+  total: number;
+  addresses: ShippingAddress[];
+  cards: PaymentCard[];
+};
 
 function addressLabel(a: ShippingAddress): string {
-  return `${a.name} 様 / ${a.prefecture}${a.city}${a.streetAddress}${a.building ? ` ${a.building}` : ""}`
+  return `${a.name} 様 / ${a.prefecture}${a.city}${a.streetAddress}${a.building ? ` ${a.building}` : ""}`;
 }
 
 function cardLabel(c: PaymentCard): string {
-  return `${c.brand} •••• ${c.last4}（${c.expMonth}/${c.expYear}）`
+  return `${c.brand} •••• ${c.last4}（${c.expMonth}/${c.expYear}）`;
 }
 
 /**
@@ -44,49 +44,52 @@ function cardLabel(c: PaymentCard): string {
  * 決済の確定（PAID）は webhook 経由（非同期）なので、 成功画面は「処理中」表記にする。
  */
 export function CheckoutForm({ items, total, addresses, cards }: Props) {
-  const defaultAddress = addresses.find((a) => a.isDefault) ?? addresses[0]
-  const defaultCard = cards.find((c) => c.isDefault) ?? cards[0]
-  const [addressId, setAddressId] = useState(defaultAddress?.id ?? "")
-  const [cardId, setCardId] = useState(defaultCard?.id ?? "")
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
-  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null)
+  const defaultAddress = addresses.find((a) => a.isDefault) ?? addresses[0];
+  const defaultCard = cards.find((c) => c.isDefault) ?? cards[0];
+  const [addressId, setAddressId] = useState(defaultAddress?.id ?? "");
+  const [cardId, setCardId] = useState(defaultCard?.id ?? "");
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
 
   function handlePay() {
-    setError(null)
+    setError(null);
     startTransition(async () => {
       // 1. 注文開始（在庫予約）。
-      const started = await startOrder(addressId, total)
+      const started = await startOrder(addressId, total);
       if (!started || started.error || !started.orderId) {
-        setError(started?.error ?? "注文の開始に失敗しました")
-        return
+        setError(started?.error ?? "注文の開始に失敗しました");
+        return;
       }
-      const orderId = started.orderId
+      const orderId = started.orderId;
 
       // 2. 決済準備（PaymentIntent 作成）。
-      const prepared = await preparePayment(orderId, cardId)
+      const prepared = await preparePayment(orderId, cardId);
       if (!prepared || prepared.error || !prepared.clientSecret) {
-        setError(prepared?.error ?? "決済の準備に失敗しました")
-        return
+        setError(prepared?.error ?? "決済の準備に失敗しました");
+        return;
       }
-      const clientSecret = prepared.clientSecret
+      const clientSecret = prepared.clientSecret;
 
       // 3. Stripe.js で confirm（必要なら 3DS をブラウザで突破）。 pm はサーバ側で PaymentIntent に紐付け済み。
-      const stripe = await getStripe()
+      const stripe = await getStripe();
       if (!stripe) {
-        setError("決済の初期化に失敗しました")
-        return
+        setError("決済の初期化に失敗しました");
+        return;
       }
-      const { error: stripeError } = await stripe.confirmCardPayment(clientSecret)
+      const { error: stripeError } =
+        await stripe.confirmCardPayment(clientSecret);
       if (stripeError) {
         // 決済失敗 ＝ 注文失敗（webhook が在庫を即解放）。 もう一度押すと新しい注文として最初からやり直す。
-        setError(stripeError.message ?? "決済に失敗しました。 もう一度お試しください")
-        return
+        setError(
+          stripeError.message ?? "決済に失敗しました。 もう一度お試しください",
+        );
+        return;
       }
 
       // 成功（succeeded / processing）。 確定（PAID）は webhook 経由で非同期に反映される。
-      setCompletedOrderId(orderId)
-    })
+      setCompletedOrderId(orderId);
+    });
   }
 
   if (completedOrderId) {
@@ -103,7 +106,7 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
           <Link href="/shop/products">買い物を続ける</Link>
         </Button>
       </Card>
-    )
+    );
   }
 
   if (addresses.length === 0) {
@@ -116,20 +119,21 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
           <Link href="/profile/shipping-addresses">配送先を登録する</Link>
         </Button>
       </Card>
-    )
+    );
   }
 
   if (cards.length === 0) {
     return (
       <Card className="flex flex-col items-start gap-3 p-6">
         <p className="text-sm text-muted-foreground">
-          お支払い用のカードが登録されていません。 先にカードを登録してください。
+          お支払い用のカードが登録されていません。
+          先にカードを登録してください。
         </p>
         <Button asChild size="sm">
           <Link href="/profile/payment-methods">カードを登録する</Link>
         </Button>
       </Card>
-    )
+    );
   }
 
   return (
@@ -188,10 +192,16 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
             >
               <span>
                 {item.productName}
-                <span className="text-muted-foreground"> × {item.itemQuantity}</span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  × {item.itemQuantity}
+                </span>
               </span>
               <span>
-                ¥{(item.productPrice * item.itemQuantity).toLocaleString("ja-JP")}
+                ¥
+                {(item.productPrice * item.itemQuantity).toLocaleString(
+                  "ja-JP",
+                )}
               </span>
             </div>
           ))}
@@ -202,7 +212,9 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
 
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">合計</span>
-        <span className="text-lg font-semibold">¥{total.toLocaleString("ja-JP")}</span>
+        <span className="text-lg font-semibold">
+          ¥{total.toLocaleString("ja-JP")}
+        </span>
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -222,5 +234,5 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
         ← 買い物かごに戻る
       </Link>
     </div>
-  )
+  );
 }
