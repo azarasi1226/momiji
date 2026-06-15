@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-/* eslint-disable @next/next/no-img-element */
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { issueImageUploadUrl } from "./actions"
+import Image from "next/image";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { issueImageUploadUrl } from "./actions";
 
-const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"]
-const MAX_BYTES = 5 * 1024 * 1024 // 5MB
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 
 /**
  * 画像アップロード欄。 ファイルを選ぶと:
@@ -20,41 +20,41 @@ export function ImageUploadField({
   name = "imageUrl",
   defaultUrl = "",
 }: {
-  name?: string
-  defaultUrl?: string
+  name?: string;
+  defaultUrl?: string;
 }) {
-  const [url, setUrl] = useState(defaultUrl)
-  const [uploading, setUploading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [url, setUrl] = useState(defaultUrl);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setError(null)
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setError("png / jpeg / webp のみアップロードできます")
-      return
+      setError("png / jpeg / webp のみアップロードできます");
+      return;
     }
     if (file.size > MAX_BYTES) {
-      setError("ファイルサイズは 5MB 以下にしてください")
-      return
+      setError("ファイルサイズは 5MB 以下にしてください");
+      return;
     }
 
-    setUploading(true)
+    setUploading(true);
     try {
-      const { uploadUrl, publicUrl } = await issueImageUploadUrl(file.type)
+      const { uploadUrl, publicUrl } = await issueImageUploadUrl(file.type);
       const res = await fetch(uploadUrl, {
         method: "PUT",
         headers: { "Content-Type": file.type },
         body: file,
-      })
-      if (!res.ok) throw new Error(`upload failed: ${res.status}`)
-      setUrl(publicUrl)
+      });
+      if (!res.ok) throw new Error(`upload failed: ${res.status}`);
+      setUrl(publicUrl);
     } catch {
-      setError("アップロードに失敗しました")
+      setError("アップロードに失敗しました");
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
   }
 
@@ -64,10 +64,12 @@ export function ImageUploadField({
       <input type="hidden" name={name} value={url} />
 
       {url && (
-        <img
+        <Image
           src={url}
           alt="プレビュー"
-          className="h-40 w-40 rounded-lg border object-cover"
+          width={160}
+          height={160}
+          className="rounded-lg border object-cover"
         />
       )}
 
@@ -80,14 +82,21 @@ export function ImageUploadField({
           className="w-auto"
         />
         {url && (
-          <Button type="button" variant="ghost" size="sm" onClick={() => setUrl("")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setUrl("")}
+          >
             画像を外す
           </Button>
         )}
       </div>
 
-      {uploading && <p className="text-xs text-muted-foreground">アップロード中...</p>}
+      {uploading && (
+        <p className="text-xs text-muted-foreground">アップロード中...</p>
+      )}
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
-  )
+  );
 }
