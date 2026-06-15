@@ -1,18 +1,18 @@
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { brandStatusLabel } from "@/lib/status-labels"
-import { fetchBrand } from "../actions"
-import { BrandEditForm } from "./brand-edit-form"
-import { ArchiveBrandButton } from "./archive-brand-button"
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { brandStatusLabel } from "@/lib/status-labels";
+import { fetchBrand } from "../actions";
+import { ArchiveBrandButton } from "./archive-brand-button";
+import { BrandEditForm } from "./brand-edit-form";
 
 export default async function BrandDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const brand = await fetchBrand(id)
+  const { id } = await params;
+  const brand = await fetchBrand(id);
 
   return (
     <main className="flex w-full max-w-2xl flex-col gap-8 px-8 py-16">
@@ -39,5 +39,5 @@ export default async function BrandDetailPage({
 
       <ArchiveBrandButton id={brand.id} />
     </main>
-  )
+  );
 }

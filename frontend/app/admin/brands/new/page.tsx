@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { BrandCreateForm } from "./brand-create-form"
+import Link from "next/link";
+import { BrandCreateForm } from "./brand-create-form";
 
 export default function NewBrandPage() {
   return (
@@ -16,5 +16,5 @@ export default function NewBrandPage() {
 
       <BrandCreateForm />
     </main>
-  )
+  );
 }

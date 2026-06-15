@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 /**
  * 汎用ページングコンポーネント。 `currentPage` / `totalPage` を渡すだけで使える drop-in。
@@ -16,25 +16,28 @@ export function Pagination({
   totalPage,
   pageParam = "page",
 }: {
-  currentPage: number
-  totalPage: number
-  pageParam?: string
+  currentPage: number;
+  totalPage: number;
+  pageParam?: string;
 }) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  if (totalPage <= 1) return null
+  if (totalPage <= 1) return null;
 
   const hrefFor = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set(pageParam, String(page))
-    return `${pathname}?${params.toString()}`
-  }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(pageParam, String(page));
+    return `${pathname}?${params.toString()}`;
+  };
 
-  const items = pageItems(currentPage, totalPage)
+  const items = pageItems(currentPage, totalPage);
 
   return (
-    <nav className="flex items-center justify-center gap-1" aria-label="ページネーション">
+    <nav
+      className="flex items-center justify-center gap-1"
+      aria-label="ページネーション"
+    >
       <Button
         variant="ghost"
         size="icon-sm"
@@ -42,19 +45,28 @@ export function Pagination({
         disabled={currentPage <= 1}
         aria-label="前のページ"
       >
-        {currentPage > 1 ? <Link href={hrefFor(currentPage - 1)}>‹</Link> : <span>‹</span>}
+        {currentPage > 1 ? (
+          <Link href={hrefFor(currentPage - 1)}>‹</Link>
+        ) : (
+          <span>‹</span>
+        )}
       </Button>
 
       {items.map((item, i) =>
         item === ELLIPSIS ? (
           <span
-            key={`ellipsis-${i}`}
+            key={`ellipsis-after-${items[i - 1]}`}
             className="flex h-7 w-7 items-center justify-center text-sm text-muted-foreground"
           >
             …
           </span>
         ) : item === currentPage ? (
-          <Button key={item} variant="default" size="icon-sm" aria-current="page">
+          <Button
+            key={item}
+            variant="default"
+            size="icon-sm"
+            aria-current="page"
+          >
             {item}
           </Button>
         ) : (
@@ -78,29 +90,32 @@ export function Pagination({
         )}
       </Button>
     </nav>
-  )
+  );
 }
 
-const ELLIPSIS = "…" as const
+const ELLIPSIS = "…" as const;
 
 /**
  * 表示するページ項目を決める。 総ページが少なければ全部、 多ければ先頭・末尾・現在周辺 + 省略記号。
  * 例: current=7, total=20 → [1, …, 6, 7, 8, …, 20]
  */
-function pageItems(current: number, total: number): (number | typeof ELLIPSIS)[] {
-  const MAX_FULL = 7
+function pageItems(
+  current: number,
+  total: number,
+): (number | typeof ELLIPSIS)[] {
+  const MAX_FULL = 7;
   if (total <= MAX_FULL) {
-    return Array.from({ length: total }, (_, i) => i + 1)
+    return Array.from({ length: total }, (_, i) => i + 1);
   }
 
-  const delta = 1
-  const start = Math.max(2, current - delta)
-  const end = Math.min(total - 1, current + delta)
+  const delta = 1;
+  const start = Math.max(2, current - delta);
+  const end = Math.min(total - 1, current + delta);
 
-  const items: (number | typeof ELLIPSIS)[] = [1]
-  if (start > 2) items.push(ELLIPSIS)
-  for (let p = start; p <= end; p++) items.push(p)
-  if (end < total - 1) items.push(ELLIPSIS)
-  items.push(total)
-  return items
+  const items: (number | typeof ELLIPSIS)[] = [1];
+  if (start > 2) items.push(ELLIPSIS);
+  for (let p = start; p <= end; p++) items.push(p);
+  if (end < total - 1) items.push(ELLIPSIS);
+  items.push(total);
+  return items;
 }

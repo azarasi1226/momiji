@@ -1,7 +1,7 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,17 +9,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { formatDateTime } from "@/lib/format"
-import { brandStatusLabel } from "@/lib/status-labels"
-import { listBrands } from "./actions"
+} from "@/components/ui/table";
+import { formatDateTime } from "@/lib/format";
+import { brandStatusLabel } from "@/lib/status-labels";
+import { listBrands } from "./actions";
 
 export const metadata: Metadata = {
   title: "ブランド管理",
-}
+};
 
 export default async function BrandListPage() {
-  const brands = await listBrands()
+  const brands = await listBrands();
 
   return (
     <main className="flex w-full max-w-4xl flex-col gap-8 px-8 py-16">
@@ -31,7 +31,9 @@ export default async function BrandListPage() {
       </div>
 
       {brands.length === 0 ? (
-        <p className="text-sm text-muted-foreground">ブランドがまだ登録されていません。</p>
+        <p className="text-sm text-muted-foreground">
+          ブランドがまだ登録されていません。
+        </p>
       ) : (
         <Table>
           <TableHeader>
@@ -51,7 +53,11 @@ export default async function BrandListPage() {
                   {brand.description || "—"}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={brand.status === "ARCHIVED" ? "secondary" : "default"}>
+                  <Badge
+                    variant={
+                      brand.status === "ARCHIVED" ? "secondary" : "default"
+                    }
+                  >
                     {brandStatusLabel(brand.status)}
                   </Badge>
                 </TableCell>
@@ -69,5 +75,5 @@ export default async function BrandListPage() {
         </Table>
       )}
     </main>
-  )
+  );
 }

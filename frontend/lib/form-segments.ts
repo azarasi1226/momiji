@@ -4,9 +4,11 @@
 export function joinPhoneNumber(formData: FormData): string {
   return ["phoneNumber1", "phoneNumber2", "phoneNumber3"]
     .map((key) => (formData.get(key) as string) ?? "")
-    .join("-")
+    .join("-");
 }
 
 export function joinPostalCode(formData: FormData): string {
-  return ["postalCode1", "postalCode2"].map((key) => (formData.get(key) as string) ?? "").join("-")
+  return ["postalCode1", "postalCode2"]
+    .map((key) => (formData.get(key) as string) ?? "")
+    .join("-");
 }

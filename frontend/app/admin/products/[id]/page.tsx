@@ -1,24 +1,27 @@
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { productStatusLabel } from "@/lib/status-labels"
-import { fetchBrand } from "../../brands/actions"
-import { fetchProduct, fetchStock } from "../actions"
-import { ProductEditForm } from "./product-edit-form"
-import { DiscontinueProductButton } from "./discontinue-product-button"
-import { StockForms } from "./stock-forms"
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { productStatusLabel } from "@/lib/status-labels";
+import { fetchBrand } from "../../brands/actions";
+import { fetchProduct, fetchStock } from "../actions";
+import { DiscontinueProductButton } from "./discontinue-product-button";
+import { ProductEditForm } from "./product-edit-form";
+import { StockForms } from "./stock-forms";
 
 export default async function ProductDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const product = await fetchProduct(id)
-  const [brand, stock] = await Promise.all([fetchBrand(product.brandId), fetchStock(id)])
+  const { id } = await params;
+  const product = await fetchProduct(id);
+  const [brand, stock] = await Promise.all([
+    fetchBrand(product.brandId),
+    fetchStock(id),
+  ]);
 
-  const discontinued = product.status === "DISCONTINUED"
+  const discontinued = product.status === "DISCONTINUED";
 
   return (
     <main className="flex w-full max-w-2xl flex-col gap-8 px-8 py-16">
@@ -63,12 +66,14 @@ export default async function ProductDetailPage({
       <Separator />
 
       {discontinued ? (
-        <p className="text-sm text-muted-foreground">生産終了済みのため操作はありません。</p>
+        <p className="text-sm text-muted-foreground">
+          生産終了済みのため操作はありません。
+        </p>
       ) : (
         <DiscontinueProductButton id={product.id} />
       )}
     </main>
-  )
+  );
 }
 
 function StockStat({
@@ -76,18 +81,22 @@ function StockStat({
   value,
   emphasize = false,
 }: {
-  label: string
-  value: number
-  emphasize?: boolean
+  label: string;
+  value: number;
+  emphasize?: boolean;
 }) {
   return (
     <Card className="py-0">
       <CardContent className="flex flex-col gap-1 px-4 py-3">
         <span className="text-xs text-muted-foreground">{label}</span>
-        <span className={emphasize ? "text-xl font-semibold" : "text-xl font-medium"}>
+        <span
+          className={
+            emphasize ? "text-xl font-semibold" : "text-xl font-medium"
+          }
+        >
           {value.toLocaleString("ja-JP")}
         </span>
       </CardContent>
     </Card>
-  )
+  );
 }

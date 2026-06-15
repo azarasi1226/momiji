@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { Button } from "@/components/ui/button"
-import { clearBasket } from "../actions"
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { clearBasket } from "../actions";
 
 /** カゴを空にする。 誤操作防止に確認を挟む。 */
 export function ClearBasketButton() {
-  const [confirming, setConfirming] = useState(false)
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function handleClear() {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const result = await clearBasket()
+      const result = await clearBasket();
       if (result?.error) {
-        setError(result.error)
-        setConfirming(false)
+        setError(result.error);
+        setConfirming(false);
       }
-    })
+    });
   }
 
   if (!confirming) {
@@ -32,13 +32,15 @@ export function ClearBasketButton() {
       >
         カゴを空にする
       </Button>
-    )
+    );
   }
 
   return (
     <div className="flex items-center gap-3">
       {error && <span className="text-xs text-destructive">{error}</span>}
-      <span className="text-sm text-muted-foreground">本当に空にしますか？</span>
+      <span className="text-sm text-muted-foreground">
+        本当に空にしますか？
+      </span>
       <Button
         type="button"
         variant="destructive"
@@ -58,5 +60,5 @@ export function ClearBasketButton() {
         キャンセル
       </Button>
     </div>
-  )
+  );
 }

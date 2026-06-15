@@ -5,6 +5,6 @@
  * ここで明示的に `Asia/Tokyo` に変換する（実行環境の TZ に依存させない）。
  */
 export function formatDateTime(iso: string): string {
-  if (!iso) return "—"
-  return new Date(iso).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
+  if (!iso) return "—";
+  return new Date(iso).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
 }

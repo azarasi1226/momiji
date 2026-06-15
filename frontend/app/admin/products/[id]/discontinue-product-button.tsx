@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { Button } from "@/components/ui/button"
-import { discontinueProduct } from "../actions"
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { discontinueProduct } from "../actions";
 
 export function DiscontinueProductButton({ id }: { id: string }) {
-  const [confirming, setConfirming] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [confirming, setConfirming] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   if (!confirming) {
     return (
@@ -18,7 +18,7 @@ export function DiscontinueProductButton({ id }: { id: string }) {
       >
         この商品を生産終了にする
       </Button>
-    )
+    );
   }
 
   return (
@@ -45,5 +45,5 @@ export function DiscontinueProductButton({ id }: { id: string }) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

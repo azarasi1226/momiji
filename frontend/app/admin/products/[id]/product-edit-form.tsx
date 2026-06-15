@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { useActionState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ImageUploadField } from "../image-upload-field"
-import { updateProduct, type Product, type ProductFormState } from "../actions"
-import { FieldError } from "@/components/form/field-error"
+import { useActionState } from "react";
+import { FieldError } from "@/components/form/field-error";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { type Product, type ProductFormState, updateProduct } from "../actions";
+import { ImageUploadField } from "../image-upload-field";
 
 export function ProductEditForm({
   product,
   brandName,
 }: {
-  product: Product
-  brandName: string
+  product: Product;
+  brandName: string;
 }) {
-  const [state, formAction, isPending] = useActionState<ProductFormState, FormData>(
-    updateProduct,
-    null,
-  )
-  const fieldErrors = state?.fieldErrors
+  const [state, formAction, isPending] = useActionState<
+    ProductFormState,
+    FormData
+  >(updateProduct, null);
+  const fieldErrors = state?.fieldErrors;
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
@@ -80,12 +80,14 @@ export function ProductEditForm({
         <FieldError message={fieldErrors?.price} />
       </div>
 
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {state?.error && (
+        <p className="text-sm text-destructive">{state.error}</p>
+      )}
       {state?.success && <p className="text-sm text-green-600">更新しました</p>}
 
       <Button type="submit" disabled={isPending} className="mt-2 w-fit">
         {isPending ? "更新中..." : "更新"}
       </Button>
     </form>
-  )
+  );
 }

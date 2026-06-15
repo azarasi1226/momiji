@@ -1,17 +1,17 @@
-/* eslint-disable @next/next/no-img-element */
-import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { fetchShopProduct, fetchShopStock } from "../../actions"
-import { AddToBasketPanel } from "./add-to-basket-panel"
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { fetchShopProduct, fetchShopStock } from "../../actions";
+import { AddToBasketPanel } from "./add-to-basket-panel";
 
 export default async function ShopProductDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const product = await fetchShopProduct(id)
-  const stock = product.isActive ? await fetchShopStock(id) : { available: 0 }
+  const { id } = await params;
+  const product = await fetchShopProduct(id);
+  const stock = product.isActive ? await fetchShopStock(id) : { available: 0 };
 
   return (
     <main className="flex w-full max-w-5xl flex-col gap-6 px-8 py-12">
@@ -25,15 +25,18 @@ export default async function ShopProductDetailPage({
       <div className="grid gap-8 md:grid-cols-[1fr_360px]">
         {/* 左: 画像 + 商品情報 */}
         <div className="flex flex-col gap-6">
-          <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl bg-muted">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted">
             {product.imageUrl ? (
-              <img
+              <Image
                 src={product.imageUrl}
                 alt={product.name}
-                className="h-full w-full object-contain"
+                fill
+                className="object-contain"
               />
             ) : (
-              <span className="text-sm text-muted-foreground">画像なし</span>
+              <span className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                画像なし
+              </span>
             )}
           </div>
 
@@ -71,5 +74,5 @@ export default async function ShopProductDetailPage({
         </div>
       </div>
     </main>
-  )
+  );
 }
