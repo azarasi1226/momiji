@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,6 +13,10 @@ import {
 import { formatDateTime } from "@/lib/format"
 import { brandStatusLabel } from "@/lib/status-labels"
 import { listBrands } from "./actions"
+
+export const metadata: Metadata = {
+  title: "ブランド管理",
+}
 
 export default async function BrandListPage() {
   const brands = await listBrands()
