@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-/* eslint-disable @next/next/no-img-element */
-import { useState, useTransition } from "react"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { deleteBasketItem, setBasketItem } from "../actions"
+} from "@/components/ui/select";
+import { deleteBasketItem, setBasketItem } from "../actions";
 
 type Props = {
-  productId: string
-  productName: string
-  productPrice: number
-  productImageUrl: string
-  itemQuantity: number
-}
+  productId: string;
+  productName: string;
+  productPrice: number;
+  productImageUrl: string;
+  itemQuantity: number;
+};
 
 /** カゴの1行。 個数変更（絶対値 set）と削除を行う。 */
 export function BasketItemRow({
@@ -28,37 +28,44 @@ export function BasketItemRow({
   productImageUrl,
   itemQuantity,
 }: Props) {
-  const [quantity, setQuantity] = useState(itemQuantity)
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
+  const [quantity, setQuantity] = useState(itemQuantity);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
-  const dirty = quantity !== itemQuantity
-  const subtotal = productPrice * itemQuantity
+  const dirty = quantity !== itemQuantity;
+  const subtotal = productPrice * itemQuantity;
 
   function handleUpdate() {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const result = await setBasketItem(productId, quantity)
-      if (result?.error) setError(result.error)
-    })
+      const result = await setBasketItem(productId, quantity);
+      if (result?.error) setError(result.error);
+    });
   }
 
   function handleRemove() {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const result = await deleteBasketItem(productId)
-      if (result?.error) setError(result.error)
-    })
+      const result = await deleteBasketItem(productId);
+      if (result?.error) setError(result.error);
+    });
   }
 
   return (
     <div className="flex flex-col gap-2 border-b py-4 last:border-b-0">
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
           {productImageUrl ? (
-            <img src={productImageUrl} alt={productName} className="h-full w-full object-cover" />
+            <Image
+              src={productImageUrl}
+              alt={productName}
+              fill
+              className="object-cover"
+            />
           ) : (
-            <span className="text-[10px] text-muted-foreground">画像なし</span>
+            <span className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+              画像なし
+            </span>
           )}
         </div>
 
@@ -114,5 +121,5 @@ export function BasketItemRow({
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
-  )
+  );
 }

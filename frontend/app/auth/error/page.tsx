@@ -1,22 +1,29 @@
-import Link from "next/link"
+import Link from "next/link";
 
 const messages: Record<string, string> = {
   no_token: "認証トークンが取得できませんでした。",
-  backend: "サーバーとの通信に失敗しました。バックエンドが起動しているか確認してください。",
-}
+  backend:
+    "サーバーとの通信に失敗しました。バックエンドが起動しているか確認してください。",
+};
 
 export default async function AuthErrorPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    reason?: string
-    code?: string
-    message?: string
-    correlationId?: string
-  }>
+    reason?: string;
+    code?: string;
+    message?: string;
+    correlationId?: string;
+  }>;
 }) {
-  const { reason, code, message: detailMessage, correlationId } = await searchParams
-  const message = messages[reason ?? ""] ?? "ログイン中にエラーが発生しました。"
+  const {
+    reason,
+    code,
+    message: detailMessage,
+    correlationId,
+  } = await searchParams;
+  const message =
+    messages[reason ?? ""] ?? "ログイン中にエラーが発生しました。";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -30,7 +37,9 @@ export default async function AuthErrorPage({
 
         {(detailMessage || code || correlationId) && (
           <div className="w-full rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <p className="mb-2 font-semibold text-zinc-700 dark:text-zinc-300">エラー詳細</p>
+            <p className="mb-2 font-semibold text-zinc-700 dark:text-zinc-300">
+              エラー詳細
+            </p>
             <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-zinc-600 dark:text-zinc-400">
               {code && (
                 <>
@@ -67,5 +76,5 @@ export default async function AuthErrorPage({
         </Link>
       </main>
     </div>
-  )
+  );
 }

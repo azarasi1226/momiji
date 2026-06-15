@@ -1,17 +1,18 @@
-import Link from "next/link"
-import { Pagination } from "@/components/pagination"
-import { QueryParamSelect } from "@/components/query-param-select"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Pagination } from "@/components/pagination";
+import { QueryParamSelect } from "@/components/query-param-select";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -19,12 +20,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { formatDateTime } from "@/lib/format"
-import { productStatusLabel } from "@/lib/status-labels"
-import { listAllBrands, listProducts } from "./actions"
+} from "@/components/ui/table";
+import { formatDateTime } from "@/lib/format";
+import { productStatusLabel } from "@/lib/status-labels";
+import { listAllBrands, listProducts } from "./actions";
 
-const PAGE_SIZE = 20
+export const metadata: Metadata = {
+  title: "商品管理",
+};
+
+const PAGE_SIZE = 20;
 
 const SORT_OPTIONS = [
   { value: "name_asc", label: "名前 昇順" },
@@ -33,47 +38,54 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "価格 高い順" },
   { value: "created_desc", label: "新しい順" },
   { value: "created_asc", label: "古い順" },
-]
+];
 
 // Radix Select は空文字値を許さないので「すべて」は "all" センチネルにし、サーバ側で "" に正規化する。
-const ALL = "all"
+const ALL = "all";
 
 const STATUS_OPTIONS = [
   { value: ALL, label: "すべて" },
   { value: "ACTIVE", label: "販売中" },
   { value: "DISCONTINUED", label: "生産終了" },
-]
+];
 
 export default async function ProductListPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    q?: string
-    status?: string
-    brand?: string
-    sort?: string
-    page?: string
-  }>
+    q?: string;
+    status?: string;
+    brand?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }) {
-  const sp = await searchParams
-  const likeName = sp.q ?? ""
-  const statusParam = sp.status ?? ALL
-  const brandParam = sp.brand ?? ALL
-  const status = statusParam === ALL ? "" : statusParam
-  const brandId = brandParam === ALL ? "" : brandParam
-  const sort = sp.sort ?? "name_asc"
-  const pageNumber = Math.max(1, Number(sp.page ?? "1") || 1)
+  const sp = await searchParams;
+  const likeName = sp.q ?? "";
+  const statusParam = sp.status ?? ALL;
+  const brandParam = sp.brand ?? ALL;
+  const status = statusParam === ALL ? "" : statusParam;
+  const brandId = brandParam === ALL ? "" : brandParam;
+  const sort = sp.sort ?? "name_asc";
+  const pageNumber = Math.max(1, Number(sp.page ?? "1") || 1);
 
   const [page, brands] = await Promise.all([
-    listProducts({ likeName, status, brandId, sort, pageSize: PAGE_SIZE, pageNumber }),
+    listProducts({
+      likeName,
+      status,
+      brandId,
+      sort,
+      pageSize: PAGE_SIZE,
+      pageNumber,
+    }),
     listAllBrands(),
-  ])
+  ]);
 
-  const brandNames = Object.fromEntries(brands.map((b) => [b.id, b.name]))
+  const brandNames = Object.fromEntries(brands.map((b) => [b.id, b.name]));
   const brandOptions = [
     { value: ALL, label: "すべて" },
     ...brands.map((b) => ({ value: b.id, label: b.name })),
-  ]
+  ];
 
   return (
     <main className="flex w-full max-w-5xl flex-col gap-6 px-8 py-16">
@@ -91,7 +103,13 @@ export default async function ProductListPage({
             <Label htmlFor="q" className="text-xs text-muted-foreground">
               商品名で検索
             </Label>
-            <Input id="q" name="q" type="text" defaultValue={likeName} placeholder="部分一致" />
+            <Input
+              id="q"
+              name="q"
+              type="text"
+              defaultValue={likeName}
+              placeholder="部分一致"
+            />
           </div>
           <div className="flex flex-col gap-1">
             <Label htmlFor="status" className="text-xs text-muted-foreground">
@@ -134,11 +152,18 @@ export default async function ProductListPage({
           </Button>
         </form>
 
-        <QueryParamSelect param="sort" value={sort} label="並び順" options={SORT_OPTIONS} />
+        <QueryParamSelect
+          param="sort"
+          value={sort}
+          label="並び順"
+          options={SORT_OPTIONS}
+        />
       </div>
 
       {page.products.length === 0 ? (
-        <p className="text-sm text-muted-foreground">条件に一致する商品がありません。</p>
+        <p className="text-sm text-muted-foreground">
+          条件に一致する商品がありません。
+        </p>
       ) : (
         <Table>
           <TableHeader>
@@ -161,17 +186,28 @@ export default async function ProductListPage({
                 </TableCell>
                 <TableCell>¥{product.price.toLocaleString("ja-JP")}</TableCell>
                 <TableCell>
-                  <span className={product.stockAvailable <= 0 ? "text-destructive" : ""}>
+                  <span
+                    className={
+                      product.stockAvailable <= 0 ? "text-destructive" : ""
+                    }
+                  >
                     {product.stockAvailable.toLocaleString("ja-JP")}
                   </span>
                   {product.stockReserved > 0 && (
                     <span className="text-xs text-muted-foreground">
-                      {" "}（確保 {product.stockReserved.toLocaleString("ja-JP")}）
+                      {" "}
+                      （確保 {product.stockReserved.toLocaleString("ja-JP")}）
                     </span>
                   )}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={product.status === "DISCONTINUED" ? "secondary" : "default"}>
+                  <Badge
+                    variant={
+                      product.status === "DISCONTINUED"
+                        ? "secondary"
+                        : "default"
+                    }
+                  >
                     {productStatusLabel(product.status)}
                   </Badge>
                 </TableCell>
@@ -196,5 +232,5 @@ export default async function ProductListPage({
         </p>
       </div>
     </main>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import Link from "next/link"
-import { listActiveBrands } from "../actions"
-import { ProductCreateForm } from "./product-create-form"
+import Link from "next/link";
+import { listActiveBrands } from "../actions";
+import { ProductCreateForm } from "./product-create-form";
 
 export default async function NewProductPage() {
-  const brands = await listActiveBrands()
+  const brands = await listActiveBrands();
 
   return (
     <main className="flex w-full max-w-2xl flex-col gap-8 px-8 py-16">
@@ -19,5 +19,5 @@ export default async function NewProductPage() {
 
       <ProductCreateForm brands={brands} />
     </main>
-  )
+  );
 }

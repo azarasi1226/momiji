@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Label } from "@/components/ui/label"
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 /**
  * URL クエリ駆動の汎用セレクト。 変更した瞬間に該当クエリ（[param]）だけ差し替えて再取得する。
@@ -17,7 +17,7 @@ import {
  * - 値が空文字の選択肢はそのクエリを**外す**（例: 状態フィルタの「すべて」）。空値は Select の内部表現に使えないので "__all__" を噛ませる。
  * - `usePathname` を使うのでどの一覧ページでも使い回せる。
  */
-const EMPTY_VALUE = "__all__"
+const EMPTY_VALUE = "__all__";
 
 export function QueryParamSelect({
   param,
@@ -25,24 +25,24 @@ export function QueryParamSelect({
   label,
   options,
 }: {
-  param: string
-  value: string
-  label: string
-  options: { value: string; label: string }[]
+  param: string;
+  value: string;
+  label: string;
+  options: { value: string; label: string }[];
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   function handleChange(next: string) {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams.toString());
     if (next && next !== EMPTY_VALUE) {
-      params.set(param, next)
+      params.set(param, next);
     } else {
-      params.delete(param)
+      params.delete(param);
     }
-    params.delete("page")
-    router.push(`${pathname}?${params.toString()}`)
+    params.delete("page");
+    router.push(`${pathname}?${params.toString()}`);
   }
 
   return (
@@ -63,5 +63,5 @@ export function QueryParamSelect({
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }

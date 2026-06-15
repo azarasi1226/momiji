@@ -1,7 +1,15 @@
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
-import { AdminNav } from "./admin-nav"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { AdminNav } from "./admin-nav";
+
+export const metadata: Metadata = {
+  title: {
+    default: "管理画面",
+    template: "%s | momiji 管理",
+  },
+};
 
 /**
  * /admin/* 共通シェル。 左サイドバー（常設ナビ）+ 右にページ内容。
@@ -13,11 +21,11 @@ import { AdminNav } from "./admin-nav"
 export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await auth()
+  const session = await auth();
   if (!session || session.error === "RefreshTokenError") {
-    redirect("/")
+    redirect("/");
   }
 
   return (
@@ -38,5 +46,5 @@ export default async function AdminLayout({
       </aside>
       <div className="flex-1">{children}</div>
     </div>
-  )
+  );
 }

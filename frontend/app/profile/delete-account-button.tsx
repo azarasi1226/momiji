@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { deleteAccount } from "./actions"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { deleteAccount } from "./actions";
 
 export function DeleteAccountButton() {
-  const [confirming, setConfirming] = useState(false)
-  const [isPending, setIsPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
-    setIsPending(true)
-    setError(null)
-    const result = await deleteAccount()
+    setIsPending(true);
+    setError(null);
+    const result = await deleteAccount();
     if (result?.error) {
-      setError(result.error)
-      setIsPending(false)
-      setConfirming(false)
+      setError(result.error);
+      setIsPending(false);
+      setConfirming(false);
     }
   }
 
@@ -32,7 +32,7 @@ export function DeleteAccountButton() {
           アカウントを削除する
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -56,8 +56,8 @@ export function DeleteAccountButton() {
           variant="outline"
           className="flex-1"
           onClick={() => {
-            setConfirming(false)
-            setError(null)
+            setConfirming(false);
+            setError(null);
           }}
           disabled={isPending}
         >
@@ -65,5 +65,5 @@ export function DeleteAccountButton() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

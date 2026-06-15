@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { PhoneNumberFields, PostalCodeFields } from "@/components/form/digit-fields"
-import { PREFECTURES } from "@/lib/prefectures"
-import { lookupAddress, type ShippingAddress } from "./actions"
-import { FieldError } from "@/components/form/field-error"
+import {
+  PhoneNumberFields,
+  PostalCodeFields,
+} from "@/components/form/digit-fields";
+import { FieldError } from "@/components/form/field-error";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PREFECTURES } from "@/lib/prefectures";
+import { lookupAddress, type ShippingAddress } from "./actions";
 
 /**
  * 配送先フォームの共通フィールド（追加・編集で共有）。
@@ -19,23 +22,26 @@ export function AddressFormFields({
   defaults,
   fieldErrors,
 }: {
-  idPrefix: string
-  defaults?: Partial<ShippingAddress>
-  fieldErrors?: Record<string, string>
+  idPrefix: string;
+  defaults?: Partial<ShippingAddress>;
+  fieldErrors?: Record<string, string>;
 }) {
   async function onPostalComplete(postalCode: string) {
-    const result = await lookupAddress(postalCode)
-    if (!result) return
+    const result = await lookupAddress(postalCode);
+    if (!result) return;
     const setValue = (id: string, value: string, onlyIfEmpty = false) => {
-      const element = document.getElementById(`${idPrefix}${id}`) as HTMLInputElement | HTMLSelectElement | null
-      if (!element) return
-      if (onlyIfEmpty && element.value !== "") return
-      element.value = value
-    }
-    setValue("prefecture", result.prefecture)
-    setValue("city", result.city)
+      const element = document.getElementById(`${idPrefix}${id}`) as
+        | HTMLInputElement
+        | HTMLSelectElement
+        | null;
+      if (!element) return;
+      if (onlyIfEmpty && element.value !== "") return;
+      element.value = value;
+    };
+    setValue("prefecture", result.prefecture);
+    setValue("city", result.city);
     // 番地はユーザーが番・号を追記する欄なので、 既に入力があるときは上書きしない
-    setValue("streetAddress", result.town, true)
+    setValue("streetAddress", result.town, true);
   }
 
   return (
@@ -54,7 +60,9 @@ export function AddressFormFields({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor={`${idPrefix}phoneNumber1`}>電話番号（ドライバー連絡用）</Label>
+        <Label htmlFor={`${idPrefix}phoneNumber1`}>
+          電話番号（ドライバー連絡用）
+        </Label>
         <PhoneNumberFields
           idPrefix={idPrefix}
           defaultValue={defaults?.phoneNumber ?? ""}
@@ -71,7 +79,9 @@ export function AddressFormFields({
           invalid={!!fieldErrors?.postalCode}
           onComplete={onPostalComplete}
         />
-        <p className="text-xs text-muted-foreground">7桁入力すると住所を自動入力します</p>
+        <p className="text-xs text-muted-foreground">
+          7桁入力すると住所を自動入力します
+        </p>
         <FieldError message={fieldErrors?.postalCode} />
       </div>
 
@@ -148,5 +158,5 @@ export function AddressFormFields({
         <FieldError message={fieldErrors?.deliveryNote} />
       </div>
     </>
-  )
+  );
 }
