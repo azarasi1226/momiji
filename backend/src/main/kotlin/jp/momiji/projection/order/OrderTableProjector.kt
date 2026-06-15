@@ -5,6 +5,8 @@ import iss.jooq.generated.tables.references.ORDERS
 import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderStatus
 import jp.momiji.event.order.OrderFailedEvent
+import jp.momiji.event.order.OrderPaidEvent
+import jp.momiji.event.order.OrderPaymentPreparedEvent
 import jp.momiji.event.order.OrderStartedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
@@ -71,20 +73,57 @@ class OrderTableProjector(
 
     @EventHandler
     fun on(
+        event: OrderPaymentPreparedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
+        // updated_at は PAYMENT_PENDING の時計（sweeper が 3DS の TTL をこの時刻基準で測る）。
+        val updated =
+            dsl
+                .update(ORDERS)
+                .set(ORDERS.STATUS, OrderStatus.PAYMENT_PENDING.name)
+                .set(ORDERS.PAYMENT_METHOD_ID, event.paymentMethodId)
+                .set(ORDERS.PAYMENT_INTENT_ID, event.paymentIntentId)
+                .set(ORDERS.UPDATED_AT, at)
+                .where(ORDERS.ID.eq(event.orderId))
+                .execute()
+        if (updated == 0) {
+            logger.warn { "決済準備の反映先の注文行がありません: orderId=${event.orderId}" }
+        }
+    }
+
+    @EventHandler
+    fun on(
+        event: OrderPaidEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        updateStatus(event.orderId, OrderStatus.PAID, timestamp)
+    }
+
+    @EventHandler
+    fun on(
         event: OrderFailedEvent,
         @Timestamp timestamp: Instant,
+    ) {
+        updateStatus(event.orderId, OrderStatus.FAILED, timestamp)
+    }
+
+    private fun updateStatus(
+        orderId: String,
+        status: OrderStatus,
+        timestamp: Instant,
     ) {
         val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
         val updated =
             dsl
                 .update(ORDERS)
-                .set(ORDERS.STATUS, OrderStatus.FAILED.name)
+                .set(ORDERS.STATUS, status.name)
                 .set(ORDERS.UPDATED_AT, at)
-                .where(ORDERS.ID.eq(event.orderId))
+                .where(ORDERS.ID.eq(orderId))
                 .execute()
         // OrderStarted で行は作られているはず。 規約: 対象不在は warn。
         if (updated == 0) {
-            logger.warn { "失敗反映先の注文行がありません: orderId=${event.orderId}" }
+            logger.warn { "状態反映先の注文行がありません: orderId=$orderId status=${status.name}" }
         }
     }
 }
