@@ -7,8 +7,11 @@ package jp.momiji.domain.order
  * 文字列保存。 在庫の reason 等と同じ方針）。 現状の StartOrder は [STARTED] のみを書き込む。
  */
 enum class OrderStatus {
-    /** 注文開始・在庫予約済み（決済待ち）。 */
+    /** 注文開始・在庫予約済み（まだ決済に着手していない）。 */
     STARTED,
+
+    /** 決済着手済み（PaymentIntent 作成済み・Stripe での confirm/3DS 待ち）。 予約タイムアウトの時計はここでリセットする。 */
+    PAYMENT_PENDING,
 
     /** 決済成功。 */
     PAID,
