@@ -66,7 +66,9 @@ class StripeWebhookParser(
         val orderId = paymentIntent.metadata?.get(STRIPE_METADATA_ORDER_ID)
         if (orderId == null) {
             // 失敗イベントは**未課金**なので Ignore で無害（我々の注文なら TTL で sweeper が在庫解放する）。 warn 据え置き。
-            logger.warn { "payment_intent.payment_failed に order_id metadata がありません: eventId=${event.id} paymentIntentId=${paymentIntent.id}" }
+            logger.warn {
+                "payment_intent.payment_failed に order_id metadata がありません: eventId=${event.id} paymentIntentId=${paymentIntent.id}"
+            }
             return StripeWebhookEvent.Ignored
         }
         return StripeWebhookEvent.PaymentIntentFailed(orderId = orderId)

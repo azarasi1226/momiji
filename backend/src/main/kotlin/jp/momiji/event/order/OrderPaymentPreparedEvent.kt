@@ -18,6 +18,6 @@ data class OrderPaymentPreparedEvent(
     // 決済に使うカード id
     @EventTag(key = MomijiEventTag.PAYMENT_METHOD_ID)
     val paymentMethodId: String,
-    //　返金時に使う決済 id
+    // 　返金時に使う決済 id
     val paymentIntentId: String,
 )
