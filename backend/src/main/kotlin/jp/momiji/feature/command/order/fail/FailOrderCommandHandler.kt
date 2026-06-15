@@ -1,6 +1,5 @@
-package jp.momiji.feature.command.order.expire
+package jp.momiji.feature.command.order.fail
 
-import jp.momiji.domain.order.OrderFailureReason
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.stock.StockReservationReleasedEvent
 import jp.momiji.feature.command.CommandResult
@@ -12,25 +11,26 @@ import org.axonframework.modelling.annotation.InjectEntity
 import org.springframework.stereotype.Component
 
 /**
- * 注文を失効させる CommandHandler（予約タイムアウトの補償）。
+ * 注文を失敗させる
  *
- * **STARTED のときだけ**失効させる。 既に PAID/FAILED、 または存在しない（status==null）なら no-op で成功（冪等）。
- * これで「期限切れ直前に支払い成功」レースでも、 先に PAID になっていれば解放しない（二重に撃たれても安全）。
+ * **releasable（STARTED or PAYMENT_PENDING）のときだけ**解放する。
+ * 既に PAID/FAILED、 または存在しないなら no-op で成功にする（冪等）。
  */
 @Component
-class ExpireOrderCommandHandler {
+class FailOrderCommandHandler {
     @CommandHandler
     fun handle(
-        command: ExpireOrderCommand,
+        command: FailOrderCommand,
         @InjectEntity(idProperty = "orderId") order: OrderState,
         @InjectEntity(idProperty = "orderProductIds") products: ProductsState,
         eventAppender: EventAppender,
     ): CommandResult {
-        if (!order.isStarted) {
-            return ExpireOrderCommandResult.success()
+        // 冪等性：注文が失敗状態にできない場合は成功とする。
+        if (!order.isReleasable) {
+            return FailOrderCommandResult.success()
         }
 
-        // 解放する個数は OrderState の予約スナップショット（権威）から。 reservedQuantity の絶対値は ProductsState の現在値から。
+        // 保障トランザクションとしてアイテムの予約を解放していく
         val releasedEvents =
             order.reservedItems.map { item ->
                 StockReservationReleasedEvent(
@@ -41,9 +41,9 @@ class ExpireOrderCommandHandler {
                 )
             }
         val orderFailedEvent =
-            OrderFailedEvent(orderId = command.orderId, reason = OrderFailureReason.EXPIRED.name)
+            OrderFailedEvent(orderId = command.orderId, reason = command.reason.name)
         eventAppender.append(orderFailedEvent, *releasedEvents.toTypedArray())
 
-        return ExpireOrderCommandResult.success()
+        return FailOrderCommandResult.success()
     }
 }
