@@ -10,17 +10,17 @@
 const BRAND_STATUS_LABELS: Record<string, string> = {
   ACTIVE: "有効",
   ARCHIVED: "アーカイブ済み",
-}
+};
 
 const PRODUCT_STATUS_LABELS: Record<string, string> = {
   ACTIVE: "販売中",
   DISCONTINUED: "生産終了",
-}
+};
 
 export function brandStatusLabel(status: string): string {
-  return BRAND_STATUS_LABELS[status] ?? status
+  return BRAND_STATUS_LABELS[status] ?? status;
 }
 
 export function productStatusLabel(status: string): string {
-  return PRODUCT_STATUS_LABELS[status] ?? status
+  return PRODUCT_STATUS_LABELS[status] ?? status;
 }

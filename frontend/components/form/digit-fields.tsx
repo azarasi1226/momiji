@@ -1,13 +1,16 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 
 // 数字以外を弾き、 枠が埋まったら次の枠へ自動フォーカスする（電話番号・郵便番号の分割枠用）。
-function digitsAutoAdvance(e: React.FormEvent<HTMLInputElement>, nextId?: string) {
-  const input = e.currentTarget
-  input.value = input.value.replace(/\D/g, "")
+function digitsAutoAdvance(
+  e: React.FormEvent<HTMLInputElement>,
+  nextId?: string,
+) {
+  const input = e.currentTarget;
+  input.value = input.value.replace(/\D/g, "");
   if (nextId && input.value.length >= input.maxLength) {
-    document.getElementById(nextId)?.focus()
+    document.getElementById(nextId)?.focus();
   }
 }
 
@@ -21,12 +24,12 @@ export function PhoneNumberFields({
   defaultValue = "",
   invalid = false,
 }: {
-  idPrefix?: string
-  defaultValue?: string
-  invalid?: boolean
+  idPrefix?: string;
+  defaultValue?: string;
+  invalid?: boolean;
 }) {
-  const [p1 = "", p2 = "", p3 = ""] = defaultValue.split("-")
-  const id = (n: number) => `${idPrefix}phoneNumber${n}`
+  const [p1 = "", p2 = "", p3 = ""] = defaultValue.split("-");
+  const id = (n: number) => `${idPrefix}phoneNumber${n}`;
 
   return (
     <div className="flex items-center gap-2">
@@ -72,7 +75,7 @@ export function PhoneNumberFields({
         onInput={(e) => digitsAutoAdvance(e)}
       />
     </div>
-  )
+  );
 }
 
 /**
@@ -85,21 +88,23 @@ export function PostalCodeFields({
   invalid = false,
   onComplete,
 }: {
-  idPrefix?: string
-  defaultValue?: string
-  invalid?: boolean
-  onComplete?: (postalCode: string) => void
+  idPrefix?: string;
+  defaultValue?: string;
+  invalid?: boolean;
+  onComplete?: (postalCode: string) => void;
 }) {
-  const [z1 = "", z2 = ""] = defaultValue.split("-")
-  const id = (n: number) => `${idPrefix}postalCode${n}`
+  const [z1 = "", z2 = ""] = defaultValue.split("-");
+  const id = (n: number) => `${idPrefix}postalCode${n}`;
 
   function handleInput(e: React.FormEvent<HTMLInputElement>, nextId?: string) {
-    digitsAutoAdvance(e, nextId)
-    if (!onComplete) return
-    const v1 = (document.getElementById(id(1)) as HTMLInputElement | null)?.value ?? ""
-    const v2 = (document.getElementById(id(2)) as HTMLInputElement | null)?.value ?? ""
+    digitsAutoAdvance(e, nextId);
+    if (!onComplete) return;
+    const v1 =
+      (document.getElementById(id(1)) as HTMLInputElement | null)?.value ?? "";
+    const v2 =
+      (document.getElementById(id(2)) as HTMLInputElement | null)?.value ?? "";
     if (v1.length === 3 && v2.length === 4) {
-      onComplete(v1 + v2)
+      onComplete(v1 + v2);
     }
   }
 
@@ -133,6 +138,5 @@ export function PostalCodeFields({
         onInput={(e) => handleInput(e)}
       />
     </div>
-  )
+  );
 }
-

@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 /**
  * Server Action / Server Component の冒頭で呼ぶ。
@@ -12,9 +12,9 @@ import { auth } from "@/auth"
  * これを 1 か所に集約することで、 各 action の冒頭ボイラープレートを削減する。
  */
 export async function requireValidSession() {
-  const session = await auth()
+  const session = await auth();
   if (!session?.accessToken || session.error === "RefreshTokenError") {
-    redirect("/")
+    redirect("/");
   }
-  return session
+  return session;
 }

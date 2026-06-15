@@ -1,22 +1,22 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { findBasket } from "../actions"
-import { BasketItemRow } from "./basket-item-row"
-import { ClearBasketButton } from "./clear-basket-button"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { findBasket } from "../actions";
+import { BasketItemRow } from "./basket-item-row";
+import { ClearBasketButton } from "./clear-basket-button";
 
 // カゴの商品種類数は backend で最大 50 に制限される。 1 ページ（最大 100）で全件取れるため、
 // カゴ画面はページングせず全件をまとめて表示し、合計金額を正確に出す。
-const PAGE_SIZE = 100
+const PAGE_SIZE = 100;
 
 export default async function BasketPage() {
-  const basket = await findBasket({ pageSize: PAGE_SIZE, pageNumber: 1 })
+  const basket = await findBasket({ pageSize: PAGE_SIZE, pageNumber: 1 });
 
   const total = basket.items.reduce(
     (sum, item) => sum + item.productPrice * item.itemQuantity,
     0,
-  )
+  );
 
   return (
     <main className="flex w-full max-w-3xl flex-col gap-6 px-8 py-12">
@@ -27,7 +27,9 @@ export default async function BasketPage() {
 
       {basket.items.length === 0 ? (
         <div className="flex flex-col items-start gap-4">
-          <p className="text-sm text-muted-foreground">カゴに商品がありません。</p>
+          <p className="text-sm text-muted-foreground">
+            カゴに商品がありません。
+          </p>
           <Button asChild>
             <Link href="/shop/products">商品一覧へ</Link>
           </Button>
@@ -67,5 +69,5 @@ export default async function BasketPage() {
         </>
       )}
     </main>
-  )
+  );
 }

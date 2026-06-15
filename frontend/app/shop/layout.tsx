@@ -1,17 +1,17 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import { ShoppingCart } from "lucide-react"
-import { auth } from "@/auth"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ShoppingCart } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: {
     default: "ショップ",
     template: "%s | momiji shop",
   },
-}
+};
 
 /**
  * /shop/* 共通シェル（購入者向け）。 上部ヘッダー（商品一覧 / カゴ）+ ページ内容。
@@ -22,18 +22,18 @@ export const metadata: Metadata = {
 export default async function ShopLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await auth()
+  const session = await auth();
   if (!session || session.error === "RefreshTokenError") {
-    redirect("/")
+    redirect("/");
   }
 
-  const name = session.user?.name
-  const email = session.user?.email
-  const image = session.user?.image
-  const label = name || email || "プロフィール"
-  const initial = (name || email || "?").charAt(0).toUpperCase()
+  const name = session.user?.name;
+  const email = session.user?.email;
+  const image = session.user?.image;
+  const label = name || email || "プロフィール";
+  const initial = (name || email || "?").charAt(0).toUpperCase();
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/30 font-sans">
@@ -66,5 +66,5 @@ export default async function ShopLayout({
       </header>
       <div className="flex flex-1 justify-center">{children}</div>
     </div>
-  )
+  );
 }

@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import { useActionState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { useActionState } from "react";
+import { FieldError } from "@/components/form/field-error";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { ImageUploadField } from "../image-upload-field"
-import { createProduct, type ProductFormState } from "../actions"
-import { FieldError } from "@/components/form/field-error"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { createProduct, type ProductFormState } from "../actions";
+import { ImageUploadField } from "../image-upload-field";
 
 export function ProductCreateForm({
   brands,
 }: {
-  brands: { id: string; name: string }[]
+  brands: { id: string; name: string }[];
 }) {
-  const [state, formAction, isPending] = useActionState<ProductFormState, FormData>(
-    createProduct,
-    null,
-  )
-  const fieldErrors = state?.fieldErrors
+  const [state, formAction, isPending] = useActionState<
+    ProductFormState,
+    FormData
+  >(createProduct, null);
+  const fieldErrors = state?.fieldErrors;
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
@@ -33,7 +33,8 @@ export function ProductCreateForm({
         <Label htmlFor="brandId">ブランド</Label>
         {brands.length === 0 ? (
           <p className="text-sm text-destructive">
-            紐づけられる ACTIVE なブランドがありません。 先にブランドを作成してください。
+            紐づけられる ACTIVE なブランドがありません。
+            先にブランドを作成してください。
           </p>
         ) : (
           <Select name="brandId" required>
@@ -54,7 +55,13 @@ export function ProductCreateForm({
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="name">商品名</Label>
-        <Input id="name" name="name" type="text" required aria-invalid={!!fieldErrors?.name} />
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          required
+          aria-invalid={!!fieldErrors?.name}
+        />
         <FieldError message={fieldErrors?.name} />
       </div>
 
@@ -89,11 +96,17 @@ export function ProductCreateForm({
         <FieldError message={fieldErrors?.price} />
       </div>
 
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {state?.error && (
+        <p className="text-sm text-destructive">{state.error}</p>
+      )}
 
-      <Button type="submit" disabled={isPending || brands.length === 0} className="mt-2 w-fit">
+      <Button
+        type="submit"
+        disabled={isPending || brands.length === 0}
+        className="mt-2 w-fit"
+      >
         {isPending ? "作成中..." : "作成"}
       </Button>
     </form>
-  )
+  );
 }

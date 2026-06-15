@@ -1,6 +1,6 @@
-import { Code, ConnectError } from "@connectrpc/connect"
-import { redirect } from "next/navigation"
-import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js"
+import { Code, ConnectError } from "@connectrpc/connect";
+import { redirect } from "next/navigation";
+import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js";
 
 /**
  * gRPC 呼び出しで UNAUTHENTICATED が返ったら "/" に飛ばして再ログインを促す。
@@ -9,7 +9,7 @@ import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js"
  */
 export function redirectIfUnauthenticated(e: unknown): void {
   if (e instanceof ConnectError && e.code === Code.Unauthenticated) {
-    redirect("/")
+    redirect("/");
   }
 }
 
@@ -28,26 +28,26 @@ export function redirectIfUnauthenticated(e: unknown): void {
  * - fallback: details が無い場合の生メッセージ
  */
 export type ParsedConnectError = {
-  businessError?: string
-  fieldErrors?: Record<string, string>
-  unknownError?: { message: string; correlationId: string }
-  fallback?: string
-}
+  businessError?: string;
+  fieldErrors?: Record<string, string>;
+  unknownError?: { message: string; correlationId: string };
+  fallback?: string;
+};
 
 export function parseConnectError(e: unknown): ParsedConnectError | null {
-  if (!(e instanceof ConnectError)) return null
-  const details = e.findDetails(ErrorDetailSchema)
-  if (details.length === 0) return { fallback: e.message }
-  const detail = details[0]
+  if (!(e instanceof ConnectError)) return null;
+  const details = e.findDetails(ErrorDetailSchema);
+  if (details.length === 0) return { fallback: e.message };
+  const detail = details[0];
   if (detail.error.case === "businessError") {
-    return { businessError: detail.error.value.message }
+    return { businessError: detail.error.value.message };
   }
   if (detail.error.case === "validationError") {
-    const fieldErrors: Record<string, string> = {}
+    const fieldErrors: Record<string, string> = {};
     for (const fe of detail.error.value.errors) {
-      fieldErrors[fe.fieldName] = fe.message
+      fieldErrors[fe.fieldName] = fe.message;
     }
-    return { fieldErrors }
+    return { fieldErrors };
   }
   if (detail.error.case === "unknownError") {
     return {
@@ -55,9 +55,9 @@ export function parseConnectError(e: unknown): ParsedConnectError | null {
         message: detail.error.value.message,
         correlationId: detail.error.value.correlationId,
       },
-    }
+    };
   }
-  return { fallback: e.message }
+  return { fallback: e.message };
 }
 
 /**
@@ -65,28 +65,32 @@ export function parseConnectError(e: unknown): ParsedConnectError | null {
  * エラーページ表示やログで「実際に何が起きたか」を見せるための共通フォーマッタ。
  */
 export function formatConnectError(e: unknown): {
-  code?: string
-  message: string
-  correlationId?: string
+  code?: string;
+  message: string;
+  correlationId?: string;
 } {
   if (!(e instanceof ConnectError)) {
-    return { message: e instanceof Error ? e.message : String(e) }
+    return { message: e instanceof Error ? e.message : String(e) };
   }
 
-  const code = Code[e.code]
-  const parsed = parseConnectError(e)
+  const code = Code[e.code];
+  const parsed = parseConnectError(e);
 
   if (parsed?.unknownError) {
-    return { code, message: parsed.unknownError.message, correlationId: parsed.unknownError.correlationId }
+    return {
+      code,
+      message: parsed.unknownError.message,
+      correlationId: parsed.unknownError.correlationId,
+    };
   }
   if (parsed?.businessError) {
-    return { code, message: parsed.businessError }
+    return { code, message: parsed.businessError };
   }
   if (parsed?.fieldErrors) {
     const message = Object.entries(parsed.fieldErrors)
       .map(([field, msg]) => `${field}: ${msg}`)
-      .join(" / ")
-    return { code, message }
+      .join(" / ");
+    return { code, message };
   }
-  return { code, message: parsed?.fallback ?? e.message }
+  return { code, message: parsed?.fallback ?? e.message };
 }
