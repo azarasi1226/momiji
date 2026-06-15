@@ -4,10 +4,13 @@ import com.stripe.StripeClient
 import com.stripe.exception.InvalidRequestException
 import com.stripe.net.RequestOptions
 import com.stripe.param.CustomerCreateParams
+import com.stripe.param.PaymentIntentCreateParams
+import com.stripe.param.RefundCreateParams
 import com.stripe.param.SetupIntentCreateParams
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jp.momiji.port.payment.CardDetails
 import jp.momiji.port.payment.PaymentGateway
+import jp.momiji.port.payment.PaymentIntentResult
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -62,6 +65,57 @@ class StripePaymentGateway(
             .clientSecret
     }
 
+    override fun createPaymentIntent(
+        stripeCustomerId: String,
+        paymentMethodId: String,
+        amount: Long,
+        orderId: String,
+    ): PaymentIntentResult {
+        val params =
+            PaymentIntentCreateParams
+                .builder()
+                .setAmount(amount)
+                .setCurrency("jpy")
+                .setCustomer(stripeCustomerId)
+                .setPaymentMethod(paymentMethodId)
+                // カード限定にする。 これを付けないと automatic_payment_methods が既定で有効になり、
+                // redirect 系メソッドが混ざって confirmCardPayment（カード専用）と相性が悪くなる（return_url 要求等）。
+                // createSetupIntent と同じ方針。
+                .addPaymentMethodType("card")
+                // confirm はフロントの Stripe.js で行う（オンセッション＝3DS をブラウザで突破させる）ので、 ここでは確定しない。
+                // webhook で注文を相関するため order_id を載せる。
+                .putMetadata(STRIPE_METADATA_ORDER_ID, orderId)
+                .build()
+        // order ごとに固定の Idempotency-Key。 リトライ・並走で PaymentIntent が二重作成されるのを防ぐ（同一 pi_・client_secret を返す）。
+        // 決済失敗＝注文失敗（カード切り替えの再準備はしない）なので、 1 注文 1 PaymentIntent でよい。
+        val options =
+            RequestOptions
+                .builder()
+                .setIdempotencyKey("order-payment-$orderId")
+                .build()
+        val paymentIntent = stripeClient.v1().paymentIntents().create(params, options)
+        return PaymentIntentResult(
+            clientSecret = paymentIntent.clientSecret,
+            paymentIntentId = paymentIntent.id,
+        )
+    }
+
+    override fun refundPayment(paymentIntentId: String) {
+        try {
+            val params =
+                RefundCreateParams
+                    .builder()
+                    .setPaymentIntent(paymentIntentId)
+                    .build()
+            stripeClient.v1().refunds().create(params)
+            logger.info { "Stripe Refund を作成しました: paymentIntentId=$paymentIntentId" }
+        } catch (e: InvalidRequestException) {
+            // 恒久エラー（既に返金済み・不在等）は冪等に握る。 detach/delete と同じ線引き。
+            logger.warn(e) { "Stripe Refund をスキップ（恒久エラー・冪等扱い）: paymentIntentId=$paymentIntentId" }
+        }
+        // 一時障害は投げて呼び出し側のリトライに乗せる。
+    }
+
     override fun retrievePaymentMethod(paymentMethodId: String): CardDetails {
         val card =
             stripeClient
@@ -111,3 +165,6 @@ class StripePaymentGateway(
  * inbound（読む）側の [StripeWebhookParser] で共有し、 文字列のドリフトを防ぐ。
  */
 internal const val STRIPE_METADATA_USER_ID = "user_id"
+
+/** PaymentIntent に載せる order_id metadata のキー。 outbound（[StripePaymentGateway]）と inbound（[StripeWebhookParser]）で共有。 */
+internal const val STRIPE_METADATA_ORDER_ID = "order_id"
