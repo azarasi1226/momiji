@@ -1,8 +1,11 @@
 package jp.momiji.projection.stock
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.STOCKS
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationReleasedEvent
+import jp.momiji.event.stock.StockReservedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
 import org.jooq.DSLContext
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+
+private val logger = KotlinLogging.logger {}
 
 @Component
 class StockTableProjector(
@@ -21,6 +26,42 @@ class StockTableProjector(
         @Timestamp timestamp: Instant,
     ) {
         upsertOnHand(event.productId, event.onHandQuantity, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: StockReservedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        setReserved(event.productId, event.reservedQuantity, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: StockReservationReleasedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        setReserved(event.productId, event.reservedQuantity, timestamp)
+    }
+
+    // reservedQuantity は予約数の絶対値なので set（差分でなく上書き）。 予約・解放どちらも再処理して冪等。
+    private fun setReserved(
+        productId: String,
+        reservedQuantity: Int,
+        timestamp: Instant,
+    ) {
+        val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
+        val updated =
+            dsl
+                .update(STOCKS)
+                .set(STOCKS.RESERVED, reservedQuantity)
+                .set(STOCKS.UPDATED_AT, at)
+                .where(STOCKS.PRODUCT_ID.eq(productId))
+                .execute()
+        // 予約/解放はコマンド側で確認済みなので在庫行は必ずあるはず。 規約: 対象不在は warn。
+        if (updated == 0) {
+            logger.warn { "予約数の反映先の在庫行がありません: productId=$productId" }
+        }
     }
 
     @EventHandler

@@ -1,4 +1,4 @@
-package jp.momiji.config
+package jp.momiji.config.axon
 
 import jakarta.annotation.PostConstruct
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.TokenStore

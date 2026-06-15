@@ -60,6 +60,10 @@ export default async function BasketPage() {
             </span>
           </div>
 
+          <Button asChild size="lg">
+            <Link href="/shop/checkout">レジに進む</Link>
+          </Button>
+
           <Link
             href="/shop/products"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"

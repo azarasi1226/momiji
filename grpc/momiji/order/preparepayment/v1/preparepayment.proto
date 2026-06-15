@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package momiji.order.preparepayment.v1;
+
+// 注文の決済を準備する。 PaymentIntent を作成し client_secret を返す（前半=同期）。
+// 持ち主(user)は JWT から解決。 注文・カードの所有権は server で検証する。
+// 確定（成功/失敗）は後半の webhook（payment_intent.succeeded / payment_failed）で記録する。
+service PreparePaymentService {
+  rpc PreparePayment(PreparePaymentRequest) returns (PreparePaymentResponse);
+}
+
+message PreparePaymentRequest {
+  // 決済する注文の id（StartOrder で採番されたもの）。
+  string order_id = 1;
+  // 決済に使うカードの id（Stripe PaymentMethod, pm_）。 所有権は server で検証する。
+  string payment_method_id = 2;
+}
+
+message PreparePaymentResponse {
+  // Stripe.js の confirmCardPayment に渡す client_secret。
+  string client_secret = 1;
+}

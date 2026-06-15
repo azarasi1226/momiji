@@ -12,6 +12,8 @@ import jp.momiji.grpc.momiji.product.create.v1.CreateProductRequest
 import jp.momiji.grpc.momiji.product.create.v1.CreateProductServiceGrpc
 import jp.momiji.grpc.momiji.product.discontinue.v1.DiscontinueProductRequest
 import jp.momiji.grpc.momiji.product.discontinue.v1.DiscontinueProductServiceGrpc
+import jp.momiji.grpc.momiji.stock.receive.v1.ReceiveStockRequest
+import jp.momiji.grpc.momiji.stock.receive.v1.ReceiveStockServiceGrpc
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -60,6 +62,8 @@ fun main() {
         val productStub = CreateProductServiceGrpc.newBlockingStub(channel).withInterceptors(auth)
         val discontinueStub =
             DiscontinueProductServiceGrpc.newBlockingStub(channel).withInterceptors(auth)
+        val receiveStockStub =
+            ReceiveStockServiceGrpc.newBlockingStub(channel).withInterceptors(auth)
 
         for (i in 1..BRAND_COUNT) {
             val brandId = brandId(i)
@@ -74,7 +78,8 @@ fun main() {
 
             for (j in 1..PRODUCTS_PER_BRAND) {
                 val productId = productId(i, j)
-                val builder =
+                // 画像URLは付けない（任意項目・null の例。 ProductImageUrl は空を Ok(null) として扱う）。
+                productStub.createProduct(
                     CreateProductRequest
                         .newBuilder()
                         .setId(productId)
@@ -82,11 +87,17 @@ fun main() {
                         .setName("商品 B$i-P$j")
                         .setDescription("ブランド$i の商品$j の説明文です。")
                         .setPrice(500 + j * 100)
-                // 画像URLは一部だけ（任意項目の有無をデータに散らす）
-                if (j % 3 == 0) {
-                    builder.imageUrl = "https://example.com/products/$i-$j.png"
-                }
-                productStub.createProduct(builder.build())
+                        .build(),
+                )
+
+                // 在庫を適当にセット（商品ごとに変える: 5, 10, …, 100）。
+                receiveStockStub.receiveStock(
+                    ReceiveStockRequest
+                        .newBuilder()
+                        .setProductId(productId)
+                        .setQuantity(j * 5)
+                        .build(),
+                )
 
                 // 各ブランドの末尾2件を生産終了にして DISCONTINUED の例を作る
                 if (j > PRODUCTS_PER_BRAND - 2) {

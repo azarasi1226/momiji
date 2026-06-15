@@ -44,6 +44,28 @@ interface PaymentGateway {
      * 一時障害は例外を投げて呼び出し側（StripeCustomerDeleter の pooledStreaming processor）の無限リトライに乗せる。
      */
     fun deleteCustomer(stripeCustomerId: String)
+
+    /**
+     * 注文の決済用 PaymentIntent を作成し、 client_secret と pi_ を返す。
+     * - [amount] は円（JPY はゼロ十進通貨なので *100 しない）。
+     * - [paymentMethodId] は確定済みの保存カード（pm_）。 confirm はフロントの Stripe.js で行う（オンセッション＝3DS をブラウザで）。
+     * - [orderId] を metadata に載せ、 webhook（[PaymentWebhookParser]）で注文を相関する。
+     *
+     * 冪等: order ごとに固定の Idempotency-Key で、 リトライ・並走でも同一 PaymentIntent（= 同一 client_secret）を返す。
+     */
+    fun createPaymentIntent(
+        stripeCustomerId: String,
+        paymentMethodId: String,
+        amount: Long,
+        orderId: String,
+    ): PaymentIntentResult
+
+    /**
+     * PaymentIntent を全額返金する（期限切れ後に課金成功してしまった場合のバックストップ）。
+     *
+     * 冪等・例外の扱いは [detachPaymentMethod] と同方針: 恒久エラー（既に返金済み等）は握り、 一時障害は投げる。
+     */
+    fun refundPayment(paymentIntentId: String)
 }
 
 data class CardDetails(
@@ -51,4 +73,9 @@ data class CardDetails(
     val last4: String,
     val expMonth: Int,
     val expYear: Int,
+)
+
+data class PaymentIntentResult(
+    val clientSecret: String,
+    val paymentIntentId: String,
 )

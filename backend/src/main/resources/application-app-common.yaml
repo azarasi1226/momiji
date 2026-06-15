@@ -7,6 +7,15 @@ spring:
   grpc:
     server:
       port: ${GRPC_PORT:9091}
+  output:
+    ansi:
+      # コンソールのレベル色分け等を全環境で有効化。
+      enabled: ALWAYS
+
+logging:
+  pattern:
+    # シンプルなログスタイル。「時刻 / レベル / thread / クラス名(simple) / メッセージ」にする。
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(%-5p) %clr([%15.15t]){faint} %clr(%logger{0}){cyan} %clr(:){faint} %m%n"
 
 momiji:
   oidc:

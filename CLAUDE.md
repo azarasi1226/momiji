@@ -80,4 +80,4 @@ config/        … Bean 配線（gRPC, jOOQ, Cognito 等）
 
 ## ADR
 
-設計判断は `docs/adr/` を参照（0001 バリデーション / 0002 エラー分類 / 0003 IDP連携 / 0004 sub マッピング / 0005 テスト方針 / 0006 Cognito / 0007 イベント型名 / 0008 プロジェクション日時は @Timestamp / 0009 EventProcessor をコードに型安全定義・subscribing/PooledStreaming で命名規約を分ける / 0010 ハードデリートを廃しライフサイクル（archive/discontinue + status）採用 / 0011 テストデータ投入ツール(seed)を gRPC command 経由・独立ソースセットで / 0012 gRPC でのエラー返却（ErrorDetail を Status.details）。0002 は分類、0012 はその gRPC 返却に分離）。
+設計判断は `docs/adr/` を参照（0001 バリデーション / 0002 エラー分類 / 0003 IDP連携 / 0004 sub マッピング / 0005 テスト方針 / 0006 Cognito / 0007 イベント型名 / 0008 プロジェクション日時は @Timestamp / 0009 EventProcessor をコードに型安全定義・subscribing/PooledStreaming で命名規約を分ける / 0010 ハードデリートを廃しライフサイクル（archive/discontinue + status）採用 / 0011 テストデータ投入ツール(seed)を gRPC command 経由・独立ソースセットで / 0012 gRPC でのエラー返却（ErrorDetail を Status.details）。0002 は分類、0012 はその gRPC 返却に分離 / 0013 ProcessManager（旧 Saga）を薄い中継にし整合境界（CommandHandler）でガード・reactor は LATEST 起動）。

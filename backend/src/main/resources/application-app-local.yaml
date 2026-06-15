@@ -10,4 +10,5 @@ spring:
 logging:
   level:
     jp.momiji: DEBUG
-    org.jooq.tools.LoggerListener: DEBUG
+    # SQLのログが見たい場合はコメントアウト。
+    #org.jooq.tools.LoggerListener: DEBUG
