@@ -26,7 +26,7 @@ class FailOrderCommandHandler {
         eventAppender: EventAppender,
     ): CommandResult {
         // 冪等性：注文が失敗状態にできない場合は成功とする。
-        if (!order.isReleasable) {
+        if (!order.canReleaseReservation) {
             return FailOrderCommandResult.success()
         }
 
