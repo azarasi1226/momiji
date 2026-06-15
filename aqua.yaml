@@ -16,4 +16,3 @@ packages:
 - name: pnpm/pnpm@v10.32.1
 - name: bufbuild/buf@v1.52.1
 - name: stripe/stripe-cli@v1.42.10
-- name: biomejs/biome@@biomejs/biome@2.5.0
