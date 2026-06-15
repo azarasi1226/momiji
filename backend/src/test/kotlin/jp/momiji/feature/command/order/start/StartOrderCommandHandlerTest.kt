@@ -21,12 +21,13 @@ class StartOrderCommandHandlerTest : MomijiIntegrationTestBase() {
         productId: String,
         price: Int = 1000,
         name: String = "テスト商品",
+        imageUrl: String? = null,
     ) = ProductCreatedEvent(
         id = productId,
         brandId = brandId,
         name = name,
         description = "説明",
-        imageUrl = null,
+        imageUrl = imageUrl,
         price = price,
     )
 
@@ -89,7 +90,8 @@ class StartOrderCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 shippingRegistered(userId, addressId),
-                productCreated(p1, price = 1000),
+                // 商品に画像 URL あり → 注文明細にスナップショットされる。
+                productCreated(p1, price = 1000, imageUrl = "https://img.example.com/p1.png"),
                 stockReceived(p1, onHand = 10),
             ).`when`()
             .command(command(orderId, userId, addressId, expectedTotalAmount = 2000, items = listOf(StartOrderCommand.Item(p1, 2))))
@@ -100,7 +102,7 @@ class StartOrderCommandHandlerTest : MomijiIntegrationTestBase() {
                     orderId = orderId,
                     userId = userId,
                     shippingAddress = expectedSnapshot,
-                    items = listOf(OrderStartedEvent.SnapshotItem(p1, "テスト商品", 1000, 2)),
+                    items = listOf(OrderStartedEvent.SnapshotItem(p1, "テスト商品", 1000, 2, "https://img.example.com/p1.png")),
                 ),
                 StockReservedEvent(productId = p1, orderId = orderId, quantity = 2, reservedQuantity = 2),
             )
@@ -118,7 +120,8 @@ class StartOrderCommandHandlerTest : MomijiIntegrationTestBase() {
             .given()
             .events(
                 shippingRegistered(userId, addressId),
-                productCreated(p1, price = 1000, name = "商品A"),
+                // p1 は画像あり、 p2 は画像なし（null）。 両方が明細にそのままスナップショットされる。
+                productCreated(p1, price = 1000, name = "商品A", imageUrl = "https://img.example.com/a.png"),
                 stockReceived(p1, onHand = 10),
                 productCreated(p2, price = 500, name = "商品B"),
                 stockReceived(p2, onHand = 5),
@@ -141,8 +144,9 @@ class StartOrderCommandHandlerTest : MomijiIntegrationTestBase() {
                     shippingAddress = expectedSnapshot,
                     items =
                         listOf(
-                            OrderStartedEvent.SnapshotItem(p1, "商品A", 1000, 2),
-                            OrderStartedEvent.SnapshotItem(p2, "商品B", 500, 3),
+                            OrderStartedEvent.SnapshotItem(p1, "商品A", 1000, 2, "https://img.example.com/a.png"),
+                            // 画像なしは null のままスナップショット。
+                            OrderStartedEvent.SnapshotItem(p2, "商品B", 500, 3, null),
                         ),
                 ),
                 StockReservedEvent(productId = p1, orderId = orderId, quantity = 2, reservedQuantity = 2),

@@ -38,5 +38,6 @@ data class OrderStartedEvent(
         val name: String,
         val unitPrice: Int,
         val quantity: Int,
+        val imageUrl: String? = null,
     )
 }

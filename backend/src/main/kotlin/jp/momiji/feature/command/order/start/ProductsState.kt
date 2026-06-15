@@ -70,10 +70,11 @@ class ProductsState private constructor(
 
     fun reservedOf(productId: String): Int = byId[productId]?.reserved ?: 0
 
-    // name/price は ACTIVE（= ProductCreated 済み）の商品にだけ呼ぶ前提。
     fun nameOf(productId: String): String = requireNotNull(byId.getValue(productId).name)
 
     fun priceOf(productId: String): Int = requireNotNull(byId.getValue(productId).price)
+
+    fun imageUrlOf(productId: String): String? = byId.getValue(productId).imageUrl
 
     private fun getOrCreate(productId: String): Product = byId.getOrPut(productId) { Product() }
 
@@ -83,15 +84,17 @@ class ProductsState private constructor(
             status = ProductStatus.ACTIVE
             name = event.name
             price = event.price
+            imageUrl = event.imageUrl
         }
     }
 
     @EventSourcingHandler
     fun evolve(event: ProductUpdatedEvent) {
-        // 名前・価格の変更を反映（在庫・status は対象外）。 注文時点の最新値をスナップショットに使う。
+        // 名前・価格・画像の変更を反映（在庫・status は対象外）。 注文時点の最新値をスナップショットに使う。
         getOrCreate(event.id).apply {
             name = event.name
             price = event.price
+            imageUrl = event.imageUrl
         }
     }
 
@@ -124,6 +127,7 @@ class ProductsState private constructor(
         var status: ProductStatus? = null,
         var name: String? = null,
         var price: Int? = null,
+        var imageUrl: String? = null,
         var onHand: Int = 0,
         var reserved: Int = 0,
     ) {

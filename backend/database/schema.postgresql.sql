@@ -142,5 +142,6 @@ CREATE TABLE order_items (
   name varchar(255) NOT NULL,
   unit_price int NOT NULL,
   quantity int NOT NULL,
+  image_url varchar(255),
   PRIMARY KEY (order_id, product_id)
 );

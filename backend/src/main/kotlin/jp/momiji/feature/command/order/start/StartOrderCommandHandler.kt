@@ -81,6 +81,7 @@ class StartOrderCommandHandler {
                             name = products.nameOf(item.productId),
                             unitPrice = products.priceOf(item.productId),
                             quantity = item.quantity,
+                            imageUrl = products.imageUrlOf(item.productId),
                         )
                     },
             )

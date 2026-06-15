@@ -66,6 +66,7 @@ class OrderTableProjector(
                         .set(ORDER_ITEMS.NAME, item.name)
                         .set(ORDER_ITEMS.UNIT_PRICE, item.unitPrice)
                         .set(ORDER_ITEMS.QUANTITY, item.quantity)
+                        .set(ORDER_ITEMS.IMAGE_URL, item.imageUrl)
                         .onDuplicateKeyIgnore()
                 },
             ).execute()
