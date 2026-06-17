@@ -1,0 +1,2 @@
+# 空 Issue（テンプレ無し）を禁止し、必ずテンプレ経由で起票させる。
+blank_issues_enabled: false
