@@ -10,8 +10,32 @@ concurrency:
   # 新しい変更を検知した際、すでに実行中のジョブはキャンセルする（最新のコードベースだけ検証したいため）
   cancel-in-progress: true
 jobs:
+  # 変更されたパスを検知し、後続ジョブの起動可否を出力する
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      proto: ${{ steps.filter.outputs.proto }}
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # backend / frontend は生成 gRPC コードに依存するので grpc/** でも起動する
+          filters: |
+            proto:
+              - 'grpc/**'
+            backend:
+              - 'backend/**'
+              - 'grpc/**'
+            frontend:
+              - 'frontend/**'
+              - 'grpc/**'
+
   # proto の lint
   proto-lint:
+    needs: changes
+    if: ${{ needs.changes.outputs.proto == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: "checkout"
@@ -31,6 +55,8 @@ jobs:
 
   # backend: ktlint + build + test（Testcontainers）+ カバレッジを PR にコメント
   backend:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     # カバレッジを PR にコメントするため pull-requests: write が必要（他は read で十分）
     permissions:
@@ -87,6 +113,8 @@ jobs:
 
   # frontend: 型チェック + lint
   frontend:
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: "checkout"
@@ -128,3 +156,25 @@ jobs:
       - name: "lint"
         working-directory: ./frontend
         run: pnpm lint
+
+  # gate: ブランチプロテクション・マージの条件における、必須チェックはこの 1 本に集約する
+  # 途中で必須チェック項目が出現・削除・りリネームされてもgithubの設定を変更しなくても良いのが嬉しいポイント
+  verify:
+    needs: [proto-lint, backend, frontend]
+    # 前段が skip でも必ず走らせる（if が無いと前段 skip 時に verify 自体も skip して無意味になる）
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: "必須ジョブの結果を判定"
+        # failure / cancelled があれば落とす。skipped（path 対象外）/ success は許容。
+        env:
+          RESULTS: "${{ needs.proto-lint.result }} ${{ needs.backend.result }} ${{ needs.frontend.result }}"
+        run: |
+          echo "results: $RESULTS"
+          for r in $RESULTS; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              echo "::error::必須ジョブが $r で終了しました"
+              exit 1
+            fi
+          done
+          echo "すべての必須ジョブが success または skipped"

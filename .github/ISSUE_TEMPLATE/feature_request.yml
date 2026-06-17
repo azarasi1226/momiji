@@ -1,0 +1,71 @@
+name: 🚀 機能追加
+description: プロダクトバックログ項目（新しいユースケース・機能）
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要 / やりたいこと
+      description: 何をやるかを簡潔に（What）。なぜやるかは「背景」に書く。
+      placeholder: |
+        ユーザーがパスワードを忘れたとき、登録メール宛のリンクから自分で再設定できるようにする。
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景 / なぜやるか
+      description: 今の課題と、この手段を選ぶ理由（メリット）。
+      placeholder: |
+        現状はパスワードを忘れると管理者に問い合わせるしかなく、サポート負荷が高い。
+        セルフサービスで再設定できれば、ユーザーの離脱とサポート対応を減らせる。
+    validations:
+      required: false
+
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: 対象外 (Non-goals)
+      description: このIssueでやらないこと。スコープ膨張防止のため。
+      placeholder: |
+        SMS によるリセットは対象外（メールリンクのみ）。
+        パスワードのポリシー変更（強度要件の見直し）は別Issueとし、ここでは扱わない。
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 完了条件 (Acceptance Criteria)
+      description: 「完了」と言える条件を、観察可能な形で。
+      placeholder: |
+        - [ ] リセット申請するとメールにリンクが届く
+        - [ ] リンクから新しいパスワードを設定でき、その後ログインできる
+        - [ ] リンクは一定時間で失効し、使用済みリンクは再利用できない
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: タスク
+      description: 着手単位でチェックリスト化してください。
+      placeholder: |
+        - [ ] リセット申請の受付（リセットトークン発行）を実装する
+        - [ ] リセット用メールの送信を実装する
+        - [ ] リンク経由のパスワード再設定画面・処理を実装する
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 依存 / 関連
+      description: "前提となる Issue/PR や関連 ADR（docs/adr/）。GitHub が追跡できるよう `Blocked by #41` の形式で。"
+      placeholder: |
+        Blocked by #41 （メール送信基盤の整備）
+        関連: ADR 0003
+    validations:
+      required: false

@@ -1,0 +1,68 @@
+name: 🔧 リファクタリング
+description: 振る舞いを変えずに内部構造・コードを改善する
+title: "[Refactor] "
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要 / 何を変えるか
+      description: どこをどう整理するか（What）。振る舞いは変えない前提。
+      placeholder: |
+        IdP アダプタ（Keycloak / Cognito）の重複した userInfo 取得処理を共通化する。
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景 / なぜやるか
+      description: 今の何が問題か（読みにくい・重複・変更が波及する 等）。
+      placeholder: |
+        2 つのアダプタで同じパース処理がコピペされており、片方だけ直して差異が出るバグが起きやすい。
+    validations:
+      required: false
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 対象範囲
+      description: 触るファイル/パッケージ等と、触らない範囲（スコープ膨張防止）。
+      placeholder: |
+        対象: adapter/idp 配下
+        対象外: port のインターフェース変更（シグネチャは維持）
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 完了条件 (Acceptance Criteria)
+      description: リファクタは「振る舞いが変わらないこと」が肝。検証可能な形で。
+      placeholder: |
+        - [ ] 既存テストがすべてグリーンのまま（振る舞い不変）
+        - [ ] 重複していた処理が 1 箇所に集約されている
+        - [ ] 公開 API / イベント型名（@Event）は変更していない
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: タスク
+      placeholder: |
+        - [ ] 共通処理を抽出する
+        - [ ] 各アダプタを共通処理に差し替える
+        - [ ] 不要になったコードを削除する
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 依存 / 関連
+      description: "前提 Issue/PR や関連 ADR（docs/adr/）。`Blocked by #41` の形式で。"
+      placeholder: |
+        関連: ADR 0004
+    validations:
+      required: false
