@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { listShopProducts } from "../actions";
+import { listShopProducts } from "./queries";
 import { QuickAddButton } from "./quick-add-button";
 
 export const metadata: Metadata = {
