@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchShopProduct, fetchShopStock } from "../../actions";
+import { fetchShopProduct, fetchShopStock } from "../queries";
 import { AddToBasketPanel } from "./add-to-basket-panel";
 
 export default async function ShopProductDetailPage({
