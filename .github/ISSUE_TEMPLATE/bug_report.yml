@@ -1,0 +1,68 @@
+name: 🐛 バグ修正
+description: 不具合の報告・修正依頼
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要 / 現象
+      description: 何が起きているかを一言で（What）。
+      placeholder: |
+        パスワードリセットのリンクを開くと 500 エラーになり、再設定画面が表示されない。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 上から順にたどれば再現する形で。
+      placeholder: |
+        1. ログイン画面で「パスワードを忘れた」を押す
+        2. 登録済みメールを入力して送信
+        3. 届いたメールのリンクを開く
+        4. → 再設定画面ではなく 500 エラーが出る
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する挙動
+      placeholder: リンクを開くと新しいパスワードの入力画面が表示される。
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の挙動
+      description: エラーメッセージ・ログ・スクショなどがあれば貼る。
+      placeholder: |
+        画面に 500 Internal Server Error。
+        backend ログ: ... （あれば correlationId も）
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境
+      description: どこで起きたか。IdP(Keycloak/Cognito)・local/本番など切り分けに必要な情報を。
+      placeholder: |
+        - 環境: local（Keycloak）/ 本番（Cognito）
+        - ブランチ / コミット:
+        - ブラウザ・OS（フロントの場合）:
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足 / 関連
+      description: 切り分けの当たり、関連 Issue/PR・ADR（docs/adr/）など。
+      placeholder: |
+        関連: #00 / ADR 0002（エラー分類）
+    validations:
+      required: false
