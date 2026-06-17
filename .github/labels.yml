@@ -1,0 +1,35 @@
+# リポジトリのラベル定義（labels as code）— このファイルが唯一の正。
+# 編集して main に push すると .github/workflows/label-sync.yml が完全同期する。
+# ここに無いラベルは削除される（skip-delete: false）。ラベルを残したいなら必ずここに書くこと。
+
+- name: enhancement
+  color: a2eeef
+  description: 機能追加
+
+- name: bug
+  color: d73a4a
+  description: 不具合
+
+- name: refactor
+  color: cfd3d7
+  description: リファクタリング
+
+- name: frontend
+  color: 1d76db
+  description: フロントエンド
+
+- name: backend
+  color: 0e8a16
+  description: バックエンド
+
+- name: infra
+  color: c2e0c6
+  description: docker / local / CI / ビルド基盤
+
+- name: docs
+  color: 0075ca
+  description: ドキュメント・ADR
+
+- name: dependencies
+  color: 0366d6
+  description: 依存ライブラリ更新（Dependabot）
