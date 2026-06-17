@@ -1,20 +1,35 @@
 {
   "permissions": {
     "allow": [
-      // 基本操作
-      "WebFetch(domain:*",
+      "WebFetch(domain:*)",
       "Bash(find:*)",
       "Bash(rg:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(buf lint:*)",
+      "Bash(buf generate:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm install:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh issue list:*)"
     ],
     "deny": [
-     // git系のコマンドは誤操作が怖いので一旦全て拒否
-     "Bash(git add:*)",
-     "Bash(git commit:*)",
-     "Bash(git push:*)",
-     "Bash(git reset:*)",
-     "Bash(git rebase:*)"
-   ]
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Bash(git clean:*)",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)",
+      "Bash(rm -rf:*)",
+      "Bash(docker compose down -v:*)",
+      "Bash(docker-compose down -v:*)"
+    ]
   }
 }
