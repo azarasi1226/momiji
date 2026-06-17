@@ -6,6 +6,7 @@ import iss.jooq.generated.tables.references.LOOKUP_EMAIL
 import iss.jooq.generated.tables.references.PAYMENT_METHODS
 import iss.jooq.generated.tables.references.SHIPPING_ADDRESSES
 import iss.jooq.generated.tables.references.USERS
+import jp.momiji.feature.command.order.complete.CompleteShippedOrderProcessManager
 import jp.momiji.port.idp.IdpUserClient
 import jp.momiji.port.idp.IdpUserInfoFetcher
 import jp.momiji.port.idp.TokenClientIdExtractor
@@ -117,6 +118,15 @@ abstract class MomijiIntegrationTestBase {
      */
     @MockkBean(relaxed = true)
     lateinit var paymentGateway: PaymentGateway
+
+    /**
+     * 発送完了 Process Manager（[CompleteShippedOrderProcessManager]）は OrderShipped を拾って CompleteOrder コマンドを
+     * 撃つ reactor。 CommandHandler テストの `given` に SHIPPED 注文を置くと、 この PM が走って状態を汚す
+     * （注文を勝手に COMPLETED にする）ため、 コマンドテストを隔離する目的で mock で無効化する。
+     * PM 自体の挙動（どのコマンドを撃つか）は専用の単体テスト [CompleteShippedOrderProcessManager] でカバーする。
+     */
+    @MockkBean(relaxed = true)
+    lateinit var completeShippedOrderProcessManager: CompleteShippedOrderProcessManager
 
     lateinit var fixture: AxonTestFixture
 
