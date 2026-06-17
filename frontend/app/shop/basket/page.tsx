@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { findBasket } from "../actions";
+import { findBasket } from "../queries";
 import { BasketItemRow } from "./basket-item-row";
 import { ClearBasketButton } from "./clear-basket-button";
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { fetchCards } from "@/app/profile/payment-methods/actions";
 import { fetchShippingAddresses } from "@/app/profile/shipping-addresses/actions";
 import { Button } from "@/components/ui/button";
-import { findBasket } from "../actions";
+import { findBasket } from "../queries";
 import { CheckoutForm, type CheckoutItem } from "./checkout-form";
 
 // カゴは最大 50 種類なので 1 ページ（最大 100）で全件取れる。 合計を正確に出すため全件取得。
