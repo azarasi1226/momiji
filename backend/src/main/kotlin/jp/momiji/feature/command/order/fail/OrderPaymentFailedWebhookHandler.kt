@@ -1,9 +1,7 @@
-package jp.momiji.feature.command.order.paymentfailed
+package jp.momiji.feature.command.order.fail
 
 import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderFailureReason
-import jp.momiji.feature.command.order.fail.FailOrderCommand
-import jp.momiji.feature.command.order.fail.failOrder
 import jp.momiji.feature.command.payment.StripeWebhookEventHandler
 import jp.momiji.port.payment.StripeWebhookEvent
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Component
  * **決済失敗＝注文失敗**の方針: [FailOrderCommand]（reason=PAYMENT_FAILED）で在庫予約を即解放して FAILED にする
  * （期限切れ sweeper と同じ補償に合流）。 ユーザーはカート（未クリア）から別カードで再チェックアウトできる。
  *
+ * 外部（Stripe）が [FailOrderCommand] を起動する入口（inbound adapter）なので、 fail ユースケースと同居する。
  * FailOrder の整合境界（product_id）を組むため、 order_items（read model）から productId を読む（sweeper と同じ）。
  * コマンド側で「releasable か」を再ガードするので、 既に PAID/FAILED なら no-op（冪等）。
  */

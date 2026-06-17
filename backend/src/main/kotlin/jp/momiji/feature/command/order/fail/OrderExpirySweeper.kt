@@ -1,4 +1,4 @@
-package jp.momiji.feature.command.order.expire
+package jp.momiji.feature.command.order.fail
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.ORDERS
@@ -6,7 +6,6 @@ import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderFailureReason
 import jp.momiji.domain.order.OrderStatus
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.order.fail.FailOrderCommand
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.jooq.DSLContext
 import org.springframework.scheduling.annotation.Scheduled
@@ -25,6 +24,8 @@ private val logger = KotlinLogging.logger {}
  * **2 系統**で掃く（3DS レース対策)
  * - STARTED: オーダーがスタートしたが決済に着手していない。 [STARTED_TTL] を `created_at` 基準
  * - PAYMENT_PENDING: 決済着手したが未完了（3DS 放置）。 [PAYMENT_PENDING_TTL] を `updated_at` 基準
+ *
+ * 時計が [FailOrderCommand] を起動する入口（time-driven inbound adapter）なので、 fail ユースケースと同居する。
  */
 @Component
 class OrderExpirySweeper(
