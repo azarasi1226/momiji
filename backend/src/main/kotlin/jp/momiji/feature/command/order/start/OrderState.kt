@@ -3,9 +3,11 @@ package jp.momiji.feature.command.order.start
 import jp.momiji.domain.order.OrderStatus
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.eventQualifiedName
+import jp.momiji.event.order.OrderCompletedEvent
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.order.OrderPaidEvent
 import jp.momiji.event.order.OrderPaymentPreparedEvent
+import jp.momiji.event.order.OrderShippedEvent
 import jp.momiji.event.order.OrderStartedEvent
 import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
@@ -20,6 +22,8 @@ import org.axonframework.messaging.eventstreaming.Tag
  * - StartOrder: 既に開始済みか（[notStarted]）の冪等判定。
  * - 決済準備: STARTED のとき PAYMENT_PENDING へ遷移（pi_ 記録）。
  * - 決済成功: PAYMENT_PENDING のとき PAID へ。
+ * - 発送: PAID のとき SHIPPED へ（admin の発送手続き）。
+ * - 完了: SHIPPED のとき COMPLETED へ（発送を拾った reactor が自動で）。
  * - 失敗/期限切れ: [canReleaseReservation]（STARTED or PAYMENT_PENDING）のとき [reservedItems] の在庫予約を解放。
  *
  * @InjectEntity(idProperty = ...) で order_id を渡して解決される。
@@ -47,6 +51,8 @@ class OrderState(
                     OrderStartedEvent::class.eventQualifiedName(),
                     OrderPaymentPreparedEvent::class.eventQualifiedName(),
                     OrderPaidEvent::class.eventQualifiedName(),
+                    OrderShippedEvent::class.eventQualifiedName(),
+                    OrderCompletedEvent::class.eventQualifiedName(),
                     OrderFailedEvent::class.eventQualifiedName(),
                 )
     }
@@ -70,6 +76,18 @@ class OrderState(
     val isPaidOrBeyond: Boolean
         get() = status == OrderStatus.PAID || status == OrderStatus.SHIPPED || status == OrderStatus.COMPLETED
 
+    /** PAID（決済確定・未発送）。 発送手続きはこの状態のときだけ SHIPPED にする。 */
+    val isPaid: Boolean get() = status == OrderStatus.PAID
+
+    /** 既に発送済み or それ以降（SHIPPED/COMPLETED）。 発送手続きの重複を冪等に握るために使う。 */
+    val isShippedOrBeyond: Boolean get() = status == OrderStatus.SHIPPED || status == OrderStatus.COMPLETED
+
+    /** SHIPPED（発送済み・未完了）。 完了手続きはこの状態のときだけ COMPLETED にする。 */
+    val isShipped: Boolean get() = status == OrderStatus.SHIPPED
+
+    /** COMPLETED（完了・終端）。 完了手続きの重複を冪等に握るために使う。 */
+    val isCompleted: Boolean get() = status == OrderStatus.COMPLETED
+
     @EventSourcingHandler
     fun evolve(event: OrderStartedEvent) {
         status = OrderStatus.STARTED
@@ -85,6 +103,16 @@ class OrderState(
     @EventSourcingHandler
     fun evolve(event: OrderPaidEvent) {
         status = OrderStatus.PAID
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: OrderShippedEvent) {
+        status = OrderStatus.SHIPPED
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: OrderCompletedEvent) {
+        status = OrderStatus.COMPLETED
     }
 
     @EventSourcingHandler

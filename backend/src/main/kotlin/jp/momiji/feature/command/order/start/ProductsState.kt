@@ -8,6 +8,7 @@ import jp.momiji.event.product.ProductDiscontinuedEvent
 import jp.momiji.event.product.ProductUpdatedEvent
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationCommittedEvent
 import jp.momiji.event.stock.StockReservationReleasedEvent
 import jp.momiji.event.stock.StockReservedEvent
 import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder
@@ -55,6 +56,7 @@ class ProductsState private constructor(
                             StockAdjustedEvent::class.eventQualifiedName(),
                             StockReservedEvent::class.eventQualifiedName(),
                             StockReservationReleasedEvent::class.eventQualifiedName(),
+                            StockReservationCommittedEvent::class.eventQualifiedName(),
                         )
                 },
             )
@@ -69,6 +71,8 @@ class ProductsState private constructor(
     fun available(productId: String): Int = byId[productId]?.available ?: 0
 
     fun reservedOf(productId: String): Int = byId[productId]?.reserved ?: 0
+
+    fun onHandOf(productId: String): Int = byId[productId]?.onHand ?: 0
 
     fun nameOf(productId: String): String = requireNotNull(byId.getValue(productId).name)
 
@@ -121,6 +125,15 @@ class ProductsState private constructor(
     @EventSourcingHandler
     fun evolve(event: StockReservationReleasedEvent) {
         getOrCreate(event.productId).reserved -= event.quantity
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: StockReservationCommittedEvent) {
+        // 出荷確定: 予約を外し、 出荷された分 onHand も減らす（onHand は絶対値で上書き）。
+        getOrCreate(event.productId).apply {
+            onHand = event.onHandQuantity
+            reserved -= event.quantity
+        }
     }
 
     private class Product(
