@@ -5,6 +5,7 @@ import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationCommittedEvent
 import jp.momiji.feature.command.CommandResult
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
@@ -71,6 +72,12 @@ class AdjustStockCommandHandler {
 
         @EventSourcingHandler
         fun evolve(event: StockAdjustedEvent) {
+            onHand = event.onHandQuantity
+        }
+
+        // 出荷確定（注文完了）でも onHand は減る。 棚卸し調整の resulting 計算が古い在庫にならないよう source する。
+        @EventSourcingHandler
+        fun evolve(event: StockReservationCommittedEvent) {
             onHand = event.onHandQuantity
         }
     }
