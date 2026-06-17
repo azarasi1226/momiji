@@ -5,10 +5,10 @@ import org.axonframework.eventsourcing.annotation.EventTag
 import org.axonframework.messaging.eventhandling.annotation.Event
 
 /**
- * 決済成功イベント（PAYMENT_PENDING → PAID）
+ * 注文完了イベント（SHIPPED → COMPLETED）
  */
-@Event(namespace = "momiji.order", name = "OrderPaidEvent")
-data class OrderPaidEvent(
+@Event(namespace = "momiji.order", name = "OrderCompletedEvent")
+data class OrderCompletedEvent(
     @EventTag(key = MomijiEventTag.ORDER_ID)
     val orderId: String,
 )
