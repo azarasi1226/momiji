@@ -35,6 +35,8 @@ class OrderState(
     val reservedItems: MutableList<ReservedItem>,
     // 決済の PaymentIntent（pi_）。 決済準備で記録。 期限切れ後課金の返金などに使う。
     var paymentIntentId: String?,
+    // 注文時点スナップショットの権威合計（OrderStarted の単価×個数）。 決済準備で課金額の検証に使う。
+    var totalAmount: Long,
 ) {
     data class ReservedItem(
         val productId: String,
@@ -58,7 +60,7 @@ class OrderState(
     }
 
     @EntityCreator
-    constructor() : this(status = null, reservedItems = mutableListOf(), paymentIntentId = null)
+    constructor() : this(status = null, reservedItems = mutableListOf(), paymentIntentId = null, totalAmount = 0)
 
     /** まだ注文が開始されていない（この order_id のイベントが無い）。 StartOrder の冪等判定に使う。 */
     val notStarted: Boolean get() = status == null
@@ -112,6 +114,7 @@ class OrderState(
     fun evolve(event: OrderStartedEvent) {
         status = OrderStatus.STARTED
         reservedItems.addAll(event.items.map { ReservedItem(it.productId, it.quantity) })
+        totalAmount = event.items.sumOf { it.unitPrice.toLong() * it.quantity }
     }
 
     @EventSourcingHandler

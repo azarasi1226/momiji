@@ -56,6 +56,8 @@ class PreparePaymentGrpcService(
                     orderId = request.orderId,
                     paymentMethodId = request.paymentMethodId,
                     paymentIntentId = paymentIntent.paymentIntentId,
+                    // PI を作った課金額。 handler が注文時点の権威合計と照合する（不一致なら client_secret を返さない）。
+                    amount = payable.totalAmount,
                 ),
             ).throwIfError()
 

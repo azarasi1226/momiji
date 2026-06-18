@@ -27,6 +27,13 @@ class PreparePaymentCommandHandler {
             return PreparePaymentCommandResult.orderNotFound()
         }
 
+        // 金額検証（client_secret を返す前の関門）: service が read model から算出して PaymentIntent を作った課金額が、
+        // 注文時点スナップショットの権威合計と一致するか。 食い違い（read model 未追従・価格変更）は黙って別額で課金させず、
+        // ここで弾く → throwIfError で client_secret が返らない → confirm されず課金は起きない（PI は uncaptured で失効）。
+        if (command.amount != order.totalAmount) {
+            return PreparePaymentCommandResult.amountMismatch()
+        }
+
         // 冪等性: STARTED のときだけ記録。 PAYMENT_PENDING への再送・既決済は no-op。
         if (order.isStarted) {
             eventAppender.append(

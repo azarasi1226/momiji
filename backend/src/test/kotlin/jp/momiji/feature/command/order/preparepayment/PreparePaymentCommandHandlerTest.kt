@@ -39,7 +39,14 @@ class PreparePaymentCommandHandlerTest : MomijiIntegrationTestBase() {
         orderId: String,
         paymentMethodId: String = "pm_test",
         paymentIntentId: String = "pi_test",
-    ) = PreparePaymentCommand(orderId = orderId, paymentMethodId = paymentMethodId, paymentIntentId = paymentIntentId)
+        // orderStarted ヘルパの権威合計（単価1000×個数1）に一致させた既定値。
+        amount: Long = 1000,
+    ) = PreparePaymentCommand(
+        orderId = orderId,
+        paymentMethodId = paymentMethodId,
+        paymentIntentId = paymentIntentId,
+        amount = amount,
+    )
 
     @Test
     fun `STARTED の注文を PAYMENT_PENDING にし OrderPaymentPrepared を発行する`() {
@@ -57,6 +64,24 @@ class PreparePaymentCommandHandlerTest : MomijiIntegrationTestBase() {
             .events(
                 OrderPaymentPreparedEvent(orderId = orderId, paymentMethodId = "pm_PREP01", paymentIntentId = "pi_PREP01"),
             )
+    }
+
+    @Test
+    fun `金額不一致なら amountMismatch で何も発行しない（client_secret を返さない）`() {
+        val orderId = "01HXYZORDER0000000PREPARE06"
+        val userId = "01HXYZUSER00000000PREPARE06"
+        val p1 = "01HXYZPRODUCT0000PREPARE061"
+
+        fixture
+            .given()
+            // 権威合計 = 単価1000 × 個数1 = 1000。
+            .events(orderStarted(orderId, userId, p1))
+            .`when`()
+            // read model 由来の課金額（9999）が権威合計（1000）と食い違う。
+            .command(command(orderId, amount = 9999))
+            .then()
+            .resultMessagePayload(PreparePaymentCommandResult.amountMismatch())
+            .noEvents()
     }
 
     @Test
