@@ -1,20 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Momiji Frontend
 
-## Getting Started
+Next.js + Auth.js による BFF（Backend For Frontend）。認証・セッション管理を担い、backend gRPC サービスを呼び出してUIを提供する。
 
-First, run the development server:
+## 技術スタック
+
+| 項目 | 採用 |
+|---|---|
+| フレームワーク | Next.js 15（App Router） |
+| 認証 | Auth.js v5（OIDC / Keycloak・Cognito 切替） |
+| API通信 | gRPC（Connect） |
+| UI | shadcn/ui + Tailwind CSS v4 |
+| Linter / Formatter | Biome 2.5 |
+| パッケージマネージャ | pnpm |
+
+## 起動と開発
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev        # localhost:3000
+pnpm lint       # Biome lint
+pnpm format     # Biome format（上書き）
+pnpm check      # lint + format 自動修正
+pnpm typecheck  # TypeScript 型チェック
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ローカル起動前に docker compose で依存サービスを立ち上げること（[local/](../local/) 参照）。
 
 ## 環境変数
 
@@ -30,8 +39,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 | `KEYCLOAK_CLIENT_ID` / `KEYCLOAK_CLIENT_SECRET` / `KEYCLOAK_ISSUER` | `AUTH_PROVIDER=keycloak` 時 ✅ | Keycloak client の id / secret と realm の OIDC issuer URL |
 | `COGNITO_CLIENT_ID` / `COGNITO_CLIENT_SECRET` / `COGNITO_ISSUER` | `AUTH_PROVIDER=cognito` 時 ✅ | Cognito app client の id / secret と issuer (`https://cognito-idp.<region>.amazonaws.com/<userPoolId>`) |
 | `GRPC_URL` | ✅ | backend gRPC エンドポイント |
+| `IMAGE_PROTOCOL` | ✅ | 商品画像配信の protocol（`http` / `https`）。Next.js の `next.config` で許可ホストに使用 |
+| `IMAGE_HOSTNAME` | ✅ | 商品画像配信のホスト名。Next.js の `next.config` で許可ホストに使用 |
+| `IMAGE_PORT` | ✅ | 商品画像配信のポート番号。Next.js の `next.config` で許可ホストに使用 |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe の公開可能キー。クライアントサイドの Stripe.js 初期化に使用 |
 
-`AUTH_PROVIDER` で local(Keycloak) / prod(Cognito) を環境ごとに切り替える ([ADR 0003](../docs/adr/0003-idp-linking.md) の 2 IDP 運用)。
+`AUTH_PROVIDER` で local(Keycloak) / prod(Cognito) を環境ごとに切り替える（[ADR 0003](../docs/adr/0003-idp-linking.md) の 2 IDP 運用）。
 有効化した provider 側の `<PROVIDER>_CLIENT_ID` / `_CLIENT_SECRET` / `<PROVIDER>_ISSUER` だけ設定すればよい。
 
 ## TODO
@@ -42,22 +55,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
   - 原因が turbopack の export `style` 条件の解決側か、lightningcss/Tailwind のパース側かは未確定。`next` / `tailwindcss` / `shadcn` のいずれかの bump で解消する可能性あり。
   - 確認手順: globals.css を一行 import に戻す → `rm -rf .next && pnpm build` → 出力 CSS を `--primary` で grep（出れば解消）。
   - 解消したら、インライン展開した custom variant / utility を消して `@import "shadcn/tailwind.css"` 一行に戻す。新しい radix-nova コンポーネントを `shadcn add` した際にインライン定義の追従漏れが起きるリスクも消える。
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
