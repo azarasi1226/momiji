@@ -74,7 +74,7 @@ dependencies {
     testImplementation("io.axoniq.framework:axoniq-testcontainer")
 
     // gRPC
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.3")
     implementation("io.grpc:grpc-kotlin-stub:1.5.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
 
