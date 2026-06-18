@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { fetchCards } from "@/app/profile/payment-methods/actions";
-import { fetchShippingAddresses } from "@/app/profile/shipping-addresses/actions";
+import { fetchCards } from "@/app/profile/payment-methods/queries";
+import { fetchShippingAddresses } from "@/app/profile/shipping-addresses/queries";
 import { Button } from "@/components/ui/button";
 import { findBasket } from "../basket/queries";
 import { CheckoutForm, type CheckoutItem } from "./checkout-form";
