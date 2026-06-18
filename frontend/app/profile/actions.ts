@@ -1,49 +1,14 @@
 "use server";
 
-import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { revalidatePath } from "next/cache";
 import { signOut } from "@/auth";
 import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js";
 import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js";
 import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js";
-import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js";
 import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
-
-// プロフィールは email と name のみ（Amazon 式）。 住所・電話は配送先（shipping-addresses）が持つ。
-export type UserProfile = {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export async function fetchProfile(): Promise<UserProfile> {
-  const session = await requireValidSession();
-
-  try {
-    const client = createGrpcClient(FindUserByIdService, session.accessToken);
-    const response = await client.findUserById({});
-
-    return {
-      id: response.id,
-      email: response.email,
-      name: response.name,
-      createdAt: response.createdAt
-        ? timestampDate(response.createdAt).toISOString()
-        : "",
-      updatedAt: response.updatedAt
-        ? timestampDate(response.updatedAt).toISOString()
-        : "",
-    };
-  } catch (e) {
-    redirectIfUnauthenticated(e);
-    throw e;
-  }
-}
 
 export type UpdateProfileState = {
   success?: boolean;

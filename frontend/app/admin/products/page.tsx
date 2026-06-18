@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/table";
 import { formatDateTime } from "@/lib/format";
 import { productStatusLabel } from "@/lib/status-labels";
-import { listAllBrands, listProducts } from "./actions";
+import { listAllBrands } from "../brands/queries";
+import { listProducts } from "./queries";
 
 export const metadata: Metadata = {
   title: "商品管理",

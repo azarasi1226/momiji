@@ -5,11 +5,8 @@ import { FieldError } from "@/components/form/field-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  type UpdateProfileState,
-  type UserProfile,
-  updateProfile,
-} from "./actions";
+import { type UpdateProfileState, updateProfile } from "./actions";
+import type { UserProfile } from "./queries";
 
 // プロフィールは email（変更フロー別建て）と name のみ。 住所・電話は配送先ページで管理する。
 export function ProfileForm({ profile }: { profile: UserProfile }) {

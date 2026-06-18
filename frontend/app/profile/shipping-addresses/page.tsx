@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchShippingAddresses } from "./actions";
+import { fetchShippingAddresses } from "./queries";
 import { ShippingAddressesManager } from "./shipping-addresses-manager";
 
 export default async function ShippingAddressesPage() {

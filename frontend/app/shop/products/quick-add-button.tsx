@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { setBasketItem } from "../actions";
+import { setBasketItem } from "../basket/actions";
 
 /**
  * 一覧カード用の「カートに入れる」（数量 1 固定）。
