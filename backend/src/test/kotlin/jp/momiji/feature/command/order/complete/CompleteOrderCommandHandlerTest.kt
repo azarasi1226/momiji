@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 /**
  * 注文完了（SHIPPED → COMPLETED）と、 完了時の在庫引き当て確定（onHand・reserved を減らす）・冪等・ガードを検証する。
- * 整合境界は order_id（[jp.momiji.feature.command.order.start.OrderState]）＋ product_id（ProductsState）。
+ * 整合境界は order_id（[jp.momiji.feature.command.order.OrderState]）＋ product_id（ProductsState）。
  *
  * EventStore は全テストで共有・リセットされないため、 テストごとにユニークな id を使う。
  */

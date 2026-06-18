@@ -8,7 +8,7 @@ import jp.momiji.event.order.OrderStartedEvent
 import org.junit.jupiter.api.Test
 
 /**
- * 決済準備の記録（STARTED → PAYMENT_PENDING）を検証する。 注入するのは [jp.momiji.feature.command.order.start.OrderState]
+ * 決済準備の記録（STARTED → PAYMENT_PENDING）を検証する。 注入するのは [jp.momiji.feature.command.order.OrderState]
  * （order_id 境界）だけなので、 given は Order* イベントだけで状態を組める。
  *
  * EventStore は全テストで共有・リセットされないため、 テストごとにユニークな id を使う。

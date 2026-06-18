@@ -3,6 +3,8 @@ package jp.momiji.feature.command.order.start
 import jp.momiji.event.order.OrderStartedEvent
 import jp.momiji.event.stock.StockReservedEvent
 import jp.momiji.feature.command.CommandResult
+import jp.momiji.feature.command.order.OrderState
+import jp.momiji.feature.command.order.ProductsState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
 import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.axonframework.modelling.annotation.InjectEntity

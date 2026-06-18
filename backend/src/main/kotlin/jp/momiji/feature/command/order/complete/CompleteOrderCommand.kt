@@ -2,7 +2,7 @@ package jp.momiji.feature.command.order.complete
 
 import jp.momiji.domain.BusinessError
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.order.start.OrderProductIds
+import jp.momiji.feature.command.order.OrderProductIds
 import kotlinx.coroutines.future.await
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 
@@ -12,8 +12,8 @@ import org.axonframework.messaging.commandhandling.gateway.CommandGateway
  * 発送（[jp.momiji.event.order.OrderShippedEvent]）を拾った reactor（[CompleteShippedOrderProcessManager]）が撃つ。
  *
  * 整合境界は **order_id ＋ 全 product_id**:
- * - order_id（[jp.momiji.feature.command.order.start.OrderState]）: SHIPPED のときだけ完了（ガード・冪等）
- * - product_id（×n, [jp.momiji.feature.command.order.start.ProductsState]）: 各商品の現在の在庫・予約数（確定後の絶対値を出すため）
+ * - order_id（[jp.momiji.feature.command.order.OrderState]）: SHIPPED のときだけ完了（ガード・冪等）
+ * - product_id（×n, [jp.momiji.feature.command.order.ProductsState]）: 各商品の現在の在庫・予約数（確定後の絶対値を出すため）
  */
 data class CompleteOrderCommand(
     val orderId: String,

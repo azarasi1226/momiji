@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 /**
  * 発送手続きの記録（PAID → SHIPPED）と冪等・ガードを検証する。 注入するのは
- * [jp.momiji.feature.command.order.start.OrderState]（order_id 境界）だけなので given は Order* イベントで組める。
+ * [jp.momiji.feature.command.order.OrderState]（order_id 境界）だけなので given は Order* イベントで組める。
  *
  * EventStore は全テストで共有・リセットされないため、 テストごとにユニークな id を使う。
  */

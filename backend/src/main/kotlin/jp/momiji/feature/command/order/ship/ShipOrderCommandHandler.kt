@@ -2,7 +2,7 @@ package jp.momiji.feature.command.order.ship
 
 import jp.momiji.event.order.OrderShippedEvent
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.order.start.OrderState
+import jp.momiji.feature.command.order.OrderState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
 import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.axonframework.modelling.annotation.InjectEntity

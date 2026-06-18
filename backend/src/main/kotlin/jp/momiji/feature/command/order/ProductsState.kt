@@ -1,4 +1,4 @@
-package jp.momiji.feature.command.order.start
+package jp.momiji.feature.command.order
 
 import jp.momiji.domain.product.ProductStatus
 import jp.momiji.event.MomijiEventTag
