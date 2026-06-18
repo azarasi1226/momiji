@@ -10,6 +10,7 @@ import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.stock.StockReceivedEvent
 import jp.momiji.event.stock.StockReservationCommittedEvent
 import jp.momiji.event.stock.StockReservedEvent
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -141,6 +142,35 @@ class CompleteOrderCommandHandlerTest : MomijiIntegrationTestBase() {
             .then()
             .resultMessagePayload(CompleteOrderCommandResult.cannotComplete())
             .noEvents()
+    }
+
+    @Test
+    fun `productIds が予約商品を欠くと例外（read model 未追従の防御。 負在庫を焼かずリトライに乗せる）`() {
+        val orderId = "01HXYZORDER000000000COMP05"
+        val userId = "01HXYZUSER0000000000COMP05"
+        val p1 = "01HXYZPRODUCT00000000COMP051"
+
+        fixture
+            .given()
+            .events(
+                productCreated(p1),
+                stockReceived(p1, onHand = 10),
+                StockReservedEvent(productId = p1, orderId = orderId, quantity = 2, reservedQuantity = 2),
+                orderStarted(orderId, userId, p1, quantity = 2),
+                paymentPrepared(orderId),
+                OrderPaidEvent(orderId = orderId),
+                OrderShippedEvent(orderId = orderId),
+            ).`when`()
+            // 予約は p1 なのに、 read model 由来の productIds が空（＝p1 を欠く）。
+            .command(command(orderId, emptyList()))
+            .then()
+            // Axon が例外をラップするので、 チェーンのメッセージで整合境界ガードの発火を確認する。
+            .exceptionSatisfies { thrown ->
+                val chain = generateSequence(thrown) { it.cause }.mapNotNull { it.message }.joinToString(" | ")
+                assertTrue(chain.contains("整合境界が不足")) {
+                    "actual=${thrown::class.java} chain=$chain"
+                }
+            }
     }
 
     @Test

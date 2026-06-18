@@ -33,6 +33,9 @@ class CompleteOrderCommandHandler {
         }
         // SHIPPED のときだけ完了を記録し、 予約在庫を引き当て確定する。
         if (order.isShipped) {
+            // 整合境界の検証: read model 由来の productIds が予約全商品をカバーしてること（負在庫を焼かない防御）。
+            order.requireReservedProductsCovered(command.orderId, command.productIds)
+
             // 出荷確定: 各商品の onHand・reserved を予約分だけ減らす（確定後の絶対値を載せる）。
             val committedEvents =
                 order.reservedItems.map { item ->

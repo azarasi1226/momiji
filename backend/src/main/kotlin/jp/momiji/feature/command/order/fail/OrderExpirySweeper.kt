@@ -40,11 +40,12 @@ class OrderExpirySweeper(
 
         for (orderId in expiredOrderIds) {
             try {
+                val productIds = orderProductIdsReader.read(orderId)
                 commandGateway
                     .send(
                         FailOrderCommand(
                             orderId = orderId,
-                            productIds = orderProductIdsReader.read(orderId),
+                            productIds = productIds,
                             reason = OrderFailureReason.EXPIRED,
                         ),
                         CommandResult::class.java,

@@ -30,6 +30,9 @@ class FailOrderCommandHandler {
             return FailOrderCommandResult.success()
         }
 
+        // 整合境界の検証: read model 由来の productIds が予約全商品をカバーしてること（負の予約数を焼かない防御）。
+        order.requireReservedProductsCovered(command.orderId, command.productIds)
+
         // 保障トランザクションとしてアイテムの予約を解放していく
         val releasedEvents =
             order.reservedItems.map { item ->

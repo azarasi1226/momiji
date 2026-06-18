@@ -29,10 +29,11 @@ class OrderPaymentFailedWebhookHandler(
 
         // Projection が間に合わないのでは？ と思うかもしれないが、 決済準備（PayableOrderReader）で product_id を
         // アトミックに Query しており、 そこを通らなければここに到達しないので order_items は投影済みと保障される。
+        val productIds = orderProductIdsReader.read(event.orderId)
         commandGateway.failOrder(
             FailOrderCommand(
                 orderId = event.orderId,
-                productIds = orderProductIdsReader.read(event.orderId),
+                productIds = productIds,
                 reason = OrderFailureReason.PAYMENT_FAILED,
             ),
         )

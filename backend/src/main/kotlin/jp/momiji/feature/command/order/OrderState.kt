@@ -88,6 +88,26 @@ class OrderState(
     /** COMPLETED（完了・終端）。 完了手続きの重複を冪等に握るために使う。 */
     val isCompleted: Boolean get() = status == OrderStatus.COMPLETED
 
+    /**
+     * 在庫操作コマンドの整合境界（[productIds]）が、 予約した全商品（[reservedItems]＝権威）をカバーしているか検証する。
+     *
+     * ドライバ（sweeper/webhook/reactor）は productIds を read model（order_items）から読んでコマンドに載せるが、
+     * read model が未追従だと商品が欠ける。 欠けたまま進むと ProductsState にその商品が載らず、 在庫の確定（commit）/
+     * 解放（release）が負値（onHandOf/reservedOf の 0 default − quantity）になり read model を破損させる。
+     * 不一致は check で例外にして processor のリトライに乗せる（追従後の再実行で正常化。 永続欠損なら止まって気づける）。
+     */
+    fun requireReservedProductsCovered(
+        orderId: String,
+        productIds: Collection<String>,
+    ) {
+        val passed = productIds.toSet()
+        reservedItems.forEach { item ->
+            check(item.productId in passed) {
+                "在庫操作の整合境界が不足（read model 未追従の可能性）: order=$orderId product=${item.productId}"
+            }
+        }
+    }
+
     @EventSourcingHandler
     fun evolve(event: OrderStartedEvent) {
         status = OrderStatus.STARTED
