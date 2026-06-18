@@ -1,4 +1,4 @@
-import { ShoppingCart } from "lucide-react";
+import { Package, ShoppingCart } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -50,6 +50,12 @@ export default async function ShopLayout({
           </Link>
         </div>
         <div className="flex items-center gap-3">
+          <Button asChild variant="outline">
+            <Link href="/shop/orders">
+              <Package />
+              注文履歴
+            </Link>
+          </Button>
           <Button asChild variant="outline">
             <Link href="/shop/basket">
               <ShoppingCart />
