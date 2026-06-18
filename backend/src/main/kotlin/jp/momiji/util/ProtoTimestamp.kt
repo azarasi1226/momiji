@@ -25,5 +25,4 @@ fun LocalDateTime.toProtoTimestamp(): Timestamp =
  * read model の datetime は **UTC の壁掛け時計**で保存する規約なので、 ここでも **UTC として解釈**して
  * `LocalDateTime` に直す → 保存値と同じ土俵で比較できる（範囲フィルタの境界がズレない）。
  */
-fun Timestamp.toUtcLocalDateTime(): LocalDateTime =
-    LocalDateTime.ofEpochSecond(seconds, nanos, ZoneOffset.UTC)
+fun Timestamp.toUtcLocalDateTime(): LocalDateTime = LocalDateTime.ofEpochSecond(seconds, nanos, ZoneOffset.UTC)

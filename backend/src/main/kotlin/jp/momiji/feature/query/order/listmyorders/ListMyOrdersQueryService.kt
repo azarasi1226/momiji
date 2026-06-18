@@ -42,8 +42,12 @@ class ListMyOrdersQueryService(
                     ORDERS.CREATED_AT,
                     totalCountField,
                 ).from(ORDERS)
-                .where(ORDERS.USER_ID.eq(userId).and(fromCondition).and(toCondition))
-                .orderBy(ORDERS.CREATED_AT.desc())
+                .where(
+                    ORDERS.USER_ID
+                        .eq(userId)
+                        .and(fromCondition)
+                        .and(toCondition),
+                ).orderBy(ORDERS.CREATED_AT.desc())
                 .limit(paging.pageSize)
                 .offset(paging.offset)
                 .fetch()
