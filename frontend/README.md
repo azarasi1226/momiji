@@ -39,6 +39,10 @@ pnpm typecheck  # TypeScript 型チェック
 | `KEYCLOAK_CLIENT_ID` / `KEYCLOAK_CLIENT_SECRET` / `KEYCLOAK_ISSUER` | `AUTH_PROVIDER=keycloak` 時 ✅ | Keycloak client の id / secret と realm の OIDC issuer URL |
 | `COGNITO_CLIENT_ID` / `COGNITO_CLIENT_SECRET` / `COGNITO_ISSUER` | `AUTH_PROVIDER=cognito` 時 ✅ | Cognito app client の id / secret と issuer (`https://cognito-idp.<region>.amazonaws.com/<userPoolId>`) |
 | `GRPC_URL` | ✅ | backend gRPC エンドポイント |
+| `IMAGE_PROTOCOL` | ✅ | 商品画像配信の protocol（`http` / `https`）。Next.js の `next.config` で許可ホストに使用 |
+| `IMAGE_HOSTNAME` | ✅ | 商品画像配信のホスト名。Next.js の `next.config` で許可ホストに使用 |
+| `IMAGE_PORT` | ✅ | 商品画像配信のポート番号。Next.js の `next.config` で許可ホストに使用 |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe の公開可能キー。クライアントサイドの Stripe.js 初期化に使用 |
 
 `AUTH_PROVIDER` で local(Keycloak) / prod(Cognito) を環境ごとに切り替える（[ADR 0003](../docs/adr/0003-idp-linking.md) の 2 IDP 運用）。
 有効化した provider 側の `<PROVIDER>_CLIENT_ID` / `_CLIENT_SECRET` / `<PROVIDER>_ISSUER` だけ設定すればよい。
