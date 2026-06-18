@@ -13,7 +13,14 @@ import { StockAdjustmentReason } from "@/grpc/gen/momiji/stock/v1/reason_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
-export type { Product, ProductListItem, ProductsPage, ListProductsParams, Stock } from "./queries";
+
+export type {
+  ListProductsParams,
+  Product,
+  ProductListItem,
+  ProductsPage,
+  Stock,
+} from "./queries";
 
 export type ProductFormState = {
   success?: boolean;

@@ -131,8 +131,12 @@ export async function fetchProduct(id: string): Promise<Product> {
       imageUrl: res.imageUrl ?? "",
       price: res.price,
       status: productStatusName(res.status),
-      createdAt: res.createdAt ? timestampDate(res.createdAt).toISOString() : "",
-      updatedAt: res.updatedAt ? timestampDate(res.updatedAt).toISOString() : "",
+      createdAt: res.createdAt
+        ? timestampDate(res.createdAt).toISOString()
+        : "",
+      updatedAt: res.updatedAt
+        ? timestampDate(res.updatedAt).toISOString()
+        : "",
     };
   } catch (e) {
     redirectIfUnauthenticated(e);

@@ -55,8 +55,12 @@ export async function fetchBrand(id: string): Promise<Brand> {
       name: res.name,
       description: res.description,
       status: brandStatusName(res.status),
-      createdAt: res.createdAt ? timestampDate(res.createdAt).toISOString() : "",
-      updatedAt: res.updatedAt ? timestampDate(res.updatedAt).toISOString() : "",
+      createdAt: res.createdAt
+        ? timestampDate(res.createdAt).toISOString()
+        : "",
+      updatedAt: res.updatedAt
+        ? timestampDate(res.updatedAt).toISOString()
+        : "",
     };
   } catch (e) {
     redirectIfUnauthenticated(e);
@@ -69,7 +73,9 @@ export async function listAllBrands(): Promise<{ id: string; name: string }[]> {
   return brands.map((b) => ({ id: b.id, name: b.name }));
 }
 
-export async function listActiveBrands(): Promise<{ id: string; name: string }[]> {
+export async function listActiveBrands(): Promise<
+  { id: string; name: string }[]
+> {
   const brands = await listBrands();
   return brands
     .filter((b) => b.status === "ACTIVE")

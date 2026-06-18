@@ -7,6 +7,7 @@ import { PrepareCardRegistrationService } from "@/grpc/gen/momiji/payment/prepar
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
+
 export type { Card } from "./queries";
 
 export type PrepareCardState = { clientSecret: string } | { error: string };

@@ -9,6 +9,7 @@ import { UpdateBrandService } from "@/grpc/gen/momiji/brand/update/v1/update_pb.
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
+
 export type { Brand } from "./queries";
 
 export type BrandFormState = {

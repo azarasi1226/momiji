@@ -5,10 +5,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { fetchProfile } from "./queries";
 import { DeleteAccountButton } from "./delete-account-button";
 import { EmailChangeForm } from "./email-change-form";
 import { ProfileForm } from "./profile-form";
+import { fetchProfile } from "./queries";
 
 export const metadata: Metadata = {
   title: "プロフィール",
