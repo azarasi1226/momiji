@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/admin/brands", label: "ブランド管理" },
   { href: "/admin/products", label: "商品管理" },
+  { href: "/admin/orders", label: "発送管理" },
 ];
 
 /**
