@@ -61,7 +61,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
-    val jooqVersion = "3.21.5"
+    val jooqVersion = "3.21.6"
     implementation("org.jooq:jooq:$jooqVersion")
     jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用（H2 で schema を解釈するので実 DB ドライバは不要）
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
