@@ -6,6 +6,7 @@ import jp.momiji.domain.stock.ReceiveStockQuantity
 import jp.momiji.domain.stock.StockQuantity
 import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationCommittedEvent
 import org.junit.jupiter.api.Test
 
 class ReceiveStockCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -59,6 +60,33 @@ class ReceiveStockCommandHandlerTest : MomijiIntegrationTestBase() {
             .resultMessagePayload(ReceiveStockCommandResult.success())
             .events(
                 StockReceivedEvent(productId = productId, receivedQuantity = 5, onHandQuantity = 15),
+            )
+    }
+
+    @Test
+    fun `正常系_出荷確定で減った後の onHand に加算される`() {
+        val productId = "01HXYZPRODUCT0000000000RC05"
+        val orderId = "01HXYZORDER00000000000RC05"
+
+        fixture
+            .given()
+            .events(
+                productCreated(productId),
+                StockReceivedEvent(productId = productId, receivedQuantity = 10, onHandQuantity = 10),
+                // 注文完了で 2 出荷確定 → onHand 10→8。 入庫はこの 8 に加算するのが正しい（10 ではない）。
+                StockReservationCommittedEvent(
+                    productId = productId,
+                    orderId = orderId,
+                    quantity = 2,
+                    onHandQuantity = 8,
+                    reservedQuantity = 0,
+                ),
+            ).`when`()
+            .command(command(productId, 5))
+            .then()
+            .resultMessagePayload(ReceiveStockCommandResult.success())
+            .events(
+                StockReceivedEvent(productId = productId, receivedQuantity = 5, onHandQuantity = 13),
             )
     }
 

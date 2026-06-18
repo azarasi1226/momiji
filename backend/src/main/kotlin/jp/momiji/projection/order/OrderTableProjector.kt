@@ -4,9 +4,11 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.ORDERS
 import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderStatus
+import jp.momiji.event.order.OrderCompletedEvent
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.order.OrderPaidEvent
 import jp.momiji.event.order.OrderPaymentPreparedEvent
+import jp.momiji.event.order.OrderShippedEvent
 import jp.momiji.event.order.OrderStartedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.annotation.Timestamp
@@ -99,6 +101,22 @@ class OrderTableProjector(
         @Timestamp timestamp: Instant,
     ) {
         updateStatus(event.orderId, OrderStatus.PAID, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: OrderShippedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        updateStatus(event.orderId, OrderStatus.SHIPPED, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: OrderCompletedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        updateStatus(event.orderId, OrderStatus.COMPLETED, timestamp)
     }
 
     @EventHandler

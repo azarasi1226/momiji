@@ -9,6 +9,7 @@ import jp.momiji.domain.stock.StockQuantity
 import jp.momiji.event.product.ProductCreatedEvent
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationCommittedEvent
 import org.junit.jupiter.api.Test
 
 class AdjustStockCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -74,6 +75,38 @@ class AdjustStockCommandHandlerTest : MomijiIntegrationTestBase() {
                     adjustmentQuantity = -4,
                     reason = "DAMAGED",
                     onHandQuantity = 6,
+                ),
+            )
+    }
+
+    @Test
+    fun `正常系_出荷確定で減った後の onHand を基準に調整する`() {
+        val productId = "01HXYZPRODUCT0000000000AJ06"
+        val orderId = "01HXYZORDER00000000000AJ06"
+
+        fixture
+            .given()
+            .events(
+                productCreated(productId),
+                StockReceivedEvent(productId = productId, receivedQuantity = 10, onHandQuantity = 10),
+                // 注文完了で 2 出荷確定 → onHand 10→8。 調整の基準はこの 8（10 ではない）。
+                StockReservationCommittedEvent(
+                    productId = productId,
+                    orderId = orderId,
+                    quantity = 2,
+                    onHandQuantity = 8,
+                    reservedQuantity = 0,
+                ),
+            ).`when`()
+            .command(command(productId, -3, StockAdjustmentReason.DAMAGED))
+            .then()
+            .resultMessagePayload(AdjustStockCommandResult.success())
+            .events(
+                StockAdjustedEvent(
+                    productId = productId,
+                    adjustmentQuantity = -3,
+                    reason = "DAMAGED",
+                    onHandQuantity = 5,
                 ),
             )
     }

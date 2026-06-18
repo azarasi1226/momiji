@@ -3,8 +3,8 @@ package jp.momiji.feature.command.order.fail
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.stock.StockReservationReleasedEvent
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.order.start.OrderState
-import jp.momiji.feature.command.order.start.ProductsState
+import jp.momiji.feature.command.order.OrderState
+import jp.momiji.feature.command.order.ProductsState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
 import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.axonframework.modelling.annotation.InjectEntity
@@ -29,6 +29,9 @@ class FailOrderCommandHandler {
         if (!order.canReleaseReservation) {
             return FailOrderCommandResult.success()
         }
+
+        // 整合境界の検証: read model 由来の productIds が予約全商品をカバーしてること（負の予約数を焼かない防御）。
+        order.requireReservedProductsCovered(command.orderId, command.productIds)
 
         // 保障トランザクションとしてアイテムの予約を解放していく
         val releasedEvents =

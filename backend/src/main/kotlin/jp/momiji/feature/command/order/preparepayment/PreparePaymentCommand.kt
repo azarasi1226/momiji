@@ -16,12 +16,17 @@ data class PreparePaymentCommand(
     val orderId: String,
     val paymentMethodId: String,
     val paymentIntentId: String,
+    // PaymentIntent を作った課金額（service が read model から算出）。 注文時点の権威合計と照合するために載せる。
+    val amount: Long,
 )
 
 object PreparePaymentCommandResult {
     fun success() = CommandResult.success()
 
     fun orderNotFound() = CommandResult.fail(BusinessError("注文が見つかりません"))
+
+    // 課金額が注文時点の権威合計と食い違う（read model 未追従の可能性）。 client_secret を返さず課金を止める。
+    fun amountMismatch() = CommandResult.fail(BusinessError("注文金額が一致しません"))
 }
 
 suspend fun CommandGateway.preparePayment(command: PreparePaymentCommand): CommandResult = send(command, CommandResult::class.java).await()

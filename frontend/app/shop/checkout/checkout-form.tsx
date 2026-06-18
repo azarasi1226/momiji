@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import type { Card as PaymentCard } from "@/app/profile/payment-methods/actions";
 import type { ShippingAddress } from "@/app/profile/shipping-addresses/actions";
+import { clearBasket } from "@/app/shop/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -88,6 +89,10 @@ export function CheckoutForm({ items, total, addresses, cards }: Props) {
       }
 
       // 成功（succeeded / processing）。 確定（PAID）は webhook 経由で非同期に反映される。
+      // カゴのクリアは order と切り離したクライアント主導の後処理。 非クリティカル（カゴ残りは許容・
+      // ユーザーが手で消せる）なので、 結果は握りつぶして成功表示を妨げない。
+      await clearBasket().catch(() => {});
+
       setCompletedOrderId(orderId);
     });
   }

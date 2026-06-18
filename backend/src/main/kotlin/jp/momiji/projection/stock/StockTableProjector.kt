@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.STOCKS
 import jp.momiji.event.stock.StockAdjustedEvent
 import jp.momiji.event.stock.StockReceivedEvent
+import jp.momiji.event.stock.StockReservationCommittedEvent
 import jp.momiji.event.stock.StockReservationReleasedEvent
 import jp.momiji.event.stock.StockReservedEvent
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
@@ -42,6 +43,26 @@ class StockTableProjector(
         @Timestamp timestamp: Instant,
     ) {
         setReserved(event.productId, event.reservedQuantity, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: StockReservationCommittedEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        // 出荷確定: onHand・reserved とも絶対値で上書き（出荷した分 onHand が減る）。
+        val at = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC)
+        val updated =
+            dsl
+                .update(STOCKS)
+                .set(STOCKS.ON_HAND, event.onHandQuantity)
+                .set(STOCKS.RESERVED, event.reservedQuantity)
+                .set(STOCKS.UPDATED_AT, at)
+                .where(STOCKS.PRODUCT_ID.eq(event.productId))
+                .execute()
+        if (updated == 0) {
+            logger.warn { "出荷確定の反映先の在庫行がありません: productId=${event.productId}" }
+        }
     }
 
     // reservedQuantity は予約数の絶対値なので set（差分でなく上書き）。 予約・解放どちらも再処理して冪等。

@@ -1,7 +1,7 @@
 package jp.momiji.feature.command.order.recordpaid
 
 import jp.momiji.event.order.OrderPaidEvent
-import jp.momiji.feature.command.order.start.OrderState
+import jp.momiji.feature.command.order.OrderState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
 import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.axonframework.modelling.annotation.InjectEntity

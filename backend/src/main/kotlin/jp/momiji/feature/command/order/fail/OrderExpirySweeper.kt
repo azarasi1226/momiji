@@ -1,12 +1,11 @@
-package jp.momiji.feature.command.order.expire
+package jp.momiji.feature.command.order.fail
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.ORDERS
-import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderFailureReason
 import jp.momiji.domain.order.OrderStatus
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.feature.command.order.fail.FailOrderCommand
+import jp.momiji.feature.command.order.OrderProductIdsReader
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.jooq.DSLContext
 import org.springframework.scheduling.annotation.Scheduled
@@ -25,11 +24,14 @@ private val logger = KotlinLogging.logger {}
  * **2 系統**で掃く（3DS レース対策)
  * - STARTED: オーダーがスタートしたが決済に着手していない。 [STARTED_TTL] を `created_at` 基準
  * - PAYMENT_PENDING: 決済着手したが未完了（3DS 放置）。 [PAYMENT_PENDING_TTL] を `updated_at` 基準
+ *
+ * 時計が [FailOrderCommand] を起動する入口（time-driven inbound adapter）なので、 fail ユースケースと同居する。
  */
 @Component
 class OrderExpirySweeper(
     private val dsl: DSLContext,
     private val commandGateway: CommandGateway,
+    private val orderProductIdsReader: OrderProductIdsReader,
 ) {
     @Scheduled(fixedDelayString = SWEEP_INTERVAL)
     fun sweep() {
@@ -38,11 +40,12 @@ class OrderExpirySweeper(
 
         for (orderId in expiredOrderIds) {
             try {
+                val productIds = orderProductIdsReader.read(orderId)
                 commandGateway
                     .send(
                         FailOrderCommand(
                             orderId = orderId,
-                            productIds = findOrderProductIds(orderId),
+                            productIds = productIds,
                             reason = OrderFailureReason.EXPIRED,
                         ),
                         CommandResult::class.java,
@@ -78,21 +81,6 @@ class OrderExpirySweeper(
             ).fetch(ORDERS.ID)
             .filterNotNull()
     }
-
-    /**
-     * 対象注文が抱えている商品の id を検索
-     *
-     * `FailOrderCommand`を作成する際に利用する。商品の在庫を解放するために必要。
-     * order テーブルと order_item テーブルは同時に projection されるため、このメソッドに到達しているということは必ず
-     * order_item も存在しているので、 id を取得できるはず。在庫解放漏れを心配する必要はない。
-     */
-    private fun findOrderProductIds(orderId: String): List<String> =
-        dsl
-            .select(ORDER_ITEMS.PRODUCT_ID)
-            .from(ORDER_ITEMS)
-            .where(ORDER_ITEMS.ORDER_ID.eq(orderId))
-            .fetch(ORDER_ITEMS.PRODUCT_ID)
-            .filterNotNull()
 
     companion object {
         // 注文がスタートしてから、決済がスタートするまでの締め切り時間
