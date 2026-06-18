@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchCards } from "./actions";
+import { fetchCards } from "./queries";
 import { AddCardForm } from "./add-card-form";
 import { CardList } from "./card-list";
 
