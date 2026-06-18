@@ -1,14 +1,13 @@
 package jp.momiji.feature.command.order.complete
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.event.order.OrderShippedEvent
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.InitialPosition
+import jp.momiji.feature.command.order.OrderProductIdsReader
 import jp.momiji.feature.command.pooledStreamingProcessorFor
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
-import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
@@ -28,13 +27,13 @@ private val logger = KotlinLogging.logger {}
 @Component
 class CompleteShippedOrderProcessManager(
     private val commandGateway: CommandGateway,
-    private val dsl: DSLContext,
+    private val orderProductIdsReader: OrderProductIdsReader,
 ) {
     @EventHandler
     fun on(event: OrderShippedEvent) {
         // 注文完了（SHIPPED → COMPLETED）＋ 在庫の引き当て確定。 ガードは CompleteOrderCommandHandler。
         // ProductsState の整合境界（product_id）を組むため、 order_items（read model）から productId を読む（FailOrder の driver と同じ）。
-        val command = CompleteOrderCommand(orderId = event.orderId, productIds = findOrderProductIds(event.orderId))
+        val command = CompleteOrderCommand(orderId = event.orderId, productIds = orderProductIdsReader.read(event.orderId))
 
         // インフラ障害は .get() が throw → processor がリトライ（CompleteOrder は冪等で再実行安全）。
         // 業務エラー（success == false）は永続的な異常なのでログのみ（リトライループにしない）。
@@ -43,15 +42,6 @@ class CompleteShippedOrderProcessManager(
             logger.warn { "発送完了 PM: 注文完了 order=${event.orderId} が業務エラー: ${result.error?.message}" }
         }
     }
-
-    // 対象注文の product_id を read model から取得する（在庫確定の整合境界に渡す）。
-    private fun findOrderProductIds(orderId: String): List<String> =
-        dsl
-            .select(ORDER_ITEMS.PRODUCT_ID)
-            .from(ORDER_ITEMS)
-            .where(ORDER_ITEMS.ORDER_ID.eq(orderId))
-            .fetch(ORDER_ITEMS.PRODUCT_ID)
-            .filterNotNull()
 
     @Configuration
     class Config {
