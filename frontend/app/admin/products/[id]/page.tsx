@@ -1,10 +1,10 @@
 import Link from "next/link";
+import { fetchBrand } from "@/app/admin/brands/queries";
+import { fetchProduct, fetchStock } from "@/app/admin/products/queries";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { productStatusLabel } from "@/lib/status-labels";
-import { fetchBrand } from "../../brands/actions";
-import { fetchProduct, fetchStock } from "../actions";
 import { DiscontinueProductButton } from "./discontinue-product-button";
 import { ProductEditForm } from "./product-edit-form";
 import { StockForms } from "./stock-forms";

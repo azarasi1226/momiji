@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  fetchMyOrder,
+  isCancelable,
+  type MyOrderDetail,
+  ORDER_STATUS_LABEL,
+} from "@/app/shop/orders/queries";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
 import { formatDateTime } from "@/lib/format";
-import {
-  fetchMyOrder,
-  isCancelable,
-  type MyOrderDetail,
-  ORDER_STATUS_LABEL,
-} from "../queries";
 
 export const metadata: Metadata = {
   title: "注文詳細",

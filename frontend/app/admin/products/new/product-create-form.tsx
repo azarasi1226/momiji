@@ -1,6 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import {
+  createProduct,
+  type ProductFormState,
+} from "@/app/admin/products/actions";
+import { ImageUploadField } from "@/app/admin/products/image-upload-field";
 import { FieldError } from "@/components/form/field-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,8 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { createProduct, type ProductFormState } from "../actions";
-import { ImageUploadField } from "../image-upload-field";
 
 export function ProductCreateForm({
   brands,
