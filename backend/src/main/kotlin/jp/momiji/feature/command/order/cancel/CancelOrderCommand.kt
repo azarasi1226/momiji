@@ -33,5 +33,4 @@ object CancelOrderCommandResult {
     fun alreadyShipped() = CommandResult.fail(BusinessError("発送済みのためキャンセルできません"))
 }
 
-suspend fun CommandGateway.cancelOrder(command: CancelOrderCommand): CommandResult =
-    send(command, CommandResult::class.java).await()
+suspend fun CommandGateway.cancelOrder(command: CancelOrderCommand): CommandResult = send(command, CommandResult::class.java).await()
