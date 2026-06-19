@@ -18,7 +18,7 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           # backend / frontend は生成 gRPC コードに依存するので grpc/** でも起動する
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "setup buf"
         uses: bufbuild/buf-setup-action@v1
@@ -64,7 +64,7 @@ jobs:
       pull-requests: write
     steps:
       - name: "checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "setup buf"
         uses: bufbuild/buf-setup-action@v1
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "checkout"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "setup buf"
         uses: bufbuild/buf-setup-action@v1

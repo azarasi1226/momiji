@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import type { Card as PaymentCard } from "@/app/profile/payment-methods/actions";
-import type { ShippingAddress } from "@/app/profile/shipping-addresses/actions";
-import { clearBasket } from "@/app/shop/actions";
+import type { Card as PaymentCard } from "@/app/profile/payment-methods/queries";
+import type { ShippingAddress } from "@/app/profile/shipping-addresses/queries";
+import { clearBasket } from "@/app/shop/basket/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {

@@ -1,11 +1,11 @@
 package jp.momiji.feature.query.brand.list
 
 import jp.momiji.feature.command.brand.brandStatusToProto
-import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsRequest
-import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsResponse
-import jp.momiji.grpc.momiji.brand.list.v1.ListBrandsServiceGrpcKt
-import jp.momiji.grpc.momiji.brand.list.v1.brand
-import jp.momiji.grpc.momiji.brand.list.v1.listBrandsResponse
+import jp.momiji.grpc.momiji.brand.list.ListBrandsRequest
+import jp.momiji.grpc.momiji.brand.list.ListBrandsResponse
+import jp.momiji.grpc.momiji.brand.list.ListBrandsServiceGrpcKt
+import jp.momiji.grpc.momiji.brand.list.brand
+import jp.momiji.grpc.momiji.brand.list.listBrandsResponse
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 

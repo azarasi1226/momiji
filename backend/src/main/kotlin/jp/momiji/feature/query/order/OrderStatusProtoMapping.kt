@@ -1,7 +1,7 @@
 package jp.momiji.feature.query.order
 
 import jp.momiji.domain.order.OrderStatus
-import jp.momiji.grpc.momiji.order.v1.OrderStatus as ProtoOrderStatus
+import jp.momiji.grpc.momiji.order.OrderStatus as ProtoOrderStatus
 
 /**
  * read model の status 文字列（= [OrderStatus] の name）を gRPC の proto enum に変換する。
@@ -17,4 +17,5 @@ internal fun orderStatusToProto(dbValue: String): ProtoOrderStatus =
         OrderStatus.SHIPPED -> ProtoOrderStatus.ORDER_STATUS_SHIPPED
         OrderStatus.COMPLETED -> ProtoOrderStatus.ORDER_STATUS_COMPLETED
         OrderStatus.FAILED -> ProtoOrderStatus.ORDER_STATUS_FAILED
+        OrderStatus.CANCELLED -> ProtoOrderStatus.ORDER_STATUS_CANCELLED
     }

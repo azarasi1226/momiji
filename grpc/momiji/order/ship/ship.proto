@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package momiji.order.ship;
+
+// 発送手続き（PAID → SHIPPED）。 admin が発送待ちの注文を発送済みにする。
+service ShipOrderService {
+  rpc ShipOrder(ShipOrderRequest) returns (ShipOrderResponse);
+}
+
+message ShipOrderRequest {
+  string order_id = 1;
+}
+
+message ShipOrderResponse {}

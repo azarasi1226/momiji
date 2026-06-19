@@ -12,9 +12,9 @@ import jp.momiji.domain.stock.AdjustStockQuantity
 import jp.momiji.domain.stock.StockAdjustment
 import jp.momiji.feature.command.stock.stockAdjustmentReasonFromProto
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.stock.adjust.v1.AdjustStockRequest
-import jp.momiji.grpc.momiji.stock.adjust.v1.AdjustStockResponse
-import jp.momiji.grpc.momiji.stock.adjust.v1.AdjustStockServiceGrpcKt
+import jp.momiji.grpc.momiji.stock.adjust.AdjustStockRequest
+import jp.momiji.grpc.momiji.stock.adjust.AdjustStockResponse
+import jp.momiji.grpc.momiji.stock.adjust.AdjustStockServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

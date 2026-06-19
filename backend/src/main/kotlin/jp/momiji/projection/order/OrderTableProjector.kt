@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import iss.jooq.generated.tables.references.ORDERS
 import iss.jooq.generated.tables.references.ORDER_ITEMS
 import jp.momiji.domain.order.OrderStatus
+import jp.momiji.event.order.OrderCancelledEvent
 import jp.momiji.event.order.OrderCompletedEvent
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.order.OrderPaidEvent
@@ -125,6 +126,14 @@ class OrderTableProjector(
         @Timestamp timestamp: Instant,
     ) {
         updateStatus(event.orderId, OrderStatus.FAILED, timestamp)
+    }
+
+    @EventHandler
+    fun on(
+        event: OrderCancelledEvent,
+        @Timestamp timestamp: Instant,
+    ) {
+        updateStatus(event.orderId, OrderStatus.CANCELLED, timestamp)
     }
 
     private fun updateStatus(

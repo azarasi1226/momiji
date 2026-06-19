@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { formatDateTime } from "@/lib/format";
 import { brandStatusLabel } from "@/lib/status-labels";
-import { listBrands } from "./actions";
+import { listBrands } from "./queries";
 
 export const metadata: Metadata = {
   title: "ブランド管理",

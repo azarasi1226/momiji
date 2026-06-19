@@ -3,10 +3,10 @@ package jp.momiji.feature.query.product.findbyid
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.product.productStatusToProto
-import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdRequest
-import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdResponse
-import jp.momiji.grpc.momiji.product.findbyid.v1.FindProductByIdServiceGrpcKt
-import jp.momiji.grpc.momiji.product.findbyid.v1.findProductByIdResponse
+import jp.momiji.grpc.momiji.product.findbyid.FindProductByIdRequest
+import jp.momiji.grpc.momiji.product.findbyid.FindProductByIdResponse
+import jp.momiji.grpc.momiji.product.findbyid.FindProductByIdServiceGrpcKt
+import jp.momiji.grpc.momiji.product.findbyid.findProductByIdResponse
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 

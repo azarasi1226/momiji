@@ -1,13 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
+import {
+  type Product,
+  type ProductFormState,
+  updateProduct,
+} from "@/app/admin/products/actions";
+import { ImageUploadField } from "@/app/admin/products/image-upload-field";
 import { FieldError } from "@/components/form/field-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { type Product, type ProductFormState, updateProduct } from "../actions";
-import { ImageUploadField } from "../image-upload-field";
 
 export function ProductEditForm({
   product,

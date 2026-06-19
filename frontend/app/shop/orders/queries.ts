@@ -1,7 +1,7 @@
 import { timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
-import { FindMyOrderService } from "@/grpc/gen/momiji/order/findmyorder/v1/findmyorder_pb.js";
-import { ListMyOrdersService } from "@/grpc/gen/momiji/order/listmyorders/v1/listmyorders_pb.js";
-import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
+import { FindMyOrderService } from "@/grpc/gen/momiji/order/findmyorder/findmyorder_pb.js";
+import { ListMyOrdersService } from "@/grpc/gen/momiji/order/listmyorders/listmyorders_pb.js";
+import { OrderStatus } from "@/grpc/gen/momiji/order/status_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -180,5 +180,6 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   [OrderStatus.SHIPPED]: "発送済み",
   // COMPLETED（在庫確定済み）も購入者目線では「発送済み」までで十分なので同じ表示に揃える。
   [OrderStatus.COMPLETED]: "発送済み",
-  [OrderStatus.FAILED]: "失敗・キャンセル",
+  [OrderStatus.FAILED]: "失敗",
+  [OrderStatus.CANCELLED]: "キャンセル済み",
 };

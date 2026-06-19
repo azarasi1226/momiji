@@ -1,6 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import {
+  adjustStock,
+  type ProductFormState,
+  receiveStock,
+} from "@/app/admin/products/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { adjustStock, type ProductFormState, receiveStock } from "../actions";
 
 const REASON_OPTIONS = [
   { value: "DAMAGED", label: "破損・廃棄" },

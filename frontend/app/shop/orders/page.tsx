@@ -6,7 +6,7 @@ import { QueryParamSelect } from "@/components/query-param-select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
+import { OrderStatus } from "@/grpc/gen/momiji/order/status_pb.js";
 import { formatDateTime } from "@/lib/format";
 import { listMyOrders, ORDER_STATUS_LABEL } from "./queries";
 
@@ -54,6 +54,7 @@ function statusVariant(
 ): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
     case OrderStatus.FAILED:
+    case OrderStatus.CANCELLED:
       return "destructive";
     case OrderStatus.SHIPPED:
     case OrderStatus.COMPLETED:

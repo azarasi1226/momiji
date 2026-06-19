@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package momiji.product.v1;
-
-enum ProductStatus {
-  PRODUCT_STATUS_UNSPECIFIED = 0;
-  PRODUCT_STATUS_ACTIVE = 1;
-  PRODUCT_STATUS_DISCONTINUED = 2;
-}

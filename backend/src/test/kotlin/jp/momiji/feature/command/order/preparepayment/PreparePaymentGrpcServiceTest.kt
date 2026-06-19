@@ -10,7 +10,7 @@ import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.order.preparepayment.v1.preparePaymentRequest
+import jp.momiji.grpc.momiji.order.preparepayment.preparePaymentRequest
 import jp.momiji.port.payment.PaymentGateway
 import jp.momiji.port.payment.PaymentIntentResult
 import kotlinx.coroutines.runBlocking

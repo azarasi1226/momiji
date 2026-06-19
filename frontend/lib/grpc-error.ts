@@ -1,6 +1,6 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { redirect } from "next/navigation";
-import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/v1/error_pb.js";
+import { ErrorDetailSchema } from "@/grpc/gen/momiji/common/error_pb.js";
 
 /**
  * gRPC 呼び出しで UNAUTHENTICATED が返ったら "/" に飛ばして再ログインを促す。

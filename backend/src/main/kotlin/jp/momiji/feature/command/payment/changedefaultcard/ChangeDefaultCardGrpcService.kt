@@ -3,9 +3,9 @@ package jp.momiji.feature.command.payment.changedefaultcard
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.payment.changedefaultcard.v1.ChangeDefaultCardRequest
-import jp.momiji.grpc.momiji.payment.changedefaultcard.v1.ChangeDefaultCardResponse
-import jp.momiji.grpc.momiji.payment.changedefaultcard.v1.ChangeDefaultCardServiceGrpcKt
+import jp.momiji.grpc.momiji.payment.changedefaultcard.ChangeDefaultCardRequest
+import jp.momiji.grpc.momiji.payment.changedefaultcard.ChangeDefaultCardResponse
+import jp.momiji.grpc.momiji.payment.changedefaultcard.ChangeDefaultCardServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

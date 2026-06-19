@@ -7,9 +7,9 @@ import jp.momiji.domain.Ulid
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.v1.ChangeDefaultShippingAddressRequest
-import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.v1.ChangeDefaultShippingAddressResponse
-import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.v1.ChangeDefaultShippingAddressServiceGrpcKt
+import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.ChangeDefaultShippingAddressRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.ChangeDefaultShippingAddressResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.ChangeDefaultShippingAddressServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.grpc.momiji.stock.receive.v1.receiveStockRequest
+import jp.momiji.grpc.momiji.stock.receive.receiveStockRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

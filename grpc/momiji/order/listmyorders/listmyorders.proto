@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package momiji.order.listmyorders;
+
+import "google/protobuf/timestamp.proto";
+import "momiji/common/paging.proto";
+import "momiji/order/status.proto";
+
+// 自分の注文一覧。 持ち主(user)は JWT から解決するのでリクエストには含めない。
+service ListMyOrdersService {
+  rpc ListMyOrders(ListMyOrdersRequest) returns (ListMyOrdersResponse);
+}
+
+message ListMyOrdersRequest {
+  // 0 ならサーバ既定のページサイズ。
+  int32 page_size = 1;
+  // 1 始まり。 0 / 負なら 1 として扱う。
+  int32 page_number = 2;
+  // 期間絞り込み（created_at）。 BFF が「直近1か月」「2025年」等を具体的な [from, to) の絶対時刻に
+  // 解決して渡す（期間の意味づけ・タイムゾーンは表示側＝BFF の責務）。 未指定なら片側または両側を開放する。
+  // created_from: この時刻以降（>=）。 created_to: この時刻より前（<）。
+  optional google.protobuf.Timestamp created_from = 3;
+  optional google.protobuf.Timestamp created_to = 4;
+}
+
+message ListMyOrdersResponse {
+  repeated Order orders = 1;
+  momiji.common.Paging paging = 2;
+}
+
+message Order {
+  string order_id = 1;
+  momiji.order.OrderStatus status = 2;
+  // 注文時点スナップショットの合計金額（単価 × 個数の総和）。
+  int64 total_amount = 3;
+  google.protobuf.Timestamp created_at = 4;
+  repeated Item items = 5;
+}
+
+message Item {
+  string product_id = 1;
+  // 注文時点スナップショットの商品名（後の改名・廃番に影響されない）。
+  string name = 2;
+  // 注文時点スナップショットの単価。
+  int32 unit_price = 3;
+  int32 quantity = 4;
+  string image_url = 5;
+}

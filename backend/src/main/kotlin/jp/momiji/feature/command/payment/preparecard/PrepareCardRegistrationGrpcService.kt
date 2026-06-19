@@ -3,10 +3,10 @@ package jp.momiji.feature.command.payment.preparecard
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.payment.preparecard.v1.PrepareCardRegistrationRequest
-import jp.momiji.grpc.momiji.payment.preparecard.v1.PrepareCardRegistrationResponse
-import jp.momiji.grpc.momiji.payment.preparecard.v1.PrepareCardRegistrationServiceGrpcKt
-import jp.momiji.grpc.momiji.payment.preparecard.v1.prepareCardRegistrationResponse
+import jp.momiji.grpc.momiji.payment.preparecard.PrepareCardRegistrationRequest
+import jp.momiji.grpc.momiji.payment.preparecard.PrepareCardRegistrationResponse
+import jp.momiji.grpc.momiji.payment.preparecard.PrepareCardRegistrationServiceGrpcKt
+import jp.momiji.grpc.momiji.payment.preparecard.prepareCardRegistrationResponse
 import jp.momiji.port.payment.PaymentGateway
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { deleteBasketItem, setBasketItem } from "../actions";
+import { deleteBasketItem, setBasketItem } from "./actions";
 
 type Props = {
   productId: string;

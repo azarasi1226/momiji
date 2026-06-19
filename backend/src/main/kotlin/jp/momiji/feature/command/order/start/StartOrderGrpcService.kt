@@ -6,10 +6,10 @@ import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.order.start.v1.StartOrderRequest
-import jp.momiji.grpc.momiji.order.start.v1.StartOrderResponse
-import jp.momiji.grpc.momiji.order.start.v1.StartOrderServiceGrpcKt
-import jp.momiji.grpc.momiji.order.start.v1.startOrderResponse
+import jp.momiji.grpc.momiji.order.start.StartOrderRequest
+import jp.momiji.grpc.momiji.order.start.StartOrderResponse
+import jp.momiji.grpc.momiji.order.start.StartOrderServiceGrpcKt
+import jp.momiji.grpc.momiji.order.start.startOrderResponse
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

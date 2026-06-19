@@ -8,10 +8,10 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.domain.brand.BrandDescription
 import jp.momiji.domain.brand.BrandName
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.brand.create.v1.CreateBrandRequest
-import jp.momiji.grpc.momiji.brand.create.v1.CreateBrandResponse
-import jp.momiji.grpc.momiji.brand.create.v1.CreateBrandServiceGrpcKt
-import jp.momiji.grpc.momiji.brand.create.v1.createBrandResponse
+import jp.momiji.grpc.momiji.brand.create.CreateBrandRequest
+import jp.momiji.grpc.momiji.brand.create.CreateBrandResponse
+import jp.momiji.grpc.momiji.brand.create.CreateBrandServiceGrpcKt
+import jp.momiji.grpc.momiji.brand.create.createBrandResponse
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

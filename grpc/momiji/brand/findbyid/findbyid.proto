@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package momiji.brand.findbyid;
+
+import "google/protobuf/timestamp.proto";
+import "momiji/brand/status.proto";
+
+service FindBrandByIdService {
+  rpc FindBrandById(FindBrandByIdRequest) returns (FindBrandByIdResponse);
+}
+
+message FindBrandByIdRequest {
+  string id = 1;
+}
+
+message FindBrandByIdResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  momiji.brand.BrandStatus status = 6;
+}

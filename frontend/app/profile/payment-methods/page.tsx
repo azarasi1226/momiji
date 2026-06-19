@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { fetchCards } from "./actions";
 import { AddCardForm } from "./add-card-form";
 import { CardList } from "./card-list";
+import { fetchCards } from "./queries";
 
 export default async function PaymentMethodsPage() {
   const cards = await fetchCards();
