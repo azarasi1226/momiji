@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { cancelOrder } from "@/app/shop/orders/actions";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CancellationReason } from "@/grpc/gen/momiji/order/cancel/v1/cancel_pb.js";
-import { cancelOrder } from "../actions";
 
 // ユーザーが選べるキャンセル理由（UNSPECIFIED は選択肢に出さない）。
 const REASON_OPTIONS: { value: CancellationReason; label: string }[] = [
