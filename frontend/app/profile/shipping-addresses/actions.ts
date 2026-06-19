@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { ulid } from "ulid";
 import { ChangeDefaultShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/changedefault/v1/changedefault_pb.js";
 import { DeleteShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/delete/v1/delete_pb.js";
-import { ListShippingAddressesService } from "@/grpc/gen/momiji/user/shippingaddress/list/v1/list_pb.js";
 import { RegisterShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/register/v1/register_pb.js";
 import { UpdateShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/update/v1/update_pb.js";
 import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments";
@@ -12,18 +11,7 @@ import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
-export type ShippingAddress = {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  postalCode: string;
-  prefecture: string;
-  city: string;
-  streetAddress: string;
-  building: string;
-  deliveryNote: string;
-  isDefault: boolean;
-};
+export type { ShippingAddress } from "./queries";
 
 export type SaveAddressState = {
   success?: boolean;
@@ -42,33 +30,6 @@ function toSaveErrorState(e: unknown, fallback: string): SaveAddressState {
     };
   }
   return { error: fallback };
-}
-
-/** 配送先一覧を取得する（登録順）。 */
-export async function fetchShippingAddresses(): Promise<ShippingAddress[]> {
-  const session = await requireValidSession();
-  try {
-    const client = createGrpcClient(
-      ListShippingAddressesService,
-      session.accessToken,
-    );
-    const response = await client.listShippingAddresses({});
-    return response.shippingAddresses.map((address) => ({
-      id: address.id,
-      name: address.name,
-      phoneNumber: address.phoneNumber,
-      postalCode: address.postalCode,
-      prefecture: address.prefecture,
-      city: address.city,
-      streetAddress: address.streetAddress,
-      building: address.building,
-      deliveryNote: address.deliveryNote,
-      isDefault: address.isDefault,
-    }));
-  } catch (e) {
-    redirectIfUnauthenticated(e);
-    throw e;
-  }
 }
 
 /** 配送先を登録する。 id は BFF 採番（冪等キー）。 成功時は採番した id を返す。 */

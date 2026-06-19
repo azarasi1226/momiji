@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { clearBasket } from "../actions";
+import { clearBasket } from "./actions";
 
 /** カゴを空にする。 誤操作防止に確認を挟む。 */
 export function ClearBasketButton() {

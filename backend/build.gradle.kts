@@ -10,7 +10,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jooq.jooq-codegen-gradle") version "3.21.5"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.8"
 }
 
 group = "momiji"
@@ -61,7 +61,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:5.0.1")
 
     // jooq
-    val jooqVersion = "3.21.5"
+    val jooqVersion = "3.21.6"
     implementation("org.jooq:jooq:$jooqVersion")
     jooqCodegen("org.jooq:jooq-meta-extensions:$jooqVersion") // DDLDatabase用（H2 で schema を解釈するので実 DB ドライバは不要）
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
@@ -74,7 +74,7 @@ dependencies {
     testImplementation("io.axoniq.framework:axoniq-testcontainer")
 
     // gRPC
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.3")
     implementation("io.grpc:grpc-kotlin-stub:1.5.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
 

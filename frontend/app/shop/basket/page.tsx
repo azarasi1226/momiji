@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { findBasket } from "../queries";
 import { BasketItemRow } from "./basket-item-row";
 import { ClearBasketButton } from "./clear-basket-button";
+import { findBasket } from "./queries";
 
 // カゴの商品種類数は backend で最大 50 に制限される。 1 ページ（最大 100）で全件取れるため、
 // カゴ画面はページングせず全件をまとめて表示し、合計金額を正確に出す。
