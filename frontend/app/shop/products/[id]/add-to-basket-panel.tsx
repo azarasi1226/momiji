@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
+import { setBasketItem } from "@/app/shop/basket/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { setBasketItem } from "../../basket/actions";
 
 // 在庫が少ないとき「残りN点」を出す閾値（Amazon 風の煽り表示）。
 const LOW_STOCK_THRESHOLD = 10;

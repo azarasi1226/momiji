@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { listAllBrands } from "@/app/admin/brands/queries";
 import { Pagination } from "@/components/pagination";
 import { QueryParamSelect } from "@/components/query-param-select";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,6 @@ import {
 } from "@/components/ui/table";
 import { formatDateTime } from "@/lib/format";
 import { productStatusLabel } from "@/lib/status-labels";
-import { listAllBrands } from "../brands/queries";
 import { listProducts } from "./queries";
 
 export const metadata: Metadata = {
