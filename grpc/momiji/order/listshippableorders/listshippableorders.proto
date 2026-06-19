@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package momiji.order.shippable;
+package momiji.order.listshippableorders;
 
 import "google/protobuf/timestamp.proto";
 

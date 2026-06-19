@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.order.shippable
+package jp.momiji.feature.query.order.listshippableorders
 
 import iss.jooq.generated.tables.references.ORDERS
 import iss.jooq.generated.tables.references.ORDER_ITEMS

@@ -1,12 +1,12 @@
-package jp.momiji.feature.query.order.shippable
+package jp.momiji.feature.query.order.listshippableorders
 
-import jp.momiji.grpc.momiji.order.shippable.ListShippableOrdersRequest
-import jp.momiji.grpc.momiji.order.shippable.ListShippableOrdersResponse
-import jp.momiji.grpc.momiji.order.shippable.ListShippableOrdersServiceGrpcKt
-import jp.momiji.grpc.momiji.order.shippable.item
-import jp.momiji.grpc.momiji.order.shippable.listShippableOrdersResponse
-import jp.momiji.grpc.momiji.order.shippable.shippableOrder
-import jp.momiji.grpc.momiji.order.shippable.shippingAddress
+import jp.momiji.grpc.momiji.order.listshippableorders.ListShippableOrdersRequest
+import jp.momiji.grpc.momiji.order.listshippableorders.ListShippableOrdersResponse
+import jp.momiji.grpc.momiji.order.listshippableorders.ListShippableOrdersServiceGrpcKt
+import jp.momiji.grpc.momiji.order.listshippableorders.item
+import jp.momiji.grpc.momiji.order.listshippableorders.listShippableOrdersResponse
+import jp.momiji.grpc.momiji.order.listshippableorders.shippableOrder
+import jp.momiji.grpc.momiji.order.listshippableorders.shippingAddress
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 

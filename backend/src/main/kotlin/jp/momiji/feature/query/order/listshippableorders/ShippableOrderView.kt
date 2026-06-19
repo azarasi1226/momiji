@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.order.shippable
+package jp.momiji.feature.query.order.listshippableorders
 
 import java.time.LocalDateTime
 
