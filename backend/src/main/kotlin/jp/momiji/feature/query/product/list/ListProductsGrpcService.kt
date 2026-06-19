@@ -4,12 +4,12 @@ import jp.momiji.feature.command.product.productStatusFilterFromProto
 import jp.momiji.feature.command.product.productStatusToProto
 import jp.momiji.feature.query.PagingCondition
 import jp.momiji.grpc.momiji.common.paging
+import jp.momiji.grpc.momiji.product.ProductSortCondition
 import jp.momiji.grpc.momiji.product.list.ListProductsRequest
 import jp.momiji.grpc.momiji.product.list.ListProductsResponse
 import jp.momiji.grpc.momiji.product.list.ListProductsServiceGrpcKt
 import jp.momiji.grpc.momiji.product.list.listProductsResponse
 import jp.momiji.grpc.momiji.product.list.product
-import jp.momiji.grpc.momiji.product.ProductSortCondition
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 
