@@ -180,5 +180,6 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   [OrderStatus.SHIPPED]: "発送済み",
   // COMPLETED（在庫確定済み）も購入者目線では「発送済み」までで十分なので同じ表示に揃える。
   [OrderStatus.COMPLETED]: "発送済み",
-  [OrderStatus.FAILED]: "失敗・キャンセル",
+  [OrderStatus.FAILED]: "失敗",
+  [OrderStatus.CANCELLED]: "キャンセル済み",
 };

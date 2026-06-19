@@ -54,6 +54,7 @@ function statusVariant(
 ): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
     case OrderStatus.FAILED:
+    case OrderStatus.CANCELLED:
       return "destructive";
     case OrderStatus.SHIPPED:
     case OrderStatus.COMPLETED:

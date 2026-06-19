@@ -3,6 +3,7 @@ package jp.momiji.feature.command.order
 import jp.momiji.domain.order.OrderStatus
 import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.eventQualifiedName
+import jp.momiji.event.order.OrderCancelledEvent
 import jp.momiji.event.order.OrderCompletedEvent
 import jp.momiji.event.order.OrderFailedEvent
 import jp.momiji.event.order.OrderPaidEvent
@@ -56,6 +57,7 @@ class OrderState(
                     OrderShippedEvent::class.eventQualifiedName(),
                     OrderCompletedEvent::class.eventQualifiedName(),
                     OrderFailedEvent::class.eventQualifiedName(),
+                    OrderCancelledEvent::class.eventQualifiedName(),
                 )
     }
 
@@ -73,6 +75,17 @@ class OrderState(
 
     /** 在庫予約を解放できる（＝まだ確定していない STARTED/PAYMENT_PENDING）状態か。 失効・支払い失敗の補償はこのときだけ解放する。 */
     val canReleaseReservation: Boolean get() = status == OrderStatus.STARTED || status == OrderStatus.PAYMENT_PENDING
+
+    /**
+     * ユーザーがキャンセルできる（＝発送前）状態か。 STARTED/PAYMENT_PENDING/PAID。
+     * PAID も発送までは予約を保持しているので解放対象（[canReleaseReservation] は未払いのみだが、 キャンセルは PAID も含む）。
+     * 返金は PAID（[isPaid]・課金確定済み）のときだけ必要。
+     */
+    val canCancel: Boolean
+        get() =
+            status == OrderStatus.STARTED ||
+                status == OrderStatus.PAYMENT_PENDING ||
+                status == OrderStatus.PAID
 
     /** 既に決済済み or それ以降（PAID/SHIPPED/COMPLETED）。 決済成功 webhook の再送・進行後の重複を冪等に握る（返金しない）ために使う。 */
     val isPaidOrBeyond: Boolean
@@ -141,5 +154,10 @@ class OrderState(
     @EventSourcingHandler
     fun evolve(event: OrderFailedEvent) {
         status = OrderStatus.FAILED
+    }
+
+    @EventSourcingHandler
+    fun evolve(event: OrderCancelledEvent) {
+        status = OrderStatus.CANCELLED
     }
 }
