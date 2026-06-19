@@ -17,4 +17,6 @@ enum OrderStatus {
   ORDER_STATUS_COMPLETED = 5;
   // 失敗（決済失敗・予約解放済み）。
   ORDER_STATUS_FAILED = 6;
+  // キャンセル（ユーザー起点・発送前。 予約解放済み。 課金済みなら返金）。
+  ORDER_STATUS_CANCELLED = 7;
 }

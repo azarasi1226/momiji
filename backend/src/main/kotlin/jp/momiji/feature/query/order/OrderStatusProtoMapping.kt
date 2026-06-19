@@ -17,4 +17,5 @@ internal fun orderStatusToProto(dbValue: String): ProtoOrderStatus =
         OrderStatus.SHIPPED -> ProtoOrderStatus.ORDER_STATUS_SHIPPED
         OrderStatus.COMPLETED -> ProtoOrderStatus.ORDER_STATUS_COMPLETED
         OrderStatus.FAILED -> ProtoOrderStatus.ORDER_STATUS_FAILED
+        OrderStatus.CANCELLED -> ProtoOrderStatus.ORDER_STATUS_CANCELLED
     }

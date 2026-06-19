@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
@@ -14,6 +13,7 @@ import {
   type MyOrderDetail,
   ORDER_STATUS_LABEL,
 } from "../queries";
+import { CancelOrderForm } from "./cancel-order-form";
 
 export const metadata: Metadata = {
   title: "注文詳細",
@@ -24,6 +24,7 @@ function statusVariant(
 ): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
     case OrderStatus.FAILED:
+    case OrderStatus.CANCELLED:
       return "destructive";
     case OrderStatus.SHIPPED:
     case OrderStatus.COMPLETED:
@@ -57,12 +58,15 @@ function reachedStepIndex(status: OrderStatus): number {
 }
 
 function DeliveryTimeline({ status }: { status: OrderStatus }) {
-  if (status === OrderStatus.FAILED) {
+  if (status === OrderStatus.CANCELLED) {
     return (
       <p className="text-sm text-destructive">
-        この注文はキャンセル／失敗しました。
+        この注文はキャンセルされました。
       </p>
     );
+  }
+  if (status === OrderStatus.FAILED) {
+    return <p className="text-sm text-destructive">この注文は失敗しました。</p>;
   }
   const reached = reachedStepIndex(status);
   return (
@@ -222,15 +226,13 @@ export default async function MyOrderDetailPage({
       </Card>
 
       {isCancelable(order.status) ? (
-        <Card className="flex flex-col items-start gap-2 p-5">
+        <Card className="flex flex-col items-start gap-3 p-5">
           <h2 className="text-sm font-medium">注文のキャンセル</h2>
           <p className="text-xs text-muted-foreground">
             発送前の注文はキャンセルできます。
+            お支払い済みの場合は返金されます。
           </p>
-          {/* キャンセル機能は別バックログで実装予定。 ここではボタンの設置のみ（無効）。 */}
-          <Button variant="destructive" disabled>
-            注文をキャンセル（準備中）
-          </Button>
+          <CancelOrderForm orderId={order.orderId} />
         </Card>
       ) : null}
 
