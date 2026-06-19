@@ -5,13 +5,13 @@ import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.query.order.orderStatusToProto
-import jp.momiji.grpc.momiji.order.findmyorder.v1.FindMyOrderRequest
-import jp.momiji.grpc.momiji.order.findmyorder.v1.FindMyOrderResponse
-import jp.momiji.grpc.momiji.order.findmyorder.v1.FindMyOrderServiceGrpcKt
-import jp.momiji.grpc.momiji.order.findmyorder.v1.findMyOrderResponse
-import jp.momiji.grpc.momiji.order.findmyorder.v1.item
-import jp.momiji.grpc.momiji.order.findmyorder.v1.paymentMethod
-import jp.momiji.grpc.momiji.order.findmyorder.v1.shippingAddress
+import jp.momiji.grpc.momiji.order.findmyorder.FindMyOrderRequest
+import jp.momiji.grpc.momiji.order.findmyorder.FindMyOrderResponse
+import jp.momiji.grpc.momiji.order.findmyorder.FindMyOrderServiceGrpcKt
+import jp.momiji.grpc.momiji.order.findmyorder.findMyOrderResponse
+import jp.momiji.grpc.momiji.order.findmyorder.item
+import jp.momiji.grpc.momiji.order.findmyorder.paymentMethod
+import jp.momiji.grpc.momiji.order.findmyorder.shippingAddress
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 

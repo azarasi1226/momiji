@@ -1,7 +1,7 @@
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/v1/findbyid_pb.js";
-import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/v1/list_pb.js";
-import { BrandStatus } from "@/grpc/gen/momiji/brand/v1/status_pb.js";
+import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/findbyid_pb.js";
+import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/list_pb.js";
+import { BrandStatus } from "@/grpc/gen/momiji/brand/status_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

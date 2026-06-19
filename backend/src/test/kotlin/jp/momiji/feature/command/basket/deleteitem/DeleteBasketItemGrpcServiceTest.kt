@@ -8,7 +8,7 @@ import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.basket.deleteitem.v1.deleteBasketItemRequest
+import jp.momiji.grpc.momiji.basket.deleteitem.deleteBasketItemRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

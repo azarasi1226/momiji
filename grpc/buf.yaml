@@ -4,6 +4,9 @@ modules:
 lint:
   use:
     - STANDARD
+  except:
+    # momiji は現状、バックエンドとフロントエンドが一対一なので v1 などのバージョニングは過剰と判断
+    - PACKAGE_VERSION_SUFFIX
 breaking:
   use:
     - FILE

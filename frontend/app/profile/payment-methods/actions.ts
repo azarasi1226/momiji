@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ChangeDefaultCardService } from "@/grpc/gen/momiji/payment/changedefaultcard/v1/changedefault_pb.js";
-import { DeleteCardService } from "@/grpc/gen/momiji/payment/deletecard/v1/delete_pb.js";
-import { PrepareCardRegistrationService } from "@/grpc/gen/momiji/payment/preparecard/v1/prepare_pb.js";
+import { ChangeDefaultCardService } from "@/grpc/gen/momiji/payment/changedefaultcard/changedefault_pb.js";
+import { DeleteCardService } from "@/grpc/gen/momiji/payment/deletecard/delete_pb.js";
+import { PrepareCardRegistrationService } from "@/grpc/gen/momiji/payment/preparecard/prepare_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

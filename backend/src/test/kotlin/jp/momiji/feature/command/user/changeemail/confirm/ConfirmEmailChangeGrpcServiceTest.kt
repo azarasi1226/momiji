@@ -11,7 +11,7 @@ import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeCommand
 import jp.momiji.feature.command.user.changeemail.confirm.ConfirmEmailChangeGrpcService
-import jp.momiji.grpc.momiji.user.changeemail.confirm.v1.confirmEmailChangeRequest
+import jp.momiji.grpc.momiji.user.changeemail.confirm.confirmEmailChangeRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

@@ -1,5 +1,5 @@
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import { FindUserByIdService } from "@/grpc/gen/momiji/user/findbyid/v1/findbyid_pb.js";
+import { FindMyProfileService } from "@/grpc/gen/momiji/user/findmyprofile/findmyprofile_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -16,8 +16,8 @@ export type UserProfile = {
 export async function fetchProfile(): Promise<UserProfile> {
   const session = await requireValidSession();
   try {
-    const client = createGrpcClient(FindUserByIdService, session.accessToken);
-    const response = await client.findUserById({});
+    const client = createGrpcClient(FindMyProfileService, session.accessToken);
+    const response = await client.findMyProfile({});
     return {
       id: response.id,
       email: response.email,

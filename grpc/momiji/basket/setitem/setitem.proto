@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package momiji.basket.setitem;
+
+service SetBasketItemService {
+  rpc SetBasketItem(SetBasketItemRequest) returns (SetBasketItemResponse);
+}
+
+// カゴの持ち主（user）は JWT から解決するのでリクエストには含めない。
+message SetBasketItemRequest {
+  string product_id = 1;
+  // 設定する個数（加算でなく絶対値）。
+  int32 item_quantity = 2;
+}
+
+message SetBasketItemResponse {}

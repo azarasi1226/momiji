@@ -12,8 +12,8 @@ import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.order.OrderOwnershipReader
 import jp.momiji.feature.command.order.OrderProductIdsReader
-import jp.momiji.grpc.momiji.order.cancel.v1.CancellationReason
-import jp.momiji.grpc.momiji.order.cancel.v1.cancelOrderRequest
+import jp.momiji.grpc.momiji.order.cancel.CancellationReason
+import jp.momiji.grpc.momiji.order.cancel.cancelOrderRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Assertions.assertEquals

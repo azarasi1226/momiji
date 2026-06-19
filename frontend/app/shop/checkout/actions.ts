@@ -1,7 +1,7 @@
 "use server";
 
-import { PreparePaymentService } from "@/grpc/gen/momiji/order/preparepayment/v1/preparepayment_pb.js";
-import { StartOrderService } from "@/grpc/gen/momiji/order/start/v1/start_pb.js";
+import { PreparePaymentService } from "@/grpc/gen/momiji/order/preparepayment/preparepayment_pb.js";
+import { StartOrderService } from "@/grpc/gen/momiji/order/start/start_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

@@ -5,7 +5,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import jp.momiji.domain.ValidationError
 import jp.momiji.domain.stock.StockAdjustmentReason
-import jp.momiji.grpc.momiji.stock.v1.StockAdjustmentReason as ProtoStockAdjustmentReason
+import jp.momiji.grpc.momiji.stock.StockAdjustmentReason as ProtoStockAdjustmentReason
 
 /**
  * gRPC の proto enum を調整理由のドメイン enum に変換する。

@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
+import { OrderStatus } from "@/grpc/gen/momiji/order/status_pb.js";
 import { formatDateTime } from "@/lib/format";
 import { CancelOrderForm } from "./cancel-order-form";
 

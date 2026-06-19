@@ -15,10 +15,10 @@ import jp.momiji.domain.user.Prefecture
 import jp.momiji.domain.user.StreetAddress
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.user.shippingaddress.register.v1.RegisterShippingAddressRequest
-import jp.momiji.grpc.momiji.user.shippingaddress.register.v1.RegisterShippingAddressResponse
-import jp.momiji.grpc.momiji.user.shippingaddress.register.v1.RegisterShippingAddressServiceGrpcKt
-import jp.momiji.grpc.momiji.user.shippingaddress.register.v1.registerShippingAddressResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.register.RegisterShippingAddressRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.register.RegisterShippingAddressResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.register.RegisterShippingAddressServiceGrpcKt
+import jp.momiji.grpc.momiji.user.shippingaddress.register.registerShippingAddressResponse
 import jp.momiji.util.zipOrAccumulate
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service

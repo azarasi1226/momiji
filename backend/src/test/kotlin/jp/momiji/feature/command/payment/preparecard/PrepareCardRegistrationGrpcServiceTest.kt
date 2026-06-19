@@ -9,7 +9,7 @@ import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.preparecard.v1.prepareCardRegistrationRequest
+import jp.momiji.grpc.momiji.payment.preparecard.prepareCardRegistrationRequest
 import jp.momiji.port.payment.PaymentGateway
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway

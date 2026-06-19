@@ -6,8 +6,8 @@ import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.order.findmyorder.v1.findMyOrderRequest
-import jp.momiji.grpc.momiji.order.v1.OrderStatus
+import jp.momiji.grpc.momiji.order.OrderStatus
+import jp.momiji.grpc.momiji.order.findmyorder.findMyOrderRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

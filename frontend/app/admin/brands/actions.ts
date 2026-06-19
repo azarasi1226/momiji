@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ulid } from "ulid";
-import { ArchiveBrandService } from "@/grpc/gen/momiji/brand/archive/v1/archive_pb.js";
-import { CreateBrandService } from "@/grpc/gen/momiji/brand/create/v1/create_pb.js";
-import { UpdateBrandService } from "@/grpc/gen/momiji/brand/update/v1/update_pb.js";
+import { ArchiveBrandService } from "@/grpc/gen/momiji/brand/archive/archive_pb.js";
+import { CreateBrandService } from "@/grpc/gen/momiji/brand/create/create_pb.js";
+import { UpdateBrandService } from "@/grpc/gen/momiji/brand/update/update_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

@@ -3,9 +3,9 @@ package jp.momiji.feature.command.payment.deletecard
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.payment.deletecard.v1.DeleteCardRequest
-import jp.momiji.grpc.momiji.payment.deletecard.v1.DeleteCardResponse
-import jp.momiji.grpc.momiji.payment.deletecard.v1.DeleteCardServiceGrpcKt
+import jp.momiji.grpc.momiji.payment.deletecard.DeleteCardRequest
+import jp.momiji.grpc.momiji.payment.deletecard.DeleteCardResponse
+import jp.momiji.grpc.momiji.payment.deletecard.DeleteCardServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

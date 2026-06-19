@@ -1,4 +1,4 @@
-import { ListCardsService } from "@/grpc/gen/momiji/payment/listcards/v1/list_pb.js";
+import { ListMyCardsService } from "@/grpc/gen/momiji/payment/listmycards/listmycards_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -16,8 +16,8 @@ export type Card = {
 export async function fetchCards(): Promise<Card[]> {
   const session = await requireValidSession();
   try {
-    const client = createGrpcClient(ListCardsService, session.accessToken);
-    const response = await client.listCards({});
+    const client = createGrpcClient(ListMyCardsService, session.accessToken);
+    const response = await client.listMyCards({});
     return response.cards.map((card) => ({
       id: card.id,
       brand: card.brand,

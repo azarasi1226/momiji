@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CancellationReason } from "@/grpc/gen/momiji/order/cancel/v1/cancel_pb.js";
+import { CancellationReason } from "@/grpc/gen/momiji/order/cancel/cancel_pb.js";
 
 // ユーザーが選べるキャンセル理由（UNSPECIFIED は選択肢に出さない）。
 const REASON_OPTIONS: { value: CancellationReason; label: string }[] = [

@@ -1,7 +1,7 @@
 import { timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
-import { FindMyOrderService } from "@/grpc/gen/momiji/order/findmyorder/v1/findmyorder_pb.js";
-import { ListMyOrdersService } from "@/grpc/gen/momiji/order/listmyorders/v1/listmyorders_pb.js";
-import { OrderStatus } from "@/grpc/gen/momiji/order/v1/status_pb.js";
+import { FindMyOrderService } from "@/grpc/gen/momiji/order/findmyorder/findmyorder_pb.js";
+import { ListMyOrdersService } from "@/grpc/gen/momiji/order/listmyorders/listmyorders_pb.js";
+import { OrderStatus } from "@/grpc/gen/momiji/order/status_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

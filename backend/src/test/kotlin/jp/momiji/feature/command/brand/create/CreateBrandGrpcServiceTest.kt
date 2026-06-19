@@ -7,7 +7,7 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.brand.create.CreateBrandCommand
 import jp.momiji.feature.command.brand.create.CreateBrandGrpcService
-import jp.momiji.grpc.momiji.brand.create.v1.createBrandRequest
+import jp.momiji.grpc.momiji.brand.create.createBrandRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

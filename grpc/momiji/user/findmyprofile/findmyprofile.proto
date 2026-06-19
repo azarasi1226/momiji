@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package momiji.user.findmyprofile;
+
+import "google/protobuf/timestamp.proto";
+
+service FindMyProfileService {
+  rpc FindMyProfile(FindMyProfileRequest) returns (FindMyProfileResponse);
+}
+
+message FindMyProfileRequest {}
+
+// プロフィールは email と name のみ。 住所・電話は配送先（momiji.user.shippingaddress）が持つ。
+message FindMyProfileResponse {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
