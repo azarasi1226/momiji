@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { setBasketItem } from "@/app/shop/basket/actions";
 import { Button } from "@/components/ui/button";
-import { setBasketItem } from "../basket/actions";
 
 /**
  * 一覧カード用の「カートに入れる」（数量 1 固定）。

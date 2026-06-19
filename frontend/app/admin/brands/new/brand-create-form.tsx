@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
+import { type BrandFormState, createBrand } from "@/app/admin/brands/actions";
 import { FieldError } from "@/components/form/field-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { type BrandFormState, createBrand } from "../actions";
 
 export function BrandCreateForm() {
   const [state, formAction, isPending] = useActionState<

@@ -1,8 +1,8 @@
 import Link from "next/link";
+import { fetchBrand } from "@/app/admin/brands/queries";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { brandStatusLabel } from "@/lib/status-labels";
-import { fetchBrand } from "../queries";
 import { ArchiveBrandButton } from "./archive-brand-button";
 import { BrandEditForm } from "./brand-edit-form";
 

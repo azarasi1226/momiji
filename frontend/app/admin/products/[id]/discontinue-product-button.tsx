@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { discontinueProduct } from "@/app/admin/products/actions";
 import { Button } from "@/components/ui/button";
-import { discontinueProduct } from "../actions";
 
 export function DiscontinueProductButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false);
