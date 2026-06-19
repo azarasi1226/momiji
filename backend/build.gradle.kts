@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     idea
 
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
     kotlin("plugin.spring") version "2.3.21"
 
     id("org.springframework.boot") version "4.1.0"
