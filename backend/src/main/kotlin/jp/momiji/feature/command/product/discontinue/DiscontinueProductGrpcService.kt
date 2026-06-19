@@ -5,9 +5,9 @@ import com.github.michaelbull.result.onOk
 import jp.momiji.domain.Ulid
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.product.discontinue.v1.DiscontinueProductRequest
-import jp.momiji.grpc.momiji.product.discontinue.v1.DiscontinueProductResponse
-import jp.momiji.grpc.momiji.product.discontinue.v1.DiscontinueProductServiceGrpcKt
+import jp.momiji.grpc.momiji.product.discontinue.DiscontinueProductRequest
+import jp.momiji.grpc.momiji.product.discontinue.DiscontinueProductResponse
+import jp.momiji.grpc.momiji.product.discontinue.DiscontinueProductServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

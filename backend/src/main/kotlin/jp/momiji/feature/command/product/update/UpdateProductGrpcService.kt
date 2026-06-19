@@ -10,9 +10,9 @@ import jp.momiji.domain.product.ProductImageUrl
 import jp.momiji.domain.product.ProductName
 import jp.momiji.domain.product.ProductPrice
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.product.update.v1.UpdateProductRequest
-import jp.momiji.grpc.momiji.product.update.v1.UpdateProductResponse
-import jp.momiji.grpc.momiji.product.update.v1.UpdateProductServiceGrpcKt
+import jp.momiji.grpc.momiji.product.update.UpdateProductRequest
+import jp.momiji.grpc.momiji.product.update.UpdateProductResponse
+import jp.momiji.grpc.momiji.product.update.UpdateProductServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

@@ -1,4 +1,4 @@
-import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/v1/findbyid_pb.js";
+import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/findbyid_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

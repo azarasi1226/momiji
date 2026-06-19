@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package momiji.basket.clear;
+
+service ClearBasketService {
+  rpc ClearBasket(ClearBasketRequest) returns (ClearBasketResponse);
+}
+
+message ClearBasketRequest {}
+
+message ClearBasketResponse {}

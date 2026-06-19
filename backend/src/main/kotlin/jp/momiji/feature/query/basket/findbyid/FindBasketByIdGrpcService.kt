@@ -3,12 +3,12 @@ package jp.momiji.feature.query.basket.findbyid
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.query.PagingCondition
-import jp.momiji.grpc.momiji.basket.findbyid.v1.FindBasketByIdRequest
-import jp.momiji.grpc.momiji.basket.findbyid.v1.FindBasketByIdResponse
-import jp.momiji.grpc.momiji.basket.findbyid.v1.FindBasketByIdServiceGrpcKt
-import jp.momiji.grpc.momiji.basket.findbyid.v1.basketItem
-import jp.momiji.grpc.momiji.basket.findbyid.v1.findBasketByIdResponse
-import jp.momiji.grpc.momiji.common.v1.paging
+import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdRequest
+import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdResponse
+import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdServiceGrpcKt
+import jp.momiji.grpc.momiji.basket.findbyid.basketItem
+import jp.momiji.grpc.momiji.basket.findbyid.findBasketByIdResponse
+import jp.momiji.grpc.momiji.common.paging
 import org.springframework.stereotype.Service
 
 @Service

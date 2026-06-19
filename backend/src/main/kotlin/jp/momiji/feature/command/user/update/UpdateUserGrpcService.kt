@@ -7,9 +7,9 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.domain.user.Name
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.user.update.v1.UpdateUserRequest
-import jp.momiji.grpc.momiji.user.update.v1.UpdateUserResponse
-import jp.momiji.grpc.momiji.user.update.v1.UpdateUserServiceGrpcKt
+import jp.momiji.grpc.momiji.user.update.UpdateUserRequest
+import jp.momiji.grpc.momiji.user.update.UpdateUserResponse
+import jp.momiji.grpc.momiji.user.update.UpdateUserServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

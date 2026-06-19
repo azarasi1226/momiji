@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.listcards.v1.listCardsRequest
+import jp.momiji.grpc.momiji.payment.listcards.listCardsRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.basket.deleteitem;
+
+service DeleteBasketItemService {
+  rpc DeleteBasketItem(DeleteBasketItemRequest) returns (DeleteBasketItemResponse);
+}
+
+message DeleteBasketItemRequest {
+  string product_id = 1;
+}
+
+message DeleteBasketItemResponse {}

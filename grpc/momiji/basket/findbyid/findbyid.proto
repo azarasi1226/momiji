@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package momiji.basket.findbyid;
+
+import "momiji/common/paging.proto";
+
+service FindBasketByIdService {
+  rpc FindBasketById(FindBasketByIdRequest) returns (FindBasketByIdResponse);
+}
+
+// カゴの持ち主（user）は JWT から解決するのでリクエストには含めない。
+message FindBasketByIdRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+}
+
+message FindBasketByIdResponse {
+  repeated BasketItem items = 1;
+  momiji.common.Paging paging = 2;
+}
+
+message BasketItem {
+  string product_id = 1;
+  string product_name = 2;
+  int32 product_price = 3;
+  string product_image_url = 4;
+  int32 item_quantity = 5;
+}

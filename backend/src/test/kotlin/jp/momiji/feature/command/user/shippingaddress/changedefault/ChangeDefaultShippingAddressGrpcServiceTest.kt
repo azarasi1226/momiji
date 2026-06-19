@@ -8,7 +8,7 @@ import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.v1.changeDefaultShippingAddressRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.changedefault.changeDefaultShippingAddressRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

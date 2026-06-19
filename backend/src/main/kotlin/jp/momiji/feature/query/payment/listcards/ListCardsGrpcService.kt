@@ -2,11 +2,11 @@ package jp.momiji.feature.query.payment.listcards
 
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.listcards.v1.ListCardsRequest
-import jp.momiji.grpc.momiji.payment.listcards.v1.ListCardsResponse
-import jp.momiji.grpc.momiji.payment.listcards.v1.ListCardsServiceGrpcKt
-import jp.momiji.grpc.momiji.payment.listcards.v1.card
-import jp.momiji.grpc.momiji.payment.listcards.v1.listCardsResponse
+import jp.momiji.grpc.momiji.payment.listcards.ListCardsRequest
+import jp.momiji.grpc.momiji.payment.listcards.ListCardsResponse
+import jp.momiji.grpc.momiji.payment.listcards.ListCardsServiceGrpcKt
+import jp.momiji.grpc.momiji.payment.listcards.card
+import jp.momiji.grpc.momiji.payment.listcards.listCardsResponse
 import org.springframework.stereotype.Service
 
 @Service

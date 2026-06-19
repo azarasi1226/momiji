@@ -1,4 +1,4 @@
-import { ListCardsService } from "@/grpc/gen/momiji/payment/listcards/v1/list_pb.js";
+import { ListCardsService } from "@/grpc/gen/momiji/payment/listcards/list_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

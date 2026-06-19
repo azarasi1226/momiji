@@ -6,9 +6,9 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.domain.user.Email
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeRequest
-import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeResponse
-import jp.momiji.grpc.momiji.user.changeemail.request.v1.RequestEmailChangeServiceGrpcKt
+import jp.momiji.grpc.momiji.user.changeemail.request.RequestEmailChangeRequest
+import jp.momiji.grpc.momiji.user.changeemail.request.RequestEmailChangeResponse
+import jp.momiji.grpc.momiji.user.changeemail.request.RequestEmailChangeServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

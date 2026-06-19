@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { CancellationReason } from "@/grpc/gen/momiji/order/cancel/v1/cancel_pb.js";
-import { CancelOrderService } from "@/grpc/gen/momiji/order/cancel/v1/cancel_pb.js";
+import type { CancellationReason } from "@/grpc/gen/momiji/order/cancel/cancel_pb.js";
+import { CancelOrderService } from "@/grpc/gen/momiji/order/cancel/cancel_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

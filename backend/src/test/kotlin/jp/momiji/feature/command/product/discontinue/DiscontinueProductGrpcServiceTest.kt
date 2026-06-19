@@ -7,7 +7,7 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.product.discontinue.DiscontinueProductCommand
 import jp.momiji.feature.command.product.discontinue.DiscontinueProductGrpcService
-import jp.momiji.grpc.momiji.product.discontinue.v1.discontinueProductRequest
+import jp.momiji.grpc.momiji.product.discontinue.discontinueProductRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

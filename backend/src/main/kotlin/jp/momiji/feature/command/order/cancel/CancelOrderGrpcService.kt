@@ -8,11 +8,11 @@ import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.order.OrderOwnershipReader
 import jp.momiji.feature.command.order.OrderProductIdsReader
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.order.cancel.v1.CancelOrderRequest
-import jp.momiji.grpc.momiji.order.cancel.v1.CancelOrderResponse
-import jp.momiji.grpc.momiji.order.cancel.v1.CancelOrderServiceGrpcKt
-import jp.momiji.grpc.momiji.order.cancel.v1.CancellationReason
-import jp.momiji.grpc.momiji.order.cancel.v1.cancelOrderResponse
+import jp.momiji.grpc.momiji.order.cancel.CancelOrderRequest
+import jp.momiji.grpc.momiji.order.cancel.CancelOrderResponse
+import jp.momiji.grpc.momiji.order.cancel.CancelOrderServiceGrpcKt
+import jp.momiji.grpc.momiji.order.cancel.CancellationReason
+import jp.momiji.grpc.momiji.order.cancel.cancelOrderResponse
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

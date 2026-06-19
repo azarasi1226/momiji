@@ -2,10 +2,10 @@ package jp.momiji.feature.query.image.issueuploadurl
 
 import com.github.michaelbull.result.getOrElse
 import jp.momiji.domain.ValidationException
-import jp.momiji.grpc.momiji.image.upload.v1.IssueImageUploadUrlRequest
-import jp.momiji.grpc.momiji.image.upload.v1.IssueImageUploadUrlResponse
-import jp.momiji.grpc.momiji.image.upload.v1.IssueImageUploadUrlServiceGrpcKt
-import jp.momiji.grpc.momiji.image.upload.v1.issueImageUploadUrlResponse
+import jp.momiji.grpc.momiji.image.upload.IssueImageUploadUrlRequest
+import jp.momiji.grpc.momiji.image.upload.IssueImageUploadUrlResponse
+import jp.momiji.grpc.momiji.image.upload.IssueImageUploadUrlServiceGrpcKt
+import jp.momiji.grpc.momiji.image.upload.issueImageUploadUrlResponse
 import jp.momiji.port.storage.ImageContentType
 import jp.momiji.port.storage.ImageStorage
 import org.springframework.stereotype.Service

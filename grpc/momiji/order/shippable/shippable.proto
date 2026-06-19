@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package momiji.order.shippable;
+
+import "google/protobuf/timestamp.proto";
+
+// 発送待ち（status=PAID）の注文一覧。 admin の発送管理画面で使う。
+service ListShippableOrdersService {
+  rpc ListShippableOrders(ListShippableOrdersRequest) returns (ListShippableOrdersResponse);
+}
+
+message ListShippableOrdersRequest {}
+
+message ListShippableOrdersResponse {
+  repeated ShippableOrder orders = 1;
+}
+
+message ShippableOrder {
+  string order_id = 1;
+  // 注文時点スナップショットの配送先（admin が荷造り・発送に使う）。
+  ShippingAddress shipping_address = 2;
+  int64 total_amount = 3;
+  google.protobuf.Timestamp created_at = 4;
+  repeated Item items = 5;
+}
+
+message ShippingAddress {
+  string recipient_name = 1;
+  string phone_number = 2;
+  string postal_code = 3;
+  string prefecture = 4;
+  string city = 5;
+  string street_address = 6;
+  string building = 7;
+  string delivery_note = 8;
+}
+
+message Item {
+  string name = 1;
+  int32 quantity = 2;
+}

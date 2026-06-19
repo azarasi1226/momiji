@@ -9,10 +9,10 @@ import jp.momiji.domain.product.ProductImageUrl
 import jp.momiji.domain.product.ProductName
 import jp.momiji.domain.product.ProductPrice
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.product.create.v1.CreateProductRequest
-import jp.momiji.grpc.momiji.product.create.v1.CreateProductResponse
-import jp.momiji.grpc.momiji.product.create.v1.CreateProductServiceGrpcKt
-import jp.momiji.grpc.momiji.product.create.v1.createProductResponse
+import jp.momiji.grpc.momiji.product.create.CreateProductRequest
+import jp.momiji.grpc.momiji.product.create.CreateProductResponse
+import jp.momiji.grpc.momiji.product.create.CreateProductServiceGrpcKt
+import jp.momiji.grpc.momiji.product.create.createProductResponse
 import jp.momiji.util.zipOrAccumulate
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service

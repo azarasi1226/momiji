@@ -9,8 +9,8 @@ import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.query.Page
 import jp.momiji.feature.query.Paging
 import jp.momiji.feature.query.PagingCondition
-import jp.momiji.grpc.momiji.order.listmyorders.v1.listMyOrdersRequest
-import jp.momiji.grpc.momiji.order.v1.OrderStatus
+import jp.momiji.grpc.momiji.order.listmyorders.listMyOrdersRequest
+import jp.momiji.grpc.momiji.order.OrderStatus
 import jp.momiji.util.toProtoTimestamp
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals

@@ -3,13 +3,13 @@ package jp.momiji.feature.query.product.list
 import jp.momiji.feature.command.product.productStatusFilterFromProto
 import jp.momiji.feature.command.product.productStatusToProto
 import jp.momiji.feature.query.PagingCondition
-import jp.momiji.grpc.momiji.common.v1.paging
-import jp.momiji.grpc.momiji.product.list.v1.ListProductsRequest
-import jp.momiji.grpc.momiji.product.list.v1.ListProductsResponse
-import jp.momiji.grpc.momiji.product.list.v1.ListProductsServiceGrpcKt
-import jp.momiji.grpc.momiji.product.list.v1.listProductsResponse
-import jp.momiji.grpc.momiji.product.list.v1.product
-import jp.momiji.grpc.momiji.product.v1.ProductSortCondition
+import jp.momiji.grpc.momiji.common.paging
+import jp.momiji.grpc.momiji.product.list.ListProductsRequest
+import jp.momiji.grpc.momiji.product.list.ListProductsResponse
+import jp.momiji.grpc.momiji.product.list.ListProductsServiceGrpcKt
+import jp.momiji.grpc.momiji.product.list.listProductsResponse
+import jp.momiji.grpc.momiji.product.list.product
+import jp.momiji.grpc.momiji.product.ProductSortCondition
 import jp.momiji.util.toProtoTimestamp
 import org.springframework.stereotype.Service
 

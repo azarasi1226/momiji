@@ -2,8 +2,8 @@
 
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { revalidatePath } from "next/cache";
-import { ShipOrderService } from "@/grpc/gen/momiji/order/ship/v1/ship_pb.js";
-import { ListShippableOrdersService } from "@/grpc/gen/momiji/order/shippable/v1/shippable_pb.js";
+import { ShipOrderService } from "@/grpc/gen/momiji/order/ship/ship_pb.js";
+import { ListShippableOrdersService } from "@/grpc/gen/momiji/order/shippable/shippable_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package momiji.brand.archive;
+
+service ArchiveBrandService {
+  rpc ArchiveBrand(ArchiveBrandRequest) returns (ArchiveBrandResponse);
+}
+
+message ArchiveBrandRequest {
+  string id = 1;
+}
+
+message ArchiveBrandResponse {}

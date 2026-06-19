@@ -2,11 +2,11 @@ package jp.momiji.feature.query.user.shippingaddress.list
 
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.user.shippingaddress.list.v1.ListShippingAddressesRequest
-import jp.momiji.grpc.momiji.user.shippingaddress.list.v1.ListShippingAddressesResponse
-import jp.momiji.grpc.momiji.user.shippingaddress.list.v1.ListShippingAddressesServiceGrpcKt
-import jp.momiji.grpc.momiji.user.shippingaddress.list.v1.listShippingAddressesResponse
-import jp.momiji.grpc.momiji.user.shippingaddress.list.v1.shippingAddress
+import jp.momiji.grpc.momiji.user.shippingaddress.list.ListShippingAddressesRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.list.ListShippingAddressesResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.list.ListShippingAddressesServiceGrpcKt
+import jp.momiji.grpc.momiji.user.shippingaddress.list.listShippingAddressesResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.list.shippingAddress
 import org.springframework.stereotype.Service
 
 @Service

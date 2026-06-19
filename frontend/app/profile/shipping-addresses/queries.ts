@@ -1,4 +1,4 @@
-import { ListShippingAddressesService } from "@/grpc/gen/momiji/user/shippingaddress/list/v1/list_pb.js";
+import { ListShippingAddressesService } from "@/grpc/gen/momiji/user/shippingaddress/list/list_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

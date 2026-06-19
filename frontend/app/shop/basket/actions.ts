@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ClearBasketService } from "@/grpc/gen/momiji/basket/clear/v1/clear_pb.js";
-import { DeleteBasketItemService } from "@/grpc/gen/momiji/basket/deleteitem/v1/deleteitem_pb.js";
-import { SetBasketItemService } from "@/grpc/gen/momiji/basket/setitem/v1/setitem_pb.js";
+import { ClearBasketService } from "@/grpc/gen/momiji/basket/clear/clear_pb.js";
+import { DeleteBasketItemService } from "@/grpc/gen/momiji/basket/deleteitem/deleteitem_pb.js";
+import { SetBasketItemService } from "@/grpc/gen/momiji/basket/setitem/setitem_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

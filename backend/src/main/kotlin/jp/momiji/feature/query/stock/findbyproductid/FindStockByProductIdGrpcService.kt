@@ -1,9 +1,9 @@
 package jp.momiji.feature.query.stock.findbyproductid
 
-import jp.momiji.grpc.momiji.stock.findbyproductid.v1.FindStockByProductIdRequest
-import jp.momiji.grpc.momiji.stock.findbyproductid.v1.FindStockByProductIdResponse
-import jp.momiji.grpc.momiji.stock.findbyproductid.v1.FindStockByProductIdServiceGrpcKt
-import jp.momiji.grpc.momiji.stock.findbyproductid.v1.findStockByProductIdResponse
+import jp.momiji.grpc.momiji.stock.findbyproductid.FindStockByProductIdRequest
+import jp.momiji.grpc.momiji.stock.findbyproductid.FindStockByProductIdResponse
+import jp.momiji.grpc.momiji.stock.findbyproductid.FindStockByProductIdServiceGrpcKt
+import jp.momiji.grpc.momiji.stock.findbyproductid.findStockByProductIdResponse
 import org.springframework.stereotype.Service
 
 @Service

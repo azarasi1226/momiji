@@ -9,9 +9,9 @@ import jp.momiji.domain.ValidationException
 import jp.momiji.domain.basket.BasketItemQuantity
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.basket.setitem.v1.SetBasketItemRequest
-import jp.momiji.grpc.momiji.basket.setitem.v1.SetBasketItemResponse
-import jp.momiji.grpc.momiji.basket.setitem.v1.SetBasketItemServiceGrpcKt
+import jp.momiji.grpc.momiji.basket.setitem.SetBasketItemRequest
+import jp.momiji.grpc.momiji.basket.setitem.SetBasketItemResponse
+import jp.momiji.grpc.momiji.basket.setitem.SetBasketItemServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { signOut } from "@/auth";
-import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/v1/confirm_pb.js";
-import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/v1/request_pb.js";
-import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/v1/delete_pb.js";
-import { UpdateUserService } from "@/grpc/gen/momiji/user/update/v1/update_pb.js";
+import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/confirm_pb.js";
+import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/request_pb.js";
+import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/delete_pb.js";
+import { UpdateUserService } from "@/grpc/gen/momiji/user/update/update_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

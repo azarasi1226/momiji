@@ -7,7 +7,7 @@ import io.mockk.verify
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.basket.clear.v1.clearBasketRequest
+import jp.momiji.grpc.momiji.basket.clear.clearBasketRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

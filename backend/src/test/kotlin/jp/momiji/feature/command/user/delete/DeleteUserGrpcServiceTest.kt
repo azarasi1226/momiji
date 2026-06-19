@@ -9,7 +9,7 @@ import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.user.delete.DeleteUserCommand
 import jp.momiji.feature.command.user.delete.DeleteUserGrpcService
-import jp.momiji.grpc.momiji.user.delete.v1.deleteUserRequest
+import jp.momiji.grpc.momiji.user.delete.deleteUserRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

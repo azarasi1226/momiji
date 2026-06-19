@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { ulid } from "ulid";
-import { ChangeDefaultShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/changedefault/v1/changedefault_pb.js";
-import { DeleteShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/delete/v1/delete_pb.js";
-import { RegisterShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/register/v1/register_pb.js";
-import { UpdateShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/update/v1/update_pb.js";
+import { ChangeDefaultShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/changedefault/changedefault_pb.js";
+import { DeleteShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/delete/delete_pb.js";
+import { RegisterShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/register/register_pb.js";
+import { UpdateShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/update/update_pb.js";
 import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
