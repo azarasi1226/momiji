@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.basket.findbyid
+package jp.momiji.feature.query.basket.findmybasket
 
 import iss.jooq.generated.tables.references.BASKETS
 import iss.jooq.generated.tables.references.PRODUCTS
@@ -17,16 +17,16 @@ data class BasketItemView(
     val itemQuantity: Int,
 )
 
-data class FindBasketByIdQuery(
+data class FindMyBasketQuery(
     val userId: String,
     val paging: PagingCondition,
 )
 
 @Component
-class FindBasketByIdQueryService(
+class FindMyBasketQueryService(
     private val dsl: DSLContext,
 ) {
-    fun findById(query: FindBasketByIdQuery): Page<BasketItemView> {
+    fun find(query: FindMyBasketQuery): Page<BasketItemView> {
         // 総件数はウィンドウ関数 count() over() で 1 クエリにまとめて取る。
         val totalCountField = DSL.count().over()
 

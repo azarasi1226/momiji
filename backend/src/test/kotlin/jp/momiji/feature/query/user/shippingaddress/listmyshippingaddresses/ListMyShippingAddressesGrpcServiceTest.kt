@@ -1,21 +1,21 @@
-package jp.momiji.feature.query.user.shippingaddress.list
+package jp.momiji.feature.query.user.shippingaddress.listmyshippingaddresses
 
 import io.grpc.Context
 import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.user.shippingaddress.list.listShippingAddressesRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.listmyshippingaddresses.listMyShippingAddressesRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
-class ListShippingAddressesGrpcServiceTest {
+class ListMyShippingAddressesGrpcServiceTest {
     private val userIdResolver = mockk<UserIdResolver>()
-    private val listShippingAddressesQueryService = mockk<ListShippingAddressesQueryService>()
-    private val service = ListShippingAddressesGrpcService(userIdResolver, listShippingAddressesQueryService)
+    private val listMyShippingAddressesQueryService = mockk<ListMyShippingAddressesQueryService>()
+    private val service = ListMyShippingAddressesGrpcService(userIdResolver, listMyShippingAddressesQueryService)
 
     private val mockAccessToken = mockk<Jwt>()
     private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
@@ -29,7 +29,7 @@ class ListShippingAddressesGrpcServiceTest {
     @Test
     fun `JWT解決したuserIdの配送先一覧がprotoへマッピングされて返る`() {
         every { userIdResolver.resolve(mockAccessToken) } returns "user-1"
-        every { listShippingAddressesQueryService.findByUserId("user-1") } returns
+        every { listMyShippingAddressesQueryService.findByUserId("user-1") } returns
             listOf(
                 ShippingAddressView(
                     id = "addr-a",
@@ -57,7 +57,7 @@ class ListShippingAddressesGrpcServiceTest {
                 ),
             )
 
-        val response = withAuth { runBlocking { service.listShippingAddresses(listShippingAddressesRequest {}) } }
+        val response = withAuth { runBlocking { service.listMyShippingAddresses(listMyShippingAddressesRequest {}) } }
 
         assertEquals(2, response.shippingAddressesCount)
         val first = response.shippingAddressesList[0]
@@ -79,9 +79,9 @@ class ListShippingAddressesGrpcServiceTest {
     @Test
     fun `配送先が無ければ空の一覧が返る`() {
         every { userIdResolver.resolve(mockAccessToken) } returns "user-2"
-        every { listShippingAddressesQueryService.findByUserId("user-2") } returns emptyList()
+        every { listMyShippingAddressesQueryService.findByUserId("user-2") } returns emptyList()
 
-        val response = withAuth { runBlocking { service.listShippingAddresses(listShippingAddressesRequest {}) } }
+        val response = withAuth { runBlocking { service.listMyShippingAddresses(listMyShippingAddressesRequest {}) } }
 
         assertEquals(0, response.shippingAddressesCount)
     }

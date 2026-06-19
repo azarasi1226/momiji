@@ -1,11 +1,11 @@
-package jp.momiji.feature.query.payment.listcards
+package jp.momiji.feature.query.payment.listmycards
 
 import iss.jooq.generated.tables.references.PAYMENT_METHODS
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 
 @Component
-class ListCardsQueryService(
+class ListMyCardsQueryService(
     private val dsl: DSLContext,
 ) {
     fun findByUserId(userId: String): List<CardView> =

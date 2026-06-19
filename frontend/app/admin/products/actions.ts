@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ulid } from "ulid";
-import { IssueImageUploadUrlService } from "@/grpc/gen/momiji/image/upload/upload_pb.js";
+import { IssueImageUploadUrlService } from "@/grpc/gen/momiji/image/issueuploadurl/issueuploadurl_pb.js";
 import { CreateProductService } from "@/grpc/gen/momiji/product/create/create_pb.js";
 import { DiscontinueProductService } from "@/grpc/gen/momiji/product/discontinue/discontinue_pb.js";
 import { UpdateProductService } from "@/grpc/gen/momiji/product/update/update_pb.js";

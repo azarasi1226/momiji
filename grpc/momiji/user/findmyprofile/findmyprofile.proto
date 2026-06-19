@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-package momiji.user.findbyid;
+package momiji.user.findmyprofile;
 
 import "google/protobuf/timestamp.proto";
 
-service FindUserByIdService {
-  rpc FindUserById(FindUserByIdRequest) returns (FindUserByIdResponse);
+service FindMyProfileService {
+  rpc FindMyProfile(FindMyProfileRequest) returns (FindMyProfileResponse);
 }
 
-message FindUserByIdRequest {}
+message FindMyProfileRequest {}
 
 // プロフィールは email と name のみ。 住所・電話は配送先（momiji.user.shippingaddress）が持つ。
-message FindUserByIdResponse {
+message FindMyProfileResponse {
   string id = 1;
   string email = 2;
   string name = 3;

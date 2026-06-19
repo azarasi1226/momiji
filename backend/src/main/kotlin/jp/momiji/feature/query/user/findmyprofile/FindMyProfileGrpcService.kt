@@ -1,32 +1,32 @@
-package jp.momiji.feature.query.user.findbyid
+package jp.momiji.feature.query.user.findmyprofile
 
 import com.google.protobuf.timestamp
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.user.findbyid.FindUserByIdRequest
-import jp.momiji.grpc.momiji.user.findbyid.FindUserByIdResponse
-import jp.momiji.grpc.momiji.user.findbyid.FindUserByIdServiceGrpcKt
-import jp.momiji.grpc.momiji.user.findbyid.findUserByIdResponse
+import jp.momiji.grpc.momiji.user.findmyprofile.FindMyProfileRequest
+import jp.momiji.grpc.momiji.user.findmyprofile.FindMyProfileResponse
+import jp.momiji.grpc.momiji.user.findmyprofile.FindMyProfileServiceGrpcKt
+import jp.momiji.grpc.momiji.user.findmyprofile.findMyProfileResponse
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Service
-class FindUserByIdGrpcService(
+class FindMyProfileGrpcService(
     private val userIdResolver: UserIdResolver,
-    private val findUserByIdQueryService: FindUserByIdQueryService,
-) : FindUserByIdServiceGrpcKt.FindUserByIdServiceCoroutineImplBase() {
-    override suspend fun findUserById(request: FindUserByIdRequest): FindUserByIdResponse {
+    private val findMyProfileQueryService: FindMyProfileQueryService,
+) : FindMyProfileServiceGrpcKt.FindMyProfileServiceCoroutineImplBase() {
+    override suspend fun findMyProfile(request: FindMyProfileRequest): FindMyProfileResponse {
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
 
         val user =
-            findUserByIdQueryService.findById(userId)
+            findMyProfileQueryService.find(userId)
                 ?: throw BusinessException(BusinessError("ユーザーが見つかりません"))
 
-        return findUserByIdResponse {
+        return findMyProfileResponse {
             id = user.id
             email = user.email
             name = user.name

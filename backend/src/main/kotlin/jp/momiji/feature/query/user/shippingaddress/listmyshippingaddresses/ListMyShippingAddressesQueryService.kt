@@ -1,11 +1,11 @@
-package jp.momiji.feature.query.user.shippingaddress.list
+package jp.momiji.feature.query.user.shippingaddress.listmyshippingaddresses
 
 import iss.jooq.generated.tables.references.SHIPPING_ADDRESSES
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 
 @Component
-class ListShippingAddressesQueryService(
+class ListMyShippingAddressesQueryService(
     private val dsl: DSLContext,
 ) {
     fun findByUserId(userId: String): List<ShippingAddressView> =

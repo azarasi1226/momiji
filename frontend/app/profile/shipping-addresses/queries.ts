@@ -1,4 +1,4 @@
-import { ListShippingAddressesService } from "@/grpc/gen/momiji/user/shippingaddress/list/list_pb.js";
+import { ListMyShippingAddressesService } from "@/grpc/gen/momiji/user/shippingaddress/listmyshippingaddresses/listmyshippingaddresses_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -21,10 +21,10 @@ export async function fetchShippingAddresses(): Promise<ShippingAddress[]> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(
-      ListShippingAddressesService,
+      ListMyShippingAddressesService,
       session.accessToken,
     );
-    const response = await client.listShippingAddresses({});
+    const response = await client.listMyShippingAddresses({});
     return response.shippingAddresses.map((address) => ({
       id: address.id,
       name: address.name,

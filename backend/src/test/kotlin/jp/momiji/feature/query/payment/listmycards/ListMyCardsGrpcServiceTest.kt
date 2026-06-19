@@ -1,21 +1,21 @@
-package jp.momiji.feature.query.payment.listcards
+package jp.momiji.feature.query.payment.listmycards
 
 import io.grpc.Context
 import io.mockk.every
 import io.mockk.mockk
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.listcards.listCardsRequest
+import jp.momiji.grpc.momiji.payment.listmycards.listMyCardsRequest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
-class ListCardsGrpcServiceTest {
+class ListMyCardsGrpcServiceTest {
     private val userIdResolver = mockk<UserIdResolver>()
-    private val listCardsQueryService = mockk<ListCardsQueryService>()
-    private val service = ListCardsGrpcService(userIdResolver, listCardsQueryService)
+    private val listMyCardsQueryService = mockk<ListMyCardsQueryService>()
+    private val service = ListMyCardsGrpcService(userIdResolver, listMyCardsQueryService)
 
     private val mockAccessToken = mockk<Jwt>()
     private val mockJwt = mockk<JwtAuthenticationToken> { every { token } returns mockAccessToken }
@@ -29,13 +29,13 @@ class ListCardsGrpcServiceTest {
     @Test
     fun `JWT解決したuserIdのカード一覧がprotoへマッピングされて返る`() {
         every { userIdResolver.resolve(mockAccessToken) } returns "user-1"
-        every { listCardsQueryService.findByUserId("user-1") } returns
+        every { listMyCardsQueryService.findByUserId("user-1") } returns
             listOf(
                 CardView(id = "pm_a", brand = "visa", last4 = "4242", expMonth = 2, expYear = 2032, isDefault = true),
                 CardView(id = "pm_b", brand = "mastercard", last4 = "4444", expMonth = 12, expYear = 2030, isDefault = false),
             )
 
-        val response = withAuth { runBlocking { service.listCards(listCardsRequest {}) } }
+        val response = withAuth { runBlocking { service.listMyCards(listMyCardsRequest {}) } }
 
         assertEquals(2, response.cardsCount)
         val first = response.cardsList[0]
@@ -51,9 +51,9 @@ class ListCardsGrpcServiceTest {
     @Test
     fun `カードが無ければ空の一覧が返る`() {
         every { userIdResolver.resolve(mockAccessToken) } returns "user-2"
-        every { listCardsQueryService.findByUserId("user-2") } returns emptyList()
+        every { listMyCardsQueryService.findByUserId("user-2") } returns emptyList()
 
-        val response = withAuth { runBlocking { service.listCards(listCardsRequest {}) } }
+        val response = withAuth { runBlocking { service.listMyCards(listMyCardsRequest {}) } }
 
         assertEquals(0, response.cardsCount)
     }

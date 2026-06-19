@@ -1,4 +1,4 @@
-import { FindBasketByIdService } from "@/grpc/gen/momiji/basket/findbyid/findbyid_pb.js";
+import { FindMyBasketService } from "@/grpc/gen/momiji/basket/findmybasket/findmybasket_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -24,8 +24,8 @@ export async function findBasket(params: {
 }): Promise<BasketPage> {
   const session = await requireValidSession();
   try {
-    const client = createGrpcClient(FindBasketByIdService, session.accessToken);
-    const res = await client.findBasketById({
+    const client = createGrpcClient(FindMyBasketService, session.accessToken);
+    const res = await client.findMyBasket({
       pageSize: params.pageSize ?? 0,
       pageNumber: params.pageNumber ?? 0,
     });

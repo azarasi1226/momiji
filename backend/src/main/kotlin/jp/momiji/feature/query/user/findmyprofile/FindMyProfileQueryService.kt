@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.user.findbyid
+package jp.momiji.feature.query.user.findmyprofile
 
 import iss.jooq.generated.tables.references.USERS
 import org.jooq.DSLContext
@@ -15,10 +15,10 @@ data class UserView(
 )
 
 @Component
-class FindUserByIdQueryService(
+class FindMyProfileQueryService(
     private val dsl: DSLContext,
 ) {
-    fun findById(id: String): UserView? =
+    fun find(id: String): UserView? =
         dsl
             .select(
                 USERS.ID,

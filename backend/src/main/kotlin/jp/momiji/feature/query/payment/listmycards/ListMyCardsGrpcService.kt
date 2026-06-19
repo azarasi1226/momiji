@@ -1,26 +1,26 @@
-package jp.momiji.feature.query.payment.listcards
+package jp.momiji.feature.query.payment.listmycards
 
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.listcards.ListCardsRequest
-import jp.momiji.grpc.momiji.payment.listcards.ListCardsResponse
-import jp.momiji.grpc.momiji.payment.listcards.ListCardsServiceGrpcKt
-import jp.momiji.grpc.momiji.payment.listcards.card
-import jp.momiji.grpc.momiji.payment.listcards.listCardsResponse
+import jp.momiji.grpc.momiji.payment.listmycards.ListMyCardsRequest
+import jp.momiji.grpc.momiji.payment.listmycards.ListMyCardsResponse
+import jp.momiji.grpc.momiji.payment.listmycards.ListMyCardsServiceGrpcKt
+import jp.momiji.grpc.momiji.payment.listmycards.card
+import jp.momiji.grpc.momiji.payment.listmycards.listMyCardsResponse
 import org.springframework.stereotype.Service
 
 @Service
-class ListCardsGrpcService(
+class ListMyCardsGrpcService(
     private val userIdResolver: UserIdResolver,
-    private val listCardsQueryService: ListCardsQueryService,
-) : ListCardsServiceGrpcKt.ListCardsServiceCoroutineImplBase() {
-    override suspend fun listCards(request: ListCardsRequest): ListCardsResponse {
+    private val listMyCardsQueryService: ListMyCardsQueryService,
+) : ListMyCardsServiceGrpcKt.ListMyCardsServiceCoroutineImplBase() {
+    override suspend fun listMyCards(request: ListMyCardsRequest): ListMyCardsResponse {
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
 
-        val cardViews = listCardsQueryService.findByUserId(userId)
+        val cardViews = listMyCardsQueryService.findByUserId(userId)
 
-        return listCardsResponse {
+        return listMyCardsResponse {
             cards.addAll(
                 cardViews.map { view ->
                     card {

@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-package momiji.user.shippingaddress.list;
+package momiji.user.shippingaddress.listmyshippingaddresses;
 
 // 配送先一覧。 持ち主(user)は JWT から解決するのでリクエストには含めない。
-service ListShippingAddressesService {
-  rpc ListShippingAddresses(ListShippingAddressesRequest) returns (ListShippingAddressesResponse);
+service ListMyShippingAddressesService {
+  rpc ListMyShippingAddresses(ListMyShippingAddressesRequest) returns (ListMyShippingAddressesResponse);
 }
 
-message ListShippingAddressesRequest {}
+message ListMyShippingAddressesRequest {}
 
-message ListShippingAddressesResponse {
+message ListMyShippingAddressesResponse {
   repeated ShippingAddress shipping_addresses = 1;
 }
 

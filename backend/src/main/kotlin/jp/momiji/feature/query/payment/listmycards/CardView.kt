@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.payment.listcards
+package jp.momiji.feature.query.payment.listmycards
 
 data class CardView(
     val id: String,

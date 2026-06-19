@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-package momiji.payment.listcards;
+package momiji.payment.listmycards;
 
 // 保存カード一覧。 持ち主(user)は JWT から解決するのでリクエストには含めない。
-service ListCardsService {
-  rpc ListCards(ListCardsRequest) returns (ListCardsResponse);
+service ListMyCardsService {
+  rpc ListMyCards(ListMyCardsRequest) returns (ListMyCardsResponse);
 }
 
-message ListCardsRequest {}
+message ListMyCardsRequest {}
 
-message ListCardsResponse {
+message ListMyCardsResponse {
   repeated Card cards = 1;
 }
 

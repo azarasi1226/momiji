@@ -1,33 +1,33 @@
-package jp.momiji.feature.query.basket.findbyid
+package jp.momiji.feature.query.basket.findmybasket
 
 import jp.momiji.config.grpc.GrpcAuthContext
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.query.PagingCondition
-import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdRequest
-import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdResponse
-import jp.momiji.grpc.momiji.basket.findbyid.FindBasketByIdServiceGrpcKt
-import jp.momiji.grpc.momiji.basket.findbyid.basketItem
-import jp.momiji.grpc.momiji.basket.findbyid.findBasketByIdResponse
+import jp.momiji.grpc.momiji.basket.findmybasket.FindMyBasketRequest
+import jp.momiji.grpc.momiji.basket.findmybasket.FindMyBasketResponse
+import jp.momiji.grpc.momiji.basket.findmybasket.FindMyBasketServiceGrpcKt
+import jp.momiji.grpc.momiji.basket.findmybasket.basketItem
+import jp.momiji.grpc.momiji.basket.findmybasket.findMyBasketResponse
 import jp.momiji.grpc.momiji.common.paging
 import org.springframework.stereotype.Service
 
 @Service
-class FindBasketByIdGrpcService(
+class FindMyBasketGrpcService(
     private val userIdResolver: UserIdResolver,
-    private val findBasketByIdQueryService: FindBasketByIdQueryService,
-) : FindBasketByIdServiceGrpcKt.FindBasketByIdServiceCoroutineImplBase() {
-    override suspend fun findBasketById(request: FindBasketByIdRequest): FindBasketByIdResponse {
+    private val findMyBasketQueryService: FindMyBasketQueryService,
+) : FindMyBasketServiceGrpcKt.FindMyBasketServiceCoroutineImplBase() {
+    override suspend fun findMyBasket(request: FindMyBasketRequest): FindMyBasketResponse {
         val accessToken = GrpcAuthContext.current().token
         val userId = userIdResolver.resolve(accessToken)
         val query =
-            FindBasketByIdQuery(
+            FindMyBasketQuery(
                 userId = userId,
                 paging = PagingCondition.of(request.pageSize, request.pageNumber),
             )
 
-        val page = findBasketByIdQueryService.findById(query)
+        val page = findMyBasketQueryService.find(query)
 
-        return findBasketByIdResponse {
+        return findMyBasketResponse {
             paging =
                 paging {
                     totalCount = page.paging.totalCount

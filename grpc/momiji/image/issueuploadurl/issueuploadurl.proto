@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package momiji.image.upload;
+package momiji.image.issueuploadurl;
 
 // 画像アップロード用の presigned PUT URL を発行する。 ログイン済み（JWT）前提の管理者操作。
 // バイナリ自体は gRPC を通さず、 ブラウザが upload_url に直接 PUT する。

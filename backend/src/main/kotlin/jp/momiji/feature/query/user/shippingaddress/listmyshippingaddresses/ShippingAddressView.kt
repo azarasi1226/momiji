@@ -1,4 +1,4 @@
-package jp.momiji.feature.query.user.shippingaddress.list
+package jp.momiji.feature.query.user.shippingaddress.listmyshippingaddresses
 
 data class ShippingAddressView(
     val id: String,
