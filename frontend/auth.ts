@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { CreateUserService } from "@/grpc/gen/momiji/user/create/v1/create_pb.js";
+import { CreateUserService } from "@/grpc/gen/momiji/user/create/create_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { formatConnectError } from "@/lib/grpc-error";
 import { activeProvider, refreshAccessToken } from "@/lib/idp";

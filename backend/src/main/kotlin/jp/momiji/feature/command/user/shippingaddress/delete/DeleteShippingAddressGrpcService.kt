@@ -7,9 +7,9 @@ import jp.momiji.domain.Ulid
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.user.shippingaddress.delete.v1.DeleteShippingAddressRequest
-import jp.momiji.grpc.momiji.user.shippingaddress.delete.v1.DeleteShippingAddressResponse
-import jp.momiji.grpc.momiji.user.shippingaddress.delete.v1.DeleteShippingAddressServiceGrpcKt
+import jp.momiji.grpc.momiji.user.shippingaddress.delete.DeleteShippingAddressRequest
+import jp.momiji.grpc.momiji.user.shippingaddress.delete.DeleteShippingAddressResponse
+import jp.momiji.grpc.momiji.user.shippingaddress.delete.DeleteShippingAddressServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

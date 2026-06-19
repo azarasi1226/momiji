@@ -1,10 +1,10 @@
 package jp.momiji.feature.command.order.ship
 
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.order.ship.v1.ShipOrderRequest
-import jp.momiji.grpc.momiji.order.ship.v1.ShipOrderResponse
-import jp.momiji.grpc.momiji.order.ship.v1.ShipOrderServiceGrpcKt
-import jp.momiji.grpc.momiji.order.ship.v1.shipOrderResponse
+import jp.momiji.grpc.momiji.order.ship.ShipOrderRequest
+import jp.momiji.grpc.momiji.order.ship.ShipOrderResponse
+import jp.momiji.grpc.momiji.order.ship.ShipOrderServiceGrpcKt
+import jp.momiji.grpc.momiji.order.ship.shipOrderResponse
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

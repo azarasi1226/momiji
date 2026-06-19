@@ -6,13 +6,13 @@ import io.mockk.verify
 import jp.momiji.domain.ValidationException
 import jp.momiji.domain.stock.StockAdjustmentReason
 import jp.momiji.feature.command.CommandResult
-import jp.momiji.grpc.momiji.stock.adjust.v1.adjustStockRequest
+import jp.momiji.grpc.momiji.stock.adjust.adjustStockRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.CompletableFuture
-import jp.momiji.grpc.momiji.stock.v1.StockAdjustmentReason as ProtoStockAdjustmentReason
+import jp.momiji.grpc.momiji.stock.StockAdjustmentReason as ProtoStockAdjustmentReason
 
 class AdjustStockGrpcServiceTest {
     private val commandGateway = mockk<CommandGateway>()

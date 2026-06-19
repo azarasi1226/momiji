@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package momiji.order.cancel;
+
+// 注文のキャンセル（ユーザー起点・発送前）。 持ち主(user)は JWT から解決し、 本人の注文でなければ拒否。
+// 課金確定済み（PAID）なら返金される。 キャンセルには理由の選択が必須。
+service CancelOrderService {
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+}
+
+message CancelOrderRequest {
+  string order_id = 1;
+  CancellationReason reason = 2;
+}
+
+message CancelOrderResponse {}
+
+// キャンセル理由（ユーザー選択・必須）。 UNSPECIFIED は未選択として拒否する。
+enum CancellationReason {
+  CANCELLATION_REASON_UNSPECIFIED = 0;
+  // 気が変わった・不要になった。
+  CANCELLATION_REASON_CHANGED_MIND = 1;
+  // 間違えて注文した。
+  CANCELLATION_REASON_ORDERED_BY_MISTAKE = 2;
+  // 他でより良い条件を見つけた。
+  CANCELLATION_REASON_FOUND_BETTER_PRICE = 3;
+  // 届くのが遅い。
+  CANCELLATION_REASON_DELIVERY_TOO_SLOW = 4;
+  // その他。
+  CANCELLATION_REASON_OTHER = 5;
+}

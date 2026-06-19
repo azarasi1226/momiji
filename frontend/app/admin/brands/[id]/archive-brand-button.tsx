@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { archiveBrand } from "@/app/admin/brands/actions";
 import { Button } from "@/components/ui/button";
-import { archiveBrand } from "../actions";
 
 export function ArchiveBrandButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false);

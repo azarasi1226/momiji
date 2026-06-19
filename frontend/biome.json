@@ -16,7 +16,20 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["../**", "../*"],
+                "message": "相対パス（../）は禁止です。@/ エイリアスを使ってください。（同階層の ./ は可）"
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "javascript": {

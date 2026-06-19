@@ -6,11 +6,11 @@ import io.grpc.StatusException
 import io.grpc.protobuf.StatusProto
 import jp.momiji.domain.BusinessException
 import jp.momiji.domain.ValidationException
-import jp.momiji.grpc.momiji.common.v1.BusinessError
-import jp.momiji.grpc.momiji.common.v1.ErrorDetail
-import jp.momiji.grpc.momiji.common.v1.FieldError
-import jp.momiji.grpc.momiji.common.v1.UnknownError
-import jp.momiji.grpc.momiji.common.v1.ValidationError
+import jp.momiji.grpc.momiji.common.BusinessError
+import jp.momiji.grpc.momiji.common.ErrorDetail
+import jp.momiji.grpc.momiji.common.FieldError
+import jp.momiji.grpc.momiji.common.UnknownError
+import jp.momiji.grpc.momiji.common.ValidationError
 import com.google.rpc.Status as RpcStatus
 
 /**

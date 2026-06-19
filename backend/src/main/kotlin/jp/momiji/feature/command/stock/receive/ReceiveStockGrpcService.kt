@@ -7,9 +7,9 @@ import jp.momiji.domain.Ulid
 import jp.momiji.domain.ValidationException
 import jp.momiji.domain.stock.ReceiveStockQuantity
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.stock.receive.v1.ReceiveStockRequest
-import jp.momiji.grpc.momiji.stock.receive.v1.ReceiveStockResponse
-import jp.momiji.grpc.momiji.stock.receive.v1.ReceiveStockServiceGrpcKt
+import jp.momiji.grpc.momiji.stock.receive.ReceiveStockRequest
+import jp.momiji.grpc.momiji.stock.receive.ReceiveStockResponse
+import jp.momiji.grpc.momiji.stock.receive.ReceiveStockServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

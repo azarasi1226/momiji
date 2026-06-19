@@ -7,9 +7,9 @@ import jp.momiji.domain.Ulid
 import jp.momiji.domain.ValidationException
 import jp.momiji.feature.command.UserIdResolver
 import jp.momiji.feature.command.throwIfError
-import jp.momiji.grpc.momiji.basket.deleteitem.v1.DeleteBasketItemRequest
-import jp.momiji.grpc.momiji.basket.deleteitem.v1.DeleteBasketItemResponse
-import jp.momiji.grpc.momiji.basket.deleteitem.v1.DeleteBasketItemServiceGrpcKt
+import jp.momiji.grpc.momiji.basket.deleteitem.DeleteBasketItemRequest
+import jp.momiji.grpc.momiji.basket.deleteitem.DeleteBasketItemResponse
+import jp.momiji.grpc.momiji.basket.deleteitem.DeleteBasketItemServiceGrpcKt
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 

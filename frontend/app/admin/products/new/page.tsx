@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listActiveBrands } from "../actions";
+import { listActiveBrands } from "@/app/admin/brands/queries";
 import { ProductCreateForm } from "./product-create-form";
 
 export default async function NewProductPage() {

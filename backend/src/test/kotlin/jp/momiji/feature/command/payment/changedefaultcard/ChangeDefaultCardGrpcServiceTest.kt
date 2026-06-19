@@ -9,7 +9,7 @@ import jp.momiji.domain.BusinessError
 import jp.momiji.domain.BusinessException
 import jp.momiji.feature.command.CommandResult
 import jp.momiji.feature.command.UserIdResolver
-import jp.momiji.grpc.momiji.payment.changedefaultcard.v1.changeDefaultCardRequest
+import jp.momiji.grpc.momiji.payment.changedefaultcard.changeDefaultCardRequest
 import kotlinx.coroutines.runBlocking
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test

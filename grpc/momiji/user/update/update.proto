@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package momiji.user.update;
+
+// プロフィールは email（変更フロー別建て）と name のみ（Amazon 式）。
+// 住所・電話は配送先（momiji.user.shippingaddress）にだけ存在する。
+service UpdateUserService {
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+}
+
+message UpdateUserRequest {
+  string name = 1;
+}
+
+message UpdateUserResponse {}

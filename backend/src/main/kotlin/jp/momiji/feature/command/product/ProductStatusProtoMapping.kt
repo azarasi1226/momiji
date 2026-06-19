@@ -1,7 +1,7 @@
 package jp.momiji.feature.command.product
 
 import jp.momiji.domain.product.ProductStatus
-import jp.momiji.grpc.momiji.product.v1.ProductStatus as ProtoProductStatus
+import jp.momiji.grpc.momiji.product.ProductStatus as ProtoProductStatus
 
 /**
  * read model の status 文字列（= [ProductStatus] の name）を gRPC の proto enum に変換する。
