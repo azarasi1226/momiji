@@ -1,12 +1,8 @@
 package jp.momiji.feature.command.brand.create
 
-import jp.momiji.domain.brand.BrandStatus
-import jp.momiji.event.MomijiEventTag
 import jp.momiji.event.brand.BrandCreatedEvent
 import jp.momiji.feature.command.CommandResult
-import org.axonframework.eventsourcing.annotation.EventSourcingHandler
-import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
-import org.axonframework.extension.spring.stereotype.EventSourced
+import jp.momiji.feature.command.brand.BrandState
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler
 import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.axonframework.modelling.annotation.InjectEntity
@@ -17,7 +13,7 @@ class CreateBrandCommandHandler {
     @CommandHandler
     fun handle(
         command: CreateBrandCommand,
-        @InjectEntity state: State,
+        @InjectEntity state: BrandState,
         eventAppender: EventAppender,
     ): CommandResult {
         // 冪等性: id は BFF が採番して渡す。 同じ id での再送 (リトライ) は
@@ -35,20 +31,5 @@ class CreateBrandCommandHandler {
             ),
         )
         return CreateBrandCommandResult.success()
-    }
-
-    @EventSourced(tagKey = MomijiEventTag.BRAND_ID, idType = String::class)
-    class State(
-        var status: BrandStatus?,
-    ) {
-        @EntityCreator
-        constructor() : this(
-            status = null,
-        )
-
-        @EventSourcingHandler
-        fun evolve(event: BrandCreatedEvent) {
-            status = BrandStatus.ACTIVE
-        }
     }
 }
