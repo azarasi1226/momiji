@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export function ErrorDisplay({ reset }: { reset: () => void }) {
@@ -9,9 +10,14 @@ export function ErrorDisplay({ reset }: { reset: () => void }) {
       <p className="text-sm text-muted-foreground">
         予期しないエラーが発生しました。時間をおいて再度お試しください。
       </p>
-      <Button type="button" variant="outline" onClick={reset}>
-        再読み込み
-      </Button>
+      <div className="flex gap-2">
+        <Button type="button" variant="outline" onClick={reset}>
+          再読み込み
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/">ホームに戻る</Link>
+        </Button>
+      </div>
     </main>
   );
 }
