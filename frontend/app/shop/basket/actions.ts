@@ -28,7 +28,7 @@ export async function setBasketItem(
     await client.setBasketItem({ productId, itemQuantity });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "処理に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/shop/basket");
   return { success: true };
@@ -46,7 +46,7 @@ export async function deleteBasketItem(
     await client.deleteBasketItem({ productId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "処理に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/shop/basket");
   return { success: true };
@@ -59,7 +59,7 @@ export async function clearBasket(): Promise<BasketActionState> {
     await client.clearBasket({});
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "処理に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/shop/basket");
   return { success: true };

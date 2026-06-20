@@ -54,7 +54,7 @@ export async function createProduct(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -77,7 +77,7 @@ export async function updateProduct(
     await client.updateProduct({ id, name, description, imageUrl, price });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -95,7 +95,7 @@ export async function discontinueProduct(id: string): Promise<ProductActionState
     await client.discontinueProduct({ id });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "商品の廃盤に失敗しました");
+    return toSimpleActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -123,7 +123,7 @@ export async function receiveStock(
     await client.receiveStock({ productId, quantity });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath(`/admin/products/${productId}`);
@@ -146,7 +146,7 @@ export async function adjustStock(
     await client.adjustStock({ productId, quantity, reason });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath(`/admin/products/${productId}`);
@@ -166,6 +166,6 @@ export async function issueImageUploadUrl(
     return { uploadUrl: res.uploadUrl, publicUrl: res.publicUrl };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "画像アップロードURLの発行に失敗しました");
+    return toSimpleActionError(e);
   }
 }

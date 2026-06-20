@@ -32,7 +32,7 @@ export async function startOrder(
     return { success: true, orderId: res.orderId };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "注文の開始に失敗しました");
+    return toSimpleActionError(e);
   }
 }
 
@@ -57,6 +57,6 @@ export async function preparePayment(
     return { success: true, clientSecret: res.clientSecret };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "決済の準備に失敗しました");
+    return toSimpleActionError(e);
   }
 }

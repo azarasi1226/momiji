@@ -24,7 +24,7 @@ export async function shipOrder(orderId: string): Promise<ShipOrderResult> {
     await client.shipOrder({ orderId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return { success: false, error: toSimpleActionError(e, "発送に失敗しました").error };
+    return { success: false, error: toSimpleActionError(e).error };
   }
   revalidatePath("/admin/orders");
   return { success: true };

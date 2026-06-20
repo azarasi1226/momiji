@@ -46,7 +46,7 @@ export async function registerShippingAddress(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "配送先の登録に失敗しました");
+    return toActionError(e);
   }
   revalidatePath("/profile/shipping-addresses");
   return { success: true, id };
@@ -76,7 +76,7 @@ export async function updateShippingAddress(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "配送先の編集に失敗しました");
+    return toActionError(e);
   }
   revalidatePath("/profile/shipping-addresses");
   return { success: true, id: shippingAddressId };
@@ -97,7 +97,7 @@ export async function deleteShippingAddress(
     await client.deleteShippingAddress({ shippingAddressId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "配送先の削除に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/profile/shipping-addresses");
   return null;
@@ -116,7 +116,7 @@ export async function changeDefaultShippingAddress(
     await client.changeDefaultShippingAddress({ shippingAddressId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "デフォルト配送先の変更に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/profile/shipping-addresses");
   return null;

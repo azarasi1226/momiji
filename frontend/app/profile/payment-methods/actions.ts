@@ -28,7 +28,7 @@ export async function prepareCardRegistration(): Promise<PrepareCardState> {
     return { clientSecret: response.clientSecret };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "カード登録の準備に失敗しました");
+    return toSimpleActionError(e);
   }
 }
 
@@ -44,7 +44,7 @@ export async function deleteCard(
     await client.deleteCard({ paymentMethodId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "カードの削除に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/profile/payment-methods");
   return null;
@@ -63,7 +63,7 @@ export async function changeDefaultCard(
     await client.changeDefaultCard({ paymentMethodId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "デフォルトカードの変更に失敗しました");
+    return toSimpleActionError(e);
   }
   revalidatePath("/profile/payment-methods");
   return null;

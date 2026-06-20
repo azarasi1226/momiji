@@ -30,7 +30,7 @@ export async function updateProfile(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "ユーザー情報の更新に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/profile");
@@ -49,7 +49,7 @@ export async function deleteAccount(): Promise<DeleteAccountState> {
     await client.deleteUser({});
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "アカウントの削除に失敗しました");
+    return toSimpleActionError(e);
   }
 
   await signOut({ redirectTo: "/" });
@@ -78,7 +78,7 @@ export async function requestEmailChange(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "メールアドレス変更リクエストに失敗しました");
+    return toActionError(e);
   }
 
   return { success: true };
@@ -100,7 +100,7 @@ export async function confirmEmailChange(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "メールアドレスの変更確認に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/profile");

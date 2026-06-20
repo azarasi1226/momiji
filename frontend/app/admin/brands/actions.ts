@@ -34,7 +34,7 @@ export async function createBrand(
     await client.createBrand({ id: ulid(), name, description });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/admin/brands");
@@ -55,7 +55,7 @@ export async function updateBrand(
     await client.updateBrand({ id, name, description });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toActionError(e, "処理に失敗しました");
+    return toActionError(e);
   }
 
   revalidatePath("/admin/brands");
@@ -70,7 +70,7 @@ export async function archiveBrand(id: string): Promise<BrandActionState> {
     await client.archiveBrand({ id });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSimpleActionError(e, "ブランドのアーカイブに失敗しました");
+    return toSimpleActionError(e);
   }
 
   revalidatePath("/admin/brands");
