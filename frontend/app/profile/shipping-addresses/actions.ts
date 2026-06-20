@@ -6,9 +6,10 @@ import { ChangeDefaultShippingAddressService } from "@/grpc/gen/momiji/user/ship
 import { DeleteShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/delete/delete_pb.js";
 import { RegisterShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/register/register_pb.js";
 import { UpdateShippingAddressService } from "@/grpc/gen/momiji/user/shippingaddress/update/update_pb.js";
+import { toActionError, toSimpleActionError } from "@/lib/action-utils";
 import { joinPhoneNumber, joinPostalCode } from "@/lib/form-segments";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type { ShippingAddress } from "./queries";
@@ -19,18 +20,6 @@ export type SaveAddressState = {
   error?: string;
   fieldErrors?: Record<string, string>;
 } | null;
-
-function toSaveErrorState(e: unknown, fallback: string): SaveAddressState {
-  const parsed = parseConnectError(e);
-  if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-  if (parsed?.businessError) return { error: parsed.businessError };
-  if (parsed?.unknownError) {
-    return {
-      error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-    };
-  }
-  return { error: fallback };
-}
 
 /** 配送先を登録する。 id は BFF 採番（冪等キー）。 成功時は採番した id を返す。 */
 export async function registerShippingAddress(
@@ -57,7 +46,7 @@ export async function registerShippingAddress(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSaveErrorState(e, "配送先の登録に失敗しました");
+    return toActionError(e, "配送先の登録に失敗しました");
   }
   revalidatePath("/profile/shipping-addresses");
   return { success: true, id };
@@ -87,7 +76,7 @@ export async function updateShippingAddress(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toSaveErrorState(e, "配送先の編集に失敗しました");
+    return toActionError(e, "配送先の編集に失敗しました");
   }
   revalidatePath("/profile/shipping-addresses");
   return { success: true, id: shippingAddressId };
@@ -108,9 +97,7 @@ export async function deleteShippingAddress(
     await client.deleteShippingAddress({ shippingAddressId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    return { error: "配送先の削除に失敗しました" };
+    return toSimpleActionError(e, "配送先の削除に失敗しました");
   }
   revalidatePath("/profile/shipping-addresses");
   return null;
@@ -129,9 +116,7 @@ export async function changeDefaultShippingAddress(
     await client.changeDefaultShippingAddress({ shippingAddressId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    return { error: "デフォルト配送先の変更に失敗しました" };
+    return toSimpleActionError(e, "デフォルト配送先の変更に失敗しました");
   }
   revalidatePath("/profile/shipping-addresses");
   return null;

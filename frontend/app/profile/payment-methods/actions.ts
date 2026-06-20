@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { toSimpleActionError } from "@/lib/action-utils";
 import { ChangeDefaultCardService } from "@/grpc/gen/momiji/payment/changedefaultcard/changedefault_pb.js";
 import { DeleteCardService } from "@/grpc/gen/momiji/payment/deletecard/delete_pb.js";
 import { PrepareCardRegistrationService } from "@/grpc/gen/momiji/payment/preparecard/prepare_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type { Card } from "./queries";
@@ -27,14 +28,7 @@ export async function prepareCardRegistration(): Promise<PrepareCardState> {
     return { clientSecret: response.clientSecret };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    return { error: "カード登録の準備に失敗しました" };
+    return toSimpleActionError(e, "カード登録の準備に失敗しました");
   }
 }
 
@@ -50,9 +44,7 @@ export async function deleteCard(
     await client.deleteCard({ paymentMethodId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    return { error: "カードの削除に失敗しました" };
+    return toSimpleActionError(e, "カードの削除に失敗しました");
   }
   revalidatePath("/profile/payment-methods");
   return null;
@@ -71,9 +63,7 @@ export async function changeDefaultCard(
     await client.changeDefaultCard({ paymentMethodId });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    return { error: "デフォルトカードの変更に失敗しました" };
+    return toSimpleActionError(e, "デフォルトカードの変更に失敗しました");
   }
   revalidatePath("/profile/payment-methods");
   return null;

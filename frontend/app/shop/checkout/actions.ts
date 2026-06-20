@@ -1,9 +1,10 @@
 "use server";
 
+import { toSimpleActionError } from "@/lib/action-utils";
 import { PreparePaymentService } from "@/grpc/gen/momiji/order/preparepayment/preparepayment_pb.js";
 import { StartOrderService } from "@/grpc/gen/momiji/order/start/start_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type StartOrderState = {
@@ -31,19 +32,7 @@ export async function startOrder(
     return { success: true, orderId: res.orderId };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.fieldErrors) {
-      return {
-        error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です",
-      };
-    }
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    return { error: parsed?.fallback ?? "注文の開始に失敗しました" };
+    return toSimpleActionError(e, "注文の開始に失敗しました");
   }
 }
 
@@ -68,18 +57,6 @@ export async function preparePayment(
     return { success: true, clientSecret: res.clientSecret };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.fieldErrors) {
-      return {
-        error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です",
-      };
-    }
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    return { error: parsed?.fallback ?? "決済の準備に失敗しました" };
+    return toSimpleActionError(e, "決済の準備に失敗しました");
   }
 }

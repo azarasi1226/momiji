@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { signOut } from "@/auth";
+import { toActionError, toSimpleActionError } from "@/lib/action-utils";
 import { ConfirmEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/confirm/confirm_pb.js";
 import { RequestEmailChangeService } from "@/grpc/gen/momiji/user/changeemail/request/request_pb.js";
 import { DeleteUserService } from "@/grpc/gen/momiji/user/delete/delete_pb.js";
 import { UpdateUserService } from "@/grpc/gen/momiji/user/update/update_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type UpdateProfileState = {
@@ -29,16 +30,7 @@ export async function updateProfile(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    if (parsed?.fallback) return { error: parsed.fallback };
-    return { error: "ユーザー情報の更新に失敗しました" };
+    return toActionError(e, "ユーザー情報の更新に失敗しました");
   }
 
   revalidatePath("/profile");
@@ -57,15 +49,7 @@ export async function deleteAccount(): Promise<DeleteAccountState> {
     await client.deleteUser({});
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    if (parsed?.fallback) return { error: parsed.fallback };
-    return { error: "アカウントの削除に失敗しました" };
+    return toSimpleActionError(e, "アカウントの削除に失敗しました");
   }
 
   await signOut({ redirectTo: "/" });
@@ -94,16 +78,7 @@ export async function requestEmailChange(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    if (parsed?.fallback) return { error: parsed.fallback };
-    return { error: "メールアドレス変更リクエストに失敗しました" };
+    return toActionError(e, "メールアドレス変更リクエストに失敗しました");
   }
 
   return { success: true };
@@ -125,16 +100,7 @@ export async function confirmEmailChange(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    const parsed = parseConnectError(e);
-    if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-    if (parsed?.businessError) return { error: parsed.businessError };
-    if (parsed?.unknownError) {
-      return {
-        error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-      };
-    }
-    if (parsed?.fallback) return { error: parsed.fallback };
-    return { error: "メールアドレスの変更確認に失敗しました" };
+    return toActionError(e, "メールアドレスの変更確認に失敗しました");
   }
 
   revalidatePath("/profile");

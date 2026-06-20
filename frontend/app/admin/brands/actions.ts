@@ -6,8 +6,9 @@ import { ulid } from "ulid";
 import { ArchiveBrandService } from "@/grpc/gen/momiji/brand/archive/archive_pb.js";
 import { CreateBrandService } from "@/grpc/gen/momiji/brand/create/create_pb.js";
 import { UpdateBrandService } from "@/grpc/gen/momiji/brand/update/update_pb.js";
+import { toActionError, toSimpleActionError } from "@/lib/action-utils";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type { Brand } from "./queries";
@@ -18,18 +19,7 @@ export type BrandFormState = {
   fieldErrors?: Record<string, string>;
 } | null;
 
-function toErrorState(e: unknown): BrandFormState {
-  const parsed = parseConnectError(e);
-  if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-  if (parsed?.businessError) return { error: parsed.businessError };
-  if (parsed?.unknownError) {
-    return {
-      error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-    };
-  }
-  if (parsed?.fallback) return { error: parsed.fallback };
-  return { error: "処理に失敗しました" };
-}
+export type BrandActionState = { error?: string } | null;
 
 export async function createBrand(
   _prevState: BrandFormState,
@@ -44,7 +34,7 @@ export async function createBrand(
     await client.createBrand({ id: ulid(), name, description });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e, "処理に失敗しました");
   }
 
   revalidatePath("/admin/brands");
@@ -65,7 +55,7 @@ export async function updateBrand(
     await client.updateBrand({ id, name, description });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e, "処理に失敗しました");
   }
 
   revalidatePath("/admin/brands");
@@ -73,14 +63,14 @@ export async function updateBrand(
   return { success: true };
 }
 
-export async function archiveBrand(id: string): Promise<void> {
+export async function archiveBrand(id: string): Promise<BrandActionState> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(ArchiveBrandService, session.accessToken);
     await client.archiveBrand({ id });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    throw e;
+    return toSimpleActionError(e, "ブランドのアーカイブに失敗しました");
   }
 
   revalidatePath("/admin/brands");

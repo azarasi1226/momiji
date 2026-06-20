@@ -43,14 +43,18 @@ export function ImageUploadField({
 
     setUploading(true);
     try {
-      const { uploadUrl, publicUrl } = await issueImageUploadUrl(file.type);
-      const res = await fetch(uploadUrl, {
+      const result = await issueImageUploadUrl(file.type);
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      const res = await fetch(result.uploadUrl, {
         method: "PUT",
         headers: { "Content-Type": file.type },
         body: file,
       });
       if (!res.ok) throw new Error(`upload failed: ${res.status}`);
-      setUrl(publicUrl);
+      setUrl(result.publicUrl);
     } catch {
       setError("アップロードに失敗しました");
     } finally {
