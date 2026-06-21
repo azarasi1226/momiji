@@ -4,8 +4,9 @@ import { ListProductsService } from "@/grpc/gen/momiji/product/list/list_pb.js";
 import { ProductSortCondition } from "@/grpc/gen/momiji/product/sort_pb.js";
 import { ProductStatus } from "@/grpc/gen/momiji/product/status_pb.js";
 import { FindStockByProductIdService } from "@/grpc/gen/momiji/stock/findbyproductid/findbyproductid_pb.js";
+import { notFound } from "next/navigation";
 import { createGrpcClient } from "@/lib/grpc";
-import { redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type Product = {
@@ -140,6 +141,7 @@ export async function fetchProduct(id: string): Promise<Product> {
     };
   } catch (e) {
     redirectIfUnauthenticated(e);
+    if (parseConnectError(e)?.businessError) notFound();
     throw e;
   }
 }
@@ -159,6 +161,7 @@ export async function fetchStock(productId: string): Promise<Stock> {
     };
   } catch (e) {
     redirectIfUnauthenticated(e);
+    if (parseConnectError(e)?.businessError) notFound();
     throw e;
   }
 }

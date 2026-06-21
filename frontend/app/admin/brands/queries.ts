@@ -2,8 +2,9 @@ import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/findbyid_pb.js";
 import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/list_pb.js";
 import { BrandStatus } from "@/grpc/gen/momiji/brand/status_pb.js";
+import { notFound } from "next/navigation";
 import { createGrpcClient } from "@/lib/grpc";
-import { redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type Brand = {
@@ -64,6 +65,7 @@ export async function fetchBrand(id: string): Promise<Brand> {
     };
   } catch (e) {
     redirectIfUnauthenticated(e);
+    if (parseConnectError(e)?.businessError) notFound();
     throw e;
   }
 }

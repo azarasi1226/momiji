@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   fetchMyOrder,
   isCancelable,
@@ -138,7 +137,6 @@ export default async function MyOrderDetailPage({
 }) {
   const { id } = await params;
   const order = await fetchMyOrder(id);
-  if (!order) notFound();
 
   return (
     <main className="flex w-full max-w-3xl flex-col gap-6 px-8 py-12">
