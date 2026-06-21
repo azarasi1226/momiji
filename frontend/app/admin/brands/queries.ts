@@ -1,8 +1,8 @@
 import { timestampDate } from "@bufbuild/protobuf/wkt";
+import { notFound } from "next/navigation";
 import { FindBrandByIdService } from "@/grpc/gen/momiji/brand/findbyid/findbyid_pb.js";
 import { ListBrandsService } from "@/grpc/gen/momiji/brand/list/list_pb.js";
 import { BrandStatus } from "@/grpc/gen/momiji/brand/status_pb.js";
-import { notFound } from "next/navigation";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";

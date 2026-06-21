@@ -85,7 +85,9 @@ export async function updateProduct(
   return { success: true };
 }
 
-export async function discontinueProduct(id: string): Promise<ProductActionState> {
+export async function discontinueProduct(
+  id: string,
+): Promise<ProductActionState> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(

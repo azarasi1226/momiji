@@ -15,7 +15,12 @@ export default function ShopProductsError({
         <p className="text-sm text-destructive">
           商品の読み込みに失敗しました。時間をおいて再度お試しください。
         </p>
-        <Button type="button" variant="outline" onClick={reset} className="w-fit">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={reset}
+          className="w-fit"
+        >
           再読み込み
         </Button>
       </div>

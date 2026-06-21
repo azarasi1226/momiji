@@ -23,7 +23,9 @@ export function toActionError(e: unknown): ActionErrorState {
 export function toSimpleActionError(e: unknown): { error: string } {
   const parsed = parseConnectError(e);
   if (parsed?.fieldErrors) {
-    return { error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です" };
+    return {
+      error: Object.values(parsed.fieldErrors)[0] ?? "入力値が不正です",
+    };
   }
   if (parsed?.businessError) return { error: parsed.businessError };
   if (parsed?.unknownError) {

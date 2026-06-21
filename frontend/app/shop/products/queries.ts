@@ -1,9 +1,9 @@
+import { notFound } from "next/navigation";
 import { FindProductByIdService } from "@/grpc/gen/momiji/product/findbyid/findbyid_pb.js";
 import { ListProductsService } from "@/grpc/gen/momiji/product/list/list_pb.js";
 import { ProductSortCondition } from "@/grpc/gen/momiji/product/sort_pb.js";
 import { ProductStatus } from "@/grpc/gen/momiji/product/status_pb.js";
 import { FindStockByProductIdService } from "@/grpc/gen/momiji/stock/findbyproductid/findbyproductid_pb.js";
-import { notFound } from "next/navigation";
 import { createGrpcClient } from "@/lib/grpc";
 import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
