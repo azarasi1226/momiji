@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDateTime } from "@/lib/format";
-import { listShippableOrders } from "./actions";
+import { listShippableOrders } from "./queries";
 import { ShipOrderButton } from "./ship-order-button";
 
 export const metadata: Metadata = {

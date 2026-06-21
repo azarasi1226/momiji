@@ -1,4 +1,5 @@
 import { timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
+import { notFound } from "next/navigation";
 import { FindMyOrderService } from "@/grpc/gen/momiji/order/findmyorder/findmyorder_pb.js";
 import { ListMyOrdersService } from "@/grpc/gen/momiji/order/listmyorders/listmyorders_pb.js";
 import { OrderStatus } from "@/grpc/gen/momiji/order/status_pb.js";
@@ -112,13 +113,7 @@ export type MyOrderDetail = {
   items: MyOrderDetailItem[];
 };
 
-/**
- * 自分の注文 1 件の詳細を取得する（持ち主は JWT から解決）。
- * 本人の注文でない／存在しない場合は backend が business error を返すので、 null を返す（呼び出し側で 404 に倒す）。
- */
-export async function fetchMyOrder(
-  orderId: string,
-): Promise<MyOrderDetail | null> {
+export async function fetchMyOrder(orderId: string): Promise<MyOrderDetail> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(FindMyOrderService, session.accessToken);
@@ -156,8 +151,7 @@ export async function fetchMyOrder(
     };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    // 本人の注文でない／不在は business error。 呼び出し側で notFound() に倒すため null を返す。
-    if (parseConnectError(e)?.businessError) return null;
+    if (parseConnectError(e)?.businessError) notFound();
     throw e;
   }
 }

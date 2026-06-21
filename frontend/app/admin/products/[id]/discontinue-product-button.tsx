@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 export function DiscontinueProductButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   if (!confirming) {
     return (
@@ -26,12 +27,18 @@ export function DiscontinueProductButton({ id }: { id: string }) {
       <p className="text-sm text-destructive">
         生産終了にすると販売・編集ができなくなります。 記録は残ります。
       </p>
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-3">
         <Button
           type="button"
           variant="destructive"
           disabled={isPending}
-          onClick={() => startTransition(() => discontinueProduct(id))}
+          onClick={() =>
+            startTransition(async () => {
+              const result = await discontinueProduct(id);
+              if (result?.error) setError(result.error);
+            })
+          }
         >
           {isPending ? "処理中..." : "生産終了にする"}
         </Button>
