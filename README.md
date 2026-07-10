@@ -80,14 +80,14 @@ cd backend
 ```bash
 cd ../frontend
 pnpm install   # 初回のみ
-pnpm dev       # http://localhost:3000
+pnpm dev       # http://localhost:4000
 ```
 
 ## 🖥️ ローカル環境確認リンク一覧
 
 | サービス | ポート | URL | 備考 |
 | --- | --- | --- | --- |
-| frontend (NextJS) | 3000 | <http://localhost:3000> | |
+| frontend (NextJS) | 4000 | <http://localhost:4000> | |
 | backend gRPC | 9091 | | |
 | backend HTTP (Stripe webhook) | 9090 | | |
 | Axon Server UI | 8024 | <http://localhost:8024> | |

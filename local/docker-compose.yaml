@@ -97,7 +97,7 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - momiji-grafana-data:/var/lib/grafana
     ports:
-      # frontend が 3000 を使うので 3001
+      # frontend が 4000 を使うが、慣習的に Grafana は 3000 台のまま 3001 で公開
       - "3001:3000"
     depends_on:
       - prometheus
@@ -111,7 +111,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-      # presigned PUT をブラウザ(localhost:3000)から直接叩くため CORS を許可（local は全許可）。
+      # presigned PUT をブラウザ(localhost:4000)から直接叩くため CORS を許可（local は全許可）。
       MINIO_API_CORS_ALLOW_ORIGIN: "*"
     volumes:
       - momiji-minio-data:/data
