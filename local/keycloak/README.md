@@ -32,7 +32,7 @@ realm とは client をまとめる認証空間のことであり、 cognito の
 | `standardFlowEnabled` | `true` | Authorization Code Flow を有効化する。コレは最も一般的で安全なログイン方式である。 |
 | `directAccessGrantsEnabled` | `false` | Password Grant ( username/password 直送り ) は無効。 BFF からは使わないので OFF |
 | `redirectUris` | `<３つのredirectUrls>` | BFF内の `ログインリダイレクト用`, `ログアウトリダイレクト用`, `Postman検証用`で３つ登録されている |
-| `webOrigins` | `localhost:3000` | CORS 許可元 |
+| `webOrigins` | `localhost:4000` | CORS 許可元 |
 | `defaultClientScopes` | `[openid, email, profile]` | リクエスト時に自動付与される scope |
 | `attributes.pkce.code.challenge.method` | `S256` | **PKCE 必須化** ( CSRF / Auth Code Interception 攻撃対策 ) |
 

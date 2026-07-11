@@ -33,7 +33,7 @@ JAVA_HOME="/c/Users/seal1/.jdks/corretto-25.0.2" ./gradlew test --tests "*XxxTes
 ### frontend
 
 ```bash
-pnpm dev        # localhost:3000
+pnpm dev        # localhost:4000
 pnpm lint
 npx tsc --noEmit
 ```

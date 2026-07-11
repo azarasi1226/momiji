@@ -47,7 +47,7 @@ export default async function Home() {
                   const logoutUrl = await buildLogoutUrl({
                     idToken: current?.idToken,
                     postLogoutRedirectUri:
-                      process.env.AUTH_URL ?? "http://localhost:3000",
+                      process.env.AUTH_URL ?? "http://localhost:4000",
                   });
                   redirect(logoutUrl);
                 }}
