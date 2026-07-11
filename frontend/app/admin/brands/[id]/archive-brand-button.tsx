@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 export function ArchiveBrandButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   if (!confirming) {
     return (
@@ -27,12 +28,18 @@ export function ArchiveBrandButton({ id }: { id: string }) {
         アーカイブすると新規商品を紐づけられなくなります。
         紐づく商品は残ります。
       </p>
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-3">
         <Button
           type="button"
           variant="destructive"
           disabled={isPending}
-          onClick={() => startTransition(() => archiveBrand(id))}
+          onClick={() =>
+            startTransition(async () => {
+              const result = await archiveBrand(id);
+              if (result?.error) setError(result.error);
+            })
+          }
         >
           {isPending ? "アーカイブ中..." : "アーカイブする"}
         </Button>

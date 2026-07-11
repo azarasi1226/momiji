@@ -10,8 +10,9 @@ import { UpdateProductService } from "@/grpc/gen/momiji/product/update/update_pb
 import { AdjustStockService } from "@/grpc/gen/momiji/stock/adjust/adjust_pb.js";
 import { StockAdjustmentReason } from "@/grpc/gen/momiji/stock/reason_pb.js";
 import { ReceiveStockService } from "@/grpc/gen/momiji/stock/receive/receive_pb.js";
+import { toActionError, toSimpleActionError } from "@/lib/action-utils";
 import { createGrpcClient } from "@/lib/grpc";
-import { parseConnectError, redirectIfUnauthenticated } from "@/lib/grpc-error";
+import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
 
 export type {
@@ -28,18 +29,7 @@ export type ProductFormState = {
   fieldErrors?: Record<string, string>;
 } | null;
 
-function toErrorState(e: unknown): ProductFormState {
-  const parsed = parseConnectError(e);
-  if (parsed?.fieldErrors) return { fieldErrors: parsed.fieldErrors };
-  if (parsed?.businessError) return { error: parsed.businessError };
-  if (parsed?.unknownError) {
-    return {
-      error: `${parsed.unknownError.message} (問い合わせ番号: ${parsed.unknownError.correlationId})`,
-    };
-  }
-  if (parsed?.fallback) return { error: parsed.fallback };
-  return { error: "処理に失敗しました" };
-}
+export type ProductActionState = { error?: string } | null;
 
 export async function createProduct(
   _prevState: ProductFormState,
@@ -64,7 +54,7 @@ export async function createProduct(
     });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -87,7 +77,7 @@ export async function updateProduct(
     await client.updateProduct({ id, name, description, imageUrl, price });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -95,7 +85,9 @@ export async function updateProduct(
   return { success: true };
 }
 
-export async function discontinueProduct(id: string): Promise<void> {
+export async function discontinueProduct(
+  id: string,
+): Promise<ProductActionState> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(
@@ -105,7 +97,7 @@ export async function discontinueProduct(id: string): Promise<void> {
     await client.discontinueProduct({ id });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    throw e;
+    return toSimpleActionError(e);
   }
 
   revalidatePath("/admin/products");
@@ -133,7 +125,7 @@ export async function receiveStock(
     await client.receiveStock({ productId, quantity });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e);
   }
 
   revalidatePath(`/admin/products/${productId}`);
@@ -156,7 +148,7 @@ export async function adjustStock(
     await client.adjustStock({ productId, quantity, reason });
   } catch (e) {
     redirectIfUnauthenticated(e);
-    return toErrorState(e);
+    return toActionError(e);
   }
 
   revalidatePath(`/admin/products/${productId}`);
@@ -165,7 +157,7 @@ export async function adjustStock(
 
 export async function issueImageUploadUrl(
   contentType: string,
-): Promise<{ uploadUrl: string; publicUrl: string }> {
+): Promise<{ uploadUrl: string; publicUrl: string } | { error: string }> {
   const session = await requireValidSession();
   try {
     const client = createGrpcClient(
@@ -176,6 +168,6 @@ export async function issueImageUploadUrl(
     return { uploadUrl: res.uploadUrl, publicUrl: res.publicUrl };
   } catch (e) {
     redirectIfUnauthenticated(e);
-    throw e;
+    return toSimpleActionError(e);
   }
 }
