@@ -77,10 +77,10 @@ dependencies {
     // Other
     implementation("io.github.oshai:kotlin-logging-jvm:8.0.4") // ロギング
     implementation("de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0") // ULID生成
-    implementation("software.amazon.awssdk:cognitoidentityprovider:2.47.3") // Cognitoクライアント
-    implementation("software.amazon.awssdk:s3:2.47.3") // S3 presigned URL 発行（画像アップロード）
-    implementation("software.amazon.awssdk:sso:2.47.3") // AWS_PROFILE が SSO プロファイルの場合に credentials を解決するために必要
-    implementation("software.amazon.awssdk:ssooidc:2.47.3") // 同上
+    implementation("software.amazon.awssdk:cognitoidentityprovider:2.48.1") // Cognitoクライアント
+    implementation("software.amazon.awssdk:s3:2.48.1") // S3 presigned URL 発行（画像アップロード）
+    implementation("software.amazon.awssdk:sso:2.48.1") // AWS_PROFILE が SSO プロファイルの場合に credentials を解決するために必要
+    implementation("software.amazon.awssdk:ssooidc:2.48.1") // 同上
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // Coroutines (GRPC、Axon Command Gatewayで使用)
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1") // Result<V, E> 型 (値オブジェクトの validation 用)
     implementation("com.stripe:stripe-java:33.1.0") // Stripe（カード登録: Customer/SetupIntent/PaymentMethod・webhook 署名検証）
