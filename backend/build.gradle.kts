@@ -63,7 +63,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-jooq-test")
 
     // Axon
-    implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.1.1"))
+    implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.2.0"))
     implementation("io.axoniq.framework:axoniq-spring-boot-starter")
     implementation("io.axoniq.framework:axon-server-connector") // AxonFramework5.1からはAxonServerConnectorが別モジュールになったため、明示的に追加する必要がある。
     testImplementation("org.axonframework:axon-test")
