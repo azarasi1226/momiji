@@ -27,6 +27,9 @@ const nextConfig: NextConfig = {
         ...(process.env.IMAGE_PORT ? { port: process.env.IMAGE_PORT } : {}),
       },
     ],
+    // ローカルの MinIO は localhost:9000（::1 / 127.0.0.1）に解決される。 Next.js の SSRF 対策は
+    // プライベートIPに解決される画像取得をブロックするため、 開発時のみプライベートIPの使用を許可する。
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
   },
 };
 
