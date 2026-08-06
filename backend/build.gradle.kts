@@ -236,8 +236,8 @@ kover {
                     // Axon Event Processor 定義クラス（イベントハンドラーは測りたいが、Processor定義クラスは設定の塊なので測っても意味が薄い）
                     "jp.momiji.feature.command.EventProcessorDefinitions*",
                     // UserIdResolver は単純なマッピングロジックしか持たないため、測っても意味が薄い。
-                    // （末尾に * を付けると top-level 関数の UserIdResolverKt ファサードも一緒に除外できる）
                     "jp.momiji.feature.command.UserIdResolver",
+                    // ※: 末尾に*をつけるとそのファイル全体を無効とできる。
                 )
                 // コンフィグなんて図る必要ナッシング！
                 annotatedBy("org.springframework.context.annotation.Configuration")
