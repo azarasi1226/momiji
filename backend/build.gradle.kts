@@ -216,17 +216,18 @@ kover {
         filters {
             excludes {
                 packages(
-                    // jOOQ自動生成 / GRPC自動生成
+                    // jOOQ / GRPC による自動生成コード系は除外
                     "iss.jooq.generated",
                     "jp.momiji.grpc",
-                    // Bean 配線（設定なので測っても意味が薄い）
+                    // Config（設定系でありビジネスロジックではないので図る意味合が薄い）
                     "jp.momiji.config",
                     // ポート / アダプタ（インターフェースと、外部依存の実装しかないので図る意味が薄い)
+                    // 統合テストだとしても、外部依存なのでモックに置き換えることがほとんどのはずである。
                     "jp.momiji.port",
                     "jp.momiji.adapter",
                     // Query系の処理は単純なDBアクセスの集まりで、ロジックがほとんどないため、測っても意味が薄い
                     "jp.momiji.feature.query",
-                    // Seed 用コードはカバレッジ測る必要ナッシング！
+                    // Seed はコードはカバレッジ測る必要ナッシング！ただのテストデータ作成だしね。
                     "jp.momiji.seed",
                 )
                 classes(
