@@ -8,7 +8,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-/**
+/*
  * 画像素材を MinIO へアップロードするヘルパー。
  *
  * バイナリは本番と同じ presigned PUT 経路で投入する（`IssueImageUploadUrl` で URL を発行 → その URL へ

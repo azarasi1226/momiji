@@ -1,10 +1,10 @@
 package jp.momiji.seed
 
-/**
+/*
  * 投入するテストデータ（brand / product）の定義。
  *
- * 画像は [ImageUploader.IMAGES_DIR]/<ブランドフォルダ>/<ファイル> に置く。 商品名・説明・値段・在庫は
- * 画像を 1 枚ずつ見て起こした値。 実行は [main] を参照（gRPC command 経由で投入）。
+ * 画像は images/<ブランドフォルダ>/<ファイル> に置く（アップロードは ImageUploader を参照）。 商品名・説明・
+ * 値段・在庫は画像を 1 枚ずつ見て起こした値。 実行は Seeder の main を参照（gRPC command 経由で投入）。
  */
 
 /**
@@ -58,7 +58,9 @@ internal val BRANDS =
                     ProductSeed(
                         imageFile = "61PwstkLnOL._AC_SL1496_.jpg",
                         name = "ASUS ROG Ally ポータブルゲーミングPC (Ryzen AI Z2 Extreme / 24GB / 1TB)",
-                        description = "AMD Ryzen AI Z2 Extreme を搭載した7型フルHD・120Hz対応のポータブルゲーミングPC。 24GBメモリと1TB SSDを備え、 持ち運びながら本格的なPCゲームをプレイできます。",
+                        description =
+                            "AMD Ryzen AI Z2 Extreme を搭載した7型フルHD・120Hz対応のポータブルゲーミングPC。 " +
+                                "24GBメモリと1TB SSDを備え、 持ち運びながら本格的なPCゲームをプレイできます。",
                         price = 139800,
                         stock = 0, // 在庫切れの例
                     ),
@@ -130,7 +132,9 @@ internal val BRANDS =
                     ProductSeed(
                         imageFile = "61j7CRRViIL._AC_SL1000_.jpg",
                         name = "MSI Cyborg 15 ゲーミングノートPC (Core i7-13620H / RTX 5060 Laptop / 16GB / 512GB / 15.6型 144Hz)",
-                        description = "第13世代 Intel Core i7 と GeForce RTX 5060 Laptop GPU を搭載した15.6型ゲーミングノートPC。 144Hz フルHDディスプレイと DDR5 メモリで、 最新ゲームを滑らかに描画します。",
+                        description =
+                            "第13世代 Intel Core i7 と GeForce RTX 5060 Laptop GPU を搭載した15.6型ゲーミングノートPC。 " +
+                                "144Hz フルHDディスプレイと DDR5 メモリで、 最新ゲームを滑らかに描画します。",
                         price = 179800,
                         stock = 10,
                     ),
