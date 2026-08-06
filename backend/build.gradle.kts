@@ -225,8 +225,12 @@ kover {
                     // 統合テストだとしても、外部依存なのでモックに置き換えることがほとんどのはずである。
                     "jp.momiji.port",
                     "jp.momiji.adapter",
+                    // Eventは基本的にデータクラスなのでテスト不要
+                    "jp.momiji.event",
                     // Query系の処理は単純なDBアクセスの集まりで、ロジックがほとんどないため、測っても意味が薄い
                     "jp.momiji.feature.query",
+                    // Projectorはビジネスロジック等はないので図っても意味が薄い
+                    "jp.momiji.projection",
                     // Seed はコードはカバレッジ測る必要ナッシング！ただのテストデータ作成だしね。
                     "jp.momiji.seed",
                 )
