@@ -4,7 +4,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { findBasketSummary } from "./basket/queries";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +37,10 @@ export default async function ShopLayout({
   const label = name || email || "プロフィール";
   const initial = (name || email || "?").charAt(0).toUpperCase();
 
+  // カゴボタンのバッジ用に合計数量を取得する（集計は backend 側。 上限やページングは意識しない）。
+  const basketSummary = await findBasketSummary();
+  const basketCount = basketSummary.totalQuantity;
+
   return (
     <div className="flex min-h-screen flex-col bg-muted/30 font-sans">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/80 px-8 py-4 backdrop-blur">
@@ -56,10 +62,32 @@ export default async function ShopLayout({
               注文履歴
             </Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button
+            asChild
+            variant="outline"
+            className="gap-2.5"
+            aria-label={
+              basketCount > 0
+                ? `買い物かご ${basketCount}個 合計¥${basketSummary.totalPrice.toLocaleString("ja-JP")}`
+                : "買い物かご（空）"
+            }
+          >
             <Link href="/shop/basket">
-              <ShoppingCart />
-              買い物かご
+              <span className="relative inline-flex">
+                <ShoppingCart />
+                {basketCount > 0 && (
+                  <Badge className="pointer-events-none absolute -top-2 -right-2.5 h-4 min-w-4 justify-center rounded-full px-1 text-[10px] leading-none tabular-nums">
+                    {basketCount > 99 ? "99+" : basketCount}
+                  </Badge>
+                )}
+              </span>
+              {basketCount > 0 ? (
+                <span className="font-semibold tabular-nums">
+                  ¥{basketSummary.totalPrice.toLocaleString("ja-JP")}
+                </span>
+              ) : (
+                "買い物かご"
+              )}
             </Link>
           </Button>
           <Link href="/profile" aria-label="プロフィール" title={label}>
