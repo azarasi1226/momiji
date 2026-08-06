@@ -13,6 +13,7 @@ import jp.momiji.domain.user.StreetAddress
 import jp.momiji.event.user.DefaultShippingAddressChangedEvent
 import jp.momiji.event.user.ShippingAddressRegisteredEvent
 import jp.momiji.event.user.UserCreatedEvent
+import jp.momiji.event.user.UserDeletedEvent
 import org.junit.jupiter.api.Test
 
 class RegisterShippingAddressCommandHandlerTest : MomijiIntegrationTestBase() {
@@ -158,6 +159,25 @@ class RegisterShippingAddressCommandHandlerTest : MomijiIntegrationTestBase() {
             .noPriorActivity()
             .`when`()
             .command(command(userId, "01HXYZSHIPREG000000000000A6"))
+            .then()
+            .resultMessagePayload(RegisterShippingAddressCommandResult.userNotFound())
+            .noEvents()
+    }
+
+    @Test
+    fun `削除済みユーザーへの登録は失敗`() {
+        val userId = "01HXYZSHIPREG000000000000U8"
+        val addressId = "01HXYZSHIPREG000000000000A8A"
+
+        fixture
+            .given()
+            .events(
+                UserCreatedEvent(id = userId, email = "ship8@example.com"),
+                registeredEvent(userId, addressId),
+                defaultChangedEvent(userId, addressId),
+                UserDeletedEvent(id = userId, oidcSubjects = emptyList(), stripeCustomerId = null),
+            ).`when`()
+            .command(command(userId, "01HXYZSHIPREG000000000000A8B"))
             .then()
             .resultMessagePayload(RegisterShippingAddressCommandResult.userNotFound())
             .noEvents()
