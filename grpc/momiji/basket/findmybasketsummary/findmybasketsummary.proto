@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package momiji.basket.findmybasketsummary;
+
+service FindMyBasketSummaryService {
+  rpc FindMyBasketSummary(FindMyBasketSummaryRequest) returns (FindMyBasketSummaryResponse);
+}
+
+message FindMyBasketSummaryRequest {}
+
+message FindMyBasketSummaryResponse {
+  int32 total_quantity = 1; // 各商品の個数の合計（バッジ表示用）
+  int32 total_type_count = 2; // 商品の種類数
+  int64 total_price = 3; // 合計金額（単価 × 個数 の総和）。 合計は int64（order.total_amount に倣う）
+}

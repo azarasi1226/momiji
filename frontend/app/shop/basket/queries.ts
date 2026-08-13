@@ -1,4 +1,5 @@
 import { FindMyBasketService } from "@/grpc/gen/momiji/basket/findmybasket/findmybasket_pb.js";
+import { FindMyBasketSummaryService } from "@/grpc/gen/momiji/basket/findmybasketsummary/findmybasketsummary_pb.js";
 import { createGrpcClient } from "@/lib/grpc";
 import { redirectIfUnauthenticated } from "@/lib/grpc-error";
 import { requireValidSession } from "@/lib/session";
@@ -17,6 +18,38 @@ export type BasketPage = {
   totalPage: number;
   pageNumber: number;
 };
+
+export type BasketSummary = {
+  /** 各商品の個数の合計（かごバッジ用）。 */
+  totalQuantity: number;
+  /** 商品の種類数。 */
+  totalTypeCount: number;
+  /** 合計金額（単価 × 個数 の総和）。 */
+  totalPrice: number;
+};
+
+/**
+ * カゴの集計値のみを取得する。 items を取らず backend 側で SUM するので、
+ * かごの上限やページングをフロントで意識しなくてよい。
+ */
+export async function findBasketSummary(): Promise<BasketSummary> {
+  const session = await requireValidSession();
+  try {
+    const client = createGrpcClient(
+      FindMyBasketSummaryService,
+      session.accessToken,
+    );
+    const res = await client.findMyBasketSummary({});
+    return {
+      totalQuantity: res.totalQuantity,
+      totalTypeCount: res.totalTypeCount,
+      totalPrice: Number(res.totalPrice),
+    };
+  } catch (e) {
+    redirectIfUnauthenticated(e);
+    throw e;
+  }
+}
 
 export async function findBasket(params: {
   pageSize?: number;

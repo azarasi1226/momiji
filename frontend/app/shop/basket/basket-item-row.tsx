@@ -1,16 +1,14 @@
 "use client";
 
+import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { deleteBasketItem, setBasketItem } from "./actions";
+
+// 個数の範囲（domain の BasketItemQuantity と一致。 0 は「カゴから消す」なので最小は 1）。
+const MIN_QUANTITY = 1;
+const MAX_QUANTITY = 99;
 
 type Props = {
   productId: string;
@@ -20,7 +18,7 @@ type Props = {
   itemQuantity: number;
 };
 
-/** カゴの1行。 個数変更（絶対値 set）と削除を行う。 */
+/** カゴの1行。 - / + ボタンで個数を即時更新（絶対値 set）し、 削除もできる。 */
 export function BasketItemRow({
   productId,
   productName,
@@ -28,17 +26,20 @@ export function BasketItemRow({
   productImageUrl,
   itemQuantity,
 }: Props) {
-  const [quantity, setQuantity] = useState(itemQuantity);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  // 楽観的更新: クリックで即 UI に反映し、 サーバー反映（revalidate）後は実値へ自動同期される。
+  const [quantity, setOptimisticQuantity] = useOptimistic(itemQuantity);
 
-  const dirty = quantity !== itemQuantity;
-  const subtotal = productPrice * itemQuantity;
+  const subtotal = productPrice * quantity;
 
-  function handleUpdate() {
+  // - / + で即更新。 押し忘れが起きないよう更新ボタンは廃止。
+  function changeQuantity(next: number) {
+    if (next < MIN_QUANTITY || next > MAX_QUANTITY) return;
     setError(null);
     startTransition(async () => {
-      const result = await setBasketItem(productId, quantity);
+      setOptimisticQuantity(next);
+      const result = await setBasketItem(productId, next);
       if (result?.error) setError(result.error);
     });
   }
@@ -77,31 +78,46 @@ export function BasketItemRow({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Select
-            value={String(quantity)}
-            onValueChange={(v) => setQuantity(Number(v))}
-            disabled={isPending}
+        <div className="flex items-center gap-1">
+          {quantity <= MIN_QUANTITY ? (
+            // 残り1個で - を押すと削除（0 は「カゴから消す」なので、 減算でなく削除にする）。
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              className="text-destructive hover:text-destructive"
+              aria-label="削除"
+              onClick={handleRemove}
+              disabled={isPending}
+            >
+              <Trash2 />
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              aria-label="1つ減らす"
+              onClick={() => changeQuantity(quantity - 1)}
+            >
+              <Minus />
+            </Button>
+          )}
+          <span
+            className="w-8 text-center text-sm tabular-nums"
+            aria-live="polite"
           >
-            <SelectTrigger size="sm" className="w-16" aria-label="個数">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
-                <SelectItem key={n} value={String(n)}>
-                  {n}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {quantity}
+          </span>
           <Button
             type="button"
             variant="outline"
-            size="sm"
-            onClick={handleUpdate}
-            disabled={isPending || !dirty}
+            size="icon-sm"
+            aria-label="1つ増やす"
+            onClick={() => changeQuantity(quantity + 1)}
+            disabled={quantity >= MAX_QUANTITY}
           >
-            更新
+            <Plus />
           </Button>
         </div>
 
