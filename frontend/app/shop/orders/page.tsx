@@ -161,6 +161,7 @@ export default async function MyOrdersPage({
                               src={item.imageUrl}
                               alt={item.name}
                               fill
+                              sizes="48px"
                               className="object-cover"
                             />
                           ) : null}

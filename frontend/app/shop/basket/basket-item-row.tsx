@@ -60,6 +60,7 @@ export function BasketItemRow({
               src={productImageUrl}
               alt={productName}
               fill
+              sizes="64px"
               className="object-cover"
             />
           ) : (
